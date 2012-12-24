@@ -1,0 +1,6 @@
+.mutt/cache/*
+ec2/bin/*
+.DS_Store
+.zsh_history
+.config/gtk*
+.config/inkscape*

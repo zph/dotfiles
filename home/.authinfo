@@ -1,0 +1,2 @@
+machine smtp.gmail.com login zander.hill port 587 password NmTa#5wqmuYRhmZ
+machine imap.gmail.com login zander.hill@gmail.com password NmTa#5wqmuYRhmZ port 993
