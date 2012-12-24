@@ -1,0 +1,48 @@
+# [Created by task 2.1.2 9/4/2012 16:10:51]
+# Taskwarrior program configuration file.
+# For more documentation, see http://taskwarrior.org or try 'man task', 'man task-faq',
+# 'man task-tutorial', 'man task-color', 'man task-sync' or 'man taskrc'
+
+# Here is an example of entries that use the default, override and blank values
+#   variable=foo   -- By specifying a value, this overrides the default
+#   variable=      -- By specifying no value, this means no default
+#   #variable=foo  -- By commenting out the line, or deleting it, this uses the default
+
+# Use the command 'task show' to see all defaults and overrides
+
+# Files
+data.location=/Users/zander/.task
+
+# Color theme (uncomment one to use)
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/light-16.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/light-256.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-16.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-256.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-red-256.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-green-256.theme
+include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-blue-256.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-violets-256.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-yellow-green.theme
+#include /usr/local/Cellar/task/2.1.2/share/doc/task/rc/dark-gray-256.theme
+
+# Customizations
+default.project=INBOX
+
+##########################
+# Personal customizations
+##########################
+report.gtd.columns=id,project,tags,priority,due,entry.age,urgency,description
+report.gtd.description=List GTD style task
+report.gtd.filter=status:pending limit:page
+report.gtd.labels=ID,Project,Context,Pri,Due,Age,Urgency,Description
+report.gtd.sort=urgency-,due-,tags+,project+,description+
+
+## Inbox report
+report.inbox.columns=id,project,tags,priority,due,entry.age,urgency,description
+report.inbox.description=Inbox to sort our and assign projects
+report.inbox.filter=proj:INBOX status:pending limit:page
+report.inbox.labels=ID,Project,Context,Pri,Due,Age,Urgency,Description
+report.inbox.sort=urgency-,due-,tags+,project+,description+
+
+# Set default command to gtd view
+default.command=gtd

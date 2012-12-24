@@ -1,0 +1,120 @@
+[submodule "home/.vim/bundle/ack.vim"]
+	path = home/.vim/bundle/ack.vim
+	url = git://github.com/mileszs/ack.vim.git
+[submodule "home/.vim/bundle/AutoTag"]
+	path = home/.vim/bundle/AutoTag
+	url = git://github.com/vim-scripts/AutoTag.git
+[submodule "home/.vim/bundle/ctrlp.vim"]
+	path = home/.vim/bundle/ctrlp.vim
+	url = git://github.com/kien/ctrlp.vim.git
+[submodule "home/.vim/bundle/delimitMate"]
+	path = home/.vim/bundle/delimitMate
+	url = git://github.com/Raimondi/delimitMate.git
+[submodule "home/.vim/bundle/fuzzyfinder_textmate"]
+	path = home/.vim/bundle/fuzzyfinder_textmate
+	url = git://github.com/sethbc/fuzzyfinder_textmate.git
+[submodule "home/.vim/bundle/gem-ctags"]
+	path = home/.vim/bundle/gem-ctags
+	url = git://github.com/tpope/gem-ctags.git
+[submodule "home/.vim/bundle/gitv"]
+	path = home/.vim/bundle/gitv
+	url = git://github.com/gregsexton/gitv.git
+[submodule "home/.vim/bundle/gundo.vim"]
+	path = home/.vim/bundle/gundo.vim
+	url = git://github.com/sjl/gundo.vim.git
+[submodule "home/.vim/bundle/neocomplcache"]
+	path = home/.vim/bundle/neocomplcache
+	url = git://github.com/Shougo/neocomplcache.git
+[submodule "home/.vim/bundle/neosnippet"]
+	path = home/.vim/bundle/neosnippet
+	url = git://github.com/Shougo/neosnippet.git
+[submodule "home/.vim/bundle/slimux"]
+	path = home/.vim/bundle/slimux
+	url = git://github.com/epeli/slimux.git
+[submodule "home/.vim/bundle/snipmate-snippets"]
+	path = home/.vim/bundle/snipmate-snippets
+	url = git://github.com/honza/snipmate-snippets.git
+[submodule "home/.vim/bundle/supertab"]
+	path = home/.vim/bundle/supertab
+	url = git://github.com/ervandew/supertab.git
+[submodule "home/.vim/bundle/tagbar"]
+	path = home/.vim/bundle/tagbar
+	url = git://github.com/majutsushi/tagbar.git
+[submodule "home/.vim/bundle/taglist.vim"]
+	path = home/.vim/bundle/taglist.vim
+	url = git://github.com/vim-scripts/taglist.vim.git
+[submodule "home/.vim/bundle/ultisnips"]
+	path = home/.vim/bundle/ultisnips
+	url = git://github.com/SirVer/ultisnips.git
+[submodule "home/.vim/bundle/vim-blackboard"]
+	path = home/.vim/bundle/vim-blackboard
+	url = git://github.com/nelstrom/vim-blackboard.git
+[submodule "home/.vim/bundle/vim-bundler"]
+	path = home/.vim/bundle/vim-bundler
+	url = git://github.com/tpope/vim-bundler.git
+[submodule "home/.vim/bundle/vim-coffee-script"]
+	path = home/.vim/bundle/vim-coffee-script
+	url = git://github.com/kchmck/vim-coffee-script.git
+[submodule "home/.vim/bundle/vim-commentary"]
+	path = home/.vim/bundle/vim-commentary
+	url = git://github.com/tpope/vim-commentary.git
+[submodule "home/.vim/bundle/vim-conque"]
+	path = home/.vim/bundle/vim-conque
+	url = git://github.com/skwp/vim-conque.git
+[submodule "home/.vim/bundle/vim-endwise"]
+	path = home/.vim/bundle/vim-endwise
+	url = git://github.com/tpope/vim-endwise.git
+[submodule "home/.vim/bundle/vim-eunuch"]
+	path = home/.vim/bundle/vim-eunuch
+	url = git://github.com/tpope/vim-eunuch.git
+[submodule "home/.vim/bundle/vim-fugitive"]
+	path = home/.vim/bundle/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule "home/.vim/bundle/vim-haml"]
+	path = home/.vim/bundle/vim-haml
+	url = git://github.com/tpope/vim-haml.git
+[submodule "home/.vim/bundle/vim-markdown"]
+	path = home/.vim/bundle/vim-markdown
+	url = git://github.com/tpope/vim-markdown.git
+[submodule "home/.vim/bundle/vim-numbertoggle"]
+	path = home/.vim/bundle/vim-numbertoggle
+	url = git://github.com/jeffkreeftmeijer/vim-numbertoggle.git
+[submodule "home/.vim/bundle/vim-powerline"]
+	path = home/.vim/bundle/vim-powerline
+	url = git://github.com/Lokaltog/vim-powerline.git
+[submodule "home/.vim/bundle/vim-repeat"]
+	path = home/.vim/bundle/vim-repeat
+	url = git://github.com/tpope/vim-repeat.git
+[submodule "home/.vim/bundle/vim-rsi"]
+	path = home/.vim/bundle/vim-rsi
+	url = git://github.com/tpope/vim-rsi.git
+[submodule "home/.vim/bundle/vim-ruby"]
+	path = home/.vim/bundle/vim-ruby
+	url = git://github.com/vim-ruby/vim-ruby.git
+[submodule "home/.vim/bundle/vim-ruby-conque"]
+	path = home/.vim/bundle/vim-ruby-conque
+	url = git://github.com/skwp/vim-ruby-conque.git
+[submodule "home/.vim/bundle/vim-rvm"]
+	path = home/.vim/bundle/vim-rvm
+	url = git://github.com/tpope/vim-rvm.git
+[submodule "home/.vim/bundle/vim-slim"]
+	path = home/.vim/bundle/vim-slim
+	url = git://github.com/bbommarito/vim-slim.git
+[submodule "home/.vim/bundle/vim-slime"]
+	path = home/.vim/bundle/vim-slime
+	url = git://github.com/jpalardy/vim-slime.git
+[submodule "home/.vim/bundle/vim-surround"]
+	path = home/.vim/bundle/vim-surround
+	url = git://github.com/tpope/vim-surround.git
+[submodule "home/.vim/bundle/vimoutliner"]
+	path = home/.vim/bundle/vimoutliner
+	url = git://github.com/vimoutliner/vimoutliner.git
+[submodule "home/.vim/bundle/vimux"]
+	path = home/.vim/bundle/vimux
+	url = git://github.com/benmills/vimux.git
+[submodule "home/.vim/bundle/xmledit"]
+	path = home/.vim/bundle/xmledit
+	url = git://github.com/sukima/xmledit.git
+[submodule "home/.vim/bundle/ZoomWin"]
+	path = home/.vim/bundle/ZoomWin
+	url = git://github.com/vim-scripts/ZoomWin.git
