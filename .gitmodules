@@ -121,3 +121,6 @@
 [submodule "home/bin_repos/ack"]
 	path = home/bin_repos/ack
 	url = https://github.com/petdance/ack.git
+[submodule "home/bin_repos/gary_bernhardt_dotfiles"]
+	path = home/bin_repos/gary_bernhardt_dotfiles
+	url = https://github.com/garybernhardt/dotfiles.git
