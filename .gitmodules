@@ -118,3 +118,6 @@
 [submodule "home/.vim/bundle/ZoomWin"]
 	path = home/.vim/bundle/ZoomWin
 	url = git://github.com/vim-scripts/ZoomWin.git
+[submodule "home/bin_repos/ack"]
+	path = home/bin_repos/ack
+	url = https://github.com/petdance/ack.git
