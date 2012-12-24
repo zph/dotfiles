@@ -2,8 +2,6 @@
 # Author: Piotr Karbowski <piotr.karbowski@gmail.com>
 # License: beerware.
 source /etc/profile
-#source /home/zander/.bashrc
-#source /etc/profile.d/autojump.zsh
 
 # Basic zsh config.
 ZDOTDIR=${ZDOTDIR:-${HOME}}
@@ -28,9 +26,6 @@ CYAN='\e[1;36m'
 NC='\e[0m'
 
 # Functions
-if [ -f '/etc/profile.d/prll.sh' ]; then
-	. "/etc/profile.d/prll.sh"
-fi
 
 reload () {
           exec "${SHELL}" "$@"
@@ -278,7 +273,7 @@ setopt inc_append_history
 # Nobody need flow control anymore. Troublesome feature.
 #stty -ixon
 setopt noflowcontrol
-umask               
+umask
 # Shell config.
 umask 077
 if ! [[ "${PATH}" =~ "^${HOME}/bin" ]]; then
@@ -341,39 +336,21 @@ bindkey '^N' history-search-forward
 
 if [ -f ~/.alert ]; then cat ~/.alert; fi
 
-
 # Include user-specified configs.
 if [ ! -d "${ZSHDDIR}" ]; then
 	mkdir -p "${ZSHDDIR}" && echo "# Put your user-specified config here." > "${ZSHDDIR}/example.zsh"
 fi
 
-for zshd in $(ls -A ${HOME}/.config/zsh.d/^*.(z)sh$); do
-	. "${zshd}"
-done
-
-# source /etc/profile.d/*.zsh
-
-# PATH=/usr/bin/ctags:$PATH:/home/zander/.gem/jruby/1.8/bin # Add rvm jruby to PATH for scripting
-# export JRUBY_HOME=/home/zander/.rvm/src/jruby-1.6.7
-# export PATH=/bin:/home/zander/.rvm/gems/ruby-1.9.3-p125/bin:/home/zander/.rvm/gems/ruby-1.9.3-p125@global/bin:/home/zander/.rvm/rubies/ruby-1.9.3-p125/bin:/home/zander/.rvm/bin:/home/zander/.autojump/bin:/home/zander/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/share/java/apache-ant/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:/opt/qt/bin:/home/zander/.gem/jruby/1.8/bin
 
 export TERM=xterm-256color
 
 # Autocd without using CD
 setopt autocd
+
 # Automatically add directories to stack so they can
 # be referenced by 'dirs -v' or cd ~+<number>
 setopt AUTO_PUSHD
 
-#[[ -s ~/.autojump/etc/profile.d/autojump.zsh ]] && source ~/.autojump/etc/profile.d/autojump.zsh
-
-# 	. ${HOME}/bin/z.sh
-# 	function precmd () {
-# 	  _z --add "$(pwd -P)"
-# # 	}
-#  git branch >/dev/null 2>/dev/null && echo '±' && return
-#      hg root >/dev/null 2>/dev/null && echo '☿' && return
-#          ○
 todo_count(){
   # # if $(which todo.sh &> /dev/null)
   # if $(which task &> /dev/null)
@@ -408,6 +385,7 @@ todo_count2(){
   #   echo ""
   # fi
 }
+
 function zle-line-init zle-keymap-select {
 RPS1="${${KEYMAP/vicmd/>○<I:$(todo_count) T:$(todo_count2)>}/(main|viins)/±<I:$(todo_count) T:$(todo_count2)>}"
     RPS2=$RPS1
@@ -415,12 +393,9 @@ RPS1="${${KEYMAP/vicmd/>○<I:$(todo_count) T:$(todo_count2)>}/(main|viins)/±<I
 }
   zle -N zle-line-init
   zle -N zle-keymap-select
+
 # Set Vi Mode
 bindkey -v
-
-
-# [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
-# [[ -s ~/.autojump/etc/profile.d/autojump.zsh ]] && source ~/.autojump/etc/profile.d/autojump.zsh
 
 # Function to add nocorrect for certain commands, one per line in .zsh_nocorrect
 # It fails if any line is a blankline
@@ -430,17 +405,13 @@ if [ -f ~/.config/zsh.d/.zsh_nocorrect ]; then
     done < ~/.config/zsh.d/.zsh_nocorrect
 fi
 
-eval "$(fasd --init auto)"
-clear
-
-# OSX Hack for recompiling Ruby using gnu-gcc rather than clang
-export CC=/usr/local/bin/gcc-4.2
-
-
 # for zsh-completions
 fpath=(/usr/local/share/zsh-completions $fpath)
 
-# for sub commands via 'go'
-# eval "$(/Users/zander/Downloads/sub/bin/go init -)"
+clear
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+# Finally, source all the files in zsh.d
+# executed in alpha order
+for zshd in $(ls -A ${HOME}/.config/zsh.d/^*.(z)sh$); do
+	. "${zshd}"
+done
