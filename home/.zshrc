@@ -205,18 +205,6 @@ chpwd() {
 	git_check_if_worktree
 }
 
-# Are we running under grsecurity's RBAC?
-rbac_auth() {
-	local auth_to_role='admin'
-	if [ "${USER}" = 'root' ]; then
-		if ! grep -qE '^RBAC:' "/proc/self/status" && which gradm > /dev/null 2>&1; then
-			echo -e "\n${BLUE}*${NC} ${GREEN}RBAC${NC} Authorize to '${auth_to_role}' RBAC role."
-			gradm -a "${auth_to_role}"
-		fi
-	fi
-}
-#rbac_auth
-
 # Le features!
 # extended globbing, awesome!
 setopt extendedGlob
@@ -284,9 +272,10 @@ export EDITOR=`which vim`
 export TMP="$HOME/tmp"
 export TEMP="$TMP"
 export TMPDIR="$TMP"
+export TMPDIRVIM="$TMP/vim" # dir for vim backup files
 
 if [ ! -d "${TMP}" ]; then mkdir "${TMP}"; fi
-
+if [ ! -d "${TMPDIRVIM}" ]; then mkdir "${TMPDIRVIM}"; fi
 
 # Keys.
 case $TERM in

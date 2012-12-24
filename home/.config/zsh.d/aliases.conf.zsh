@@ -30,7 +30,7 @@ alias rmv='rsync -v --progress --remove-source-files'
 alias mv='mv -iv'
 alias rm='rm -iv'
 alias re="reload"
-alias d="dirs -v"
+# alias d="dirs -v"
 alias c="clear"
 # alias dcd="cd ~+"
 if which colordiff > /dev/null 2>&1; then

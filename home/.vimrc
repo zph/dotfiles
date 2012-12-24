@@ -563,8 +563,10 @@ map ZX <esc>:w<CR>
 " Override standard VIM save and exit command (ZZ)
 map ZZ <esc>:w<CR>
 "
-set backupdir=~/.tmp
-set directory=~/.tmp " Don't clutter my dirs up with swp and tmp files
+"
+" This folder is automatically created in zph's .zshrc
+set backupdir=~/tmp/vim
+set directory=~/tmp/vim " Don't clutter my dirs up with swp and tmp files
 set gdefault " assume the /g flag on :s substitutions to replace all matches in a line
 " Get rid of the delay when hitting esc!
 set noesckeys
