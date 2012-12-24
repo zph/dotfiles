@@ -7,9 +7,17 @@ else
   alias get='wget --continue --progress=bar --timestamping'
 fi
 
-alias pbc='pbcopy'
-alias pbp='pbpaste'
+if [[ "$OSTYPE" == darwin* ]]; then
+  # OSX Hack for recompiling Ruby using gnu-gcc rather than clang
+  export CC=/usr/local/bin/gcc-4.2
 
-alias trash_empty='rm -rf ~/.Trash/*'
+  # OSX Specific Aliases
+  alias pbc='pbcopy'
+  alias pbp='pbpaste'
 
-alias dsstore_rm='sudo find / -name ".DS_Store" -depth -exec rm {} \;'
+  alias trash_empty='rm -rf ~/.Trash/*'
+
+  alias dsstore_rm='sudo find / -name ".DS_Store" -depth -exec rm {} \;'
+else
+
+fi
