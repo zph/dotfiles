@@ -1,5 +1,2 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =3
-let g:netrw_dirhist_1='/Users/zander/Dropbox/scripts/abstracting/jdbc_trials/lib'
-let g:netrw_dirhist_2='/Users/zander/Dropbox/dotfiles/home/.task'
-let g:netrw_dirhist_3='/Users/zander/Dropbox/dotfiles/home/.irssi'
+let g:netrw_dirhist_cnt =0
