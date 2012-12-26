@@ -403,40 +403,40 @@ endfunction
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SWITCH BETWEEN TEST AND PRODUCTION CODE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! OpenTestAlternate()
-  let new_file = AlternateForCurrentFile()
-  exec ':e ' . new_file
-endfunction
-function! AlternateForCurrentFile()
-  let current_file = expand("%")
-  let new_file = current_file
-  let in_spec = match(current_file, '^spec/') != -1
-  let going_to_spec = !in_spec
-  let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1
-  let in_lib = match(current_file, '\<lib\>') != -1
-  if going_to_spec
-    if in_app
-      let new_file = substitute(new_file, '^app/', '', '')
-    end
-    if in_lib
-      let new_file = substitute(new_file, '^lib/', '', '')
-    end
-    let new_file = substitute(new_file, '\.rb$', '_spec.rb', '')
-    let new_file = 'spec/' . new_file
-  else
-    let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
-    let new_file = substitute(new_file, '^spec/', '', '')
-    if in_app
-      let new_file = 'app/' . new_file
-    end
-    if in_lib
-      let new_file = 'lib/' . new_file
-    end
+" function! OpenTestAlternate()
+"   let new_file = AlternateForCurrentFile()
+"   exec ':e ' . new_file
+" endfunction
+" function! AlternateForCurrentFile()
+"   let current_file = expand("%")
+"   let new_file = current_file
+"   let in_spec = match(current_file, '^spec/') != -1
+"   let going_to_spec = !in_spec
+"   let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1
+"   let in_lib = match(current_file, '\<lib\>') != -1
+"   if going_to_spec
+"     if in_app
+"       let new_file = substitute(new_file, '^app/', '', '')
+"     end
+"     if in_lib
+"       let new_file = substitute(new_file, '^lib/', '', '')
+"     end
+"     let new_file = substitute(new_file, '\.rb$', '_spec.rb', '')
+"     let new_file = 'spec/' . new_file
+"   else
+"     let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
+"     let new_file = substitute(new_file, '^spec/', '', '')
+"     if in_app
+"       let new_file = 'app/' . new_file
+"     end
+"     if in_lib
+"       let new_file = 'lib/' . new_file
+"     end
 
-  endif
-  return new_file
-endfunction
-nnoremap <leader>. :call OpenTestAlternate()<cr>
+"   endif
+"   return new_file
+" endfunction
+" nnoremap <leader>. :call OpenTestAlternate()<cr>
 """"""""""""""""
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RUNNING TESTS
@@ -559,9 +559,9 @@ map <Leader>gc :Gcommit<CR>
 " Changed from C-s to C-something else because OSX eats my C-s
 map <C-j> <esc>:w<CR>
 imap <C-J> <esc>:w<CR>
-map ZX <esc>:w<CR>
+map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
-map ZZ <esc>:w<CR>
+" map ZZ <esc>:w<CR>
 "
 "
 " This folder is automatically created in zph's .zshrc
@@ -641,3 +641,11 @@ endfunction
 nnoremap <silent> <Leader>bl  :BlogList<CR>
 nnoremap <silent> <Leader>bn  :BlogNew<CR>
 nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
+
+" Sweet-rspec
+map <D-r> :SweetVimRspecRunFile<CR> " (CMD-r)  or (Apple-r)
+map <D-R> :SweetVimRspecRunFocused<CR> "(SHIFT-CMD-r) 
+map <M-D-r> :SweetVimRspecRunPrevious<CR> "(OPT-CMD-r)
+
+highlight RSpecFailed guibg=#671d1a
+highlight RSpecPending guibg=#54521a

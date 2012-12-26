@@ -130,3 +130,6 @@
 [submodule "home/bin_repos/osx-proxy"]
 	path = home/bin_repos/osx-proxy
 	url = git@bitbucket.org:zph/osx-proxy.git
+[submodule "home/.vim/bundle/sweet-rspec-vim"]
+	path = home/.vim/bundle/sweet-rspec-vim
+	url = https://github.com/phanle/sweet-rspec-vim.git
