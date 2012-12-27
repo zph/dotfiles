@@ -2,13 +2,29 @@
 # Author: Piotr Karbowski <piotr.karbowski@gmail.com>
 # License: beerware.
 source /etc/profile
-
+#
 # Basic zsh config.
 ZDOTDIR=${ZDOTDIR:-${HOME}}
-ZSHDDIR="${HOME}/.config/zsh.d"
+ZSHDDIR="${HOME}/.zsh.d"
 HISTFILE="${ZDOTDIR}/.zsh_history"
 HISTSIZE='10000'
 SAVEHIST="${HISTSIZE}"
+# for zsh-completions
+fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func)
+
+# Finally, source all the files in zsh.d
+# executed in alpha order
+for zshd in $(find ${HOME}/.zsh.d | grep .zsh$ 2> /dev/null); do
+	source "${zshd}"
+done
+
+# Setup prompt
+setopt PROMPT_SUBST
+autoload -U promptinit
+promptinit
+prompt grb
+
+
 
 # Colors.
 red='\e[0;31m'
@@ -278,19 +294,4 @@ if [ -f ~/.config/zsh.d/.zsh_nocorrect ]; then
         alias $COMMAND="nocorrect $COMMAND"
     done < ~/.config/zsh.d/.zsh_nocorrect
 fi
-
-# for zsh-completions
-fpath=(/usr/local/share/zsh-completions $fpath ${HOME}/.config/zsh.d/func)
-
-# Finally, source all the files in zsh.d
-# executed in alpha order
-for zshd in $(find ${HOME}/.config/zsh.d/ | grep .zsh$); do
-	source "${zshd}"
-done
-
-# Setup prompt
-setopt PROMPT_SUBST
-autoload -U promptinit
-promptinit
-prompt grb
 
