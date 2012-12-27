@@ -3,6 +3,10 @@
 # License: beerware.
 source /etc/profile
 #
+# Include user-specified configs.
+if [ ! -d "${ZSHDDIR}" ]; then
+	mkdir -p "${ZSHDDIR}" && echo "# Put your user-specified config here." > "${ZSHDDIR}/example.zsh"
+fi
 # Basic zsh config.
 ZDOTDIR=${ZDOTDIR:-${HOME}}
 ZSHDDIR="${HOME}/.zsh.d"
@@ -235,10 +239,6 @@ bindkey '^N' history-search-forward
 
 if [ -f ~/.alert ]; then cat ~/.alert; fi
 
-# Include user-specified configs.
-if [ ! -d "${ZSHDDIR}" ]; then
-	mkdir -p "${ZSHDDIR}" && echo "# Put your user-specified config here." > "${ZSHDDIR}/example.zsh"
-fi
 
 
 export TERM=xterm-256color
