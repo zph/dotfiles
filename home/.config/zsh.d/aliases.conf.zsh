@@ -55,3 +55,17 @@ alias l='|less -30'
 
 unalias f #because of fasd
 alias f='fg'
+# Set sz as a function for sourcing base shell dotfile
+sz(){
+case $(echo $SHELL) in
+  "/bin/zsh")
+    source ~/.zshrc
+    ;;
+  "/bin/bash")
+    source ~/.bashrc
+    ;;
+  *)
+    echo "Unknown Shell"
+    ;;
+esac
+}
