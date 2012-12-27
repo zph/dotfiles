@@ -4,7 +4,7 @@ alias ack='noglob ack -i --nogroup'
 alias less="less -R"
 alias qlf='qlmanage -p "$@" >& /dev/null'
 alias q='exit'
-alias mkdir='mkdir -p' # Make mkdir recursive
+# alias mkdir='mkdir -p' # Make mkdir recursive
 alias cdd='cd - '                     # goto last dir cd'ed from
 alias df='df -kH'
 alias xt='extract'
@@ -19,7 +19,6 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ......="cd ../../../../.."
 
-
 # Because swapping to fg, bg, etc should be seamless
 alias j="jobs"
 alias f="fg"
@@ -32,6 +31,7 @@ alias rm='rm -iv'
 alias re="reload"
 # alias d="dirs -v"
 alias c="clear"
+alias v-='view -'
 # alias dcd="cd ~+"
 if which colordiff > /dev/null 2>&1; then
 	alias diff="colordiff -Nuar"
@@ -39,7 +39,7 @@ else
 	alias diff="diff -Nuar"
 fi
 
-alias grep='grep -inR --color=auto'
+alias grep='grep -i --color=auto'
 alias egrep='egrep --color=auto'
 # alias ls='ls --color=auto --human-readable --group-directories-first --classify'
 alias g="bundle exec guard $*"
@@ -51,9 +51,8 @@ alias ll="ls -lah"
 # alias t='todo.sh'
 alias gcomp='g++ -g -Wall -o'
 alias h='history'
-alias l='|less -30'
+alias l='less -30'
 
-unalias f #because of fasd
 alias f='fg'
 # Set sz as a function for sourcing base shell dotfile
 sz(){
