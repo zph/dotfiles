@@ -173,7 +173,7 @@ prompt_grb_setup() {
 	#PROMPT+="($pc[hist]%h$pc[reset])"
 	PROMPT+=":$pc[shortpath]%1~$pc[reset]"
     PROMPT+="($pc[scm_branch]\$(prompt_wunjo_scm_branch)$pc[reset])"
-	PROMPT+=" $pc[#]\$$pc[reset] "
+	PROMPT+=" $pc[#]$pc[reset]"
 
     #RPROMPT=
     #if [ $verbose ]; then
