@@ -7,6 +7,7 @@
 [alias]
     st = status
     ci = commit
+    cim = commit -m
     co = checkout
     di = diff
     dc = diff --cached
@@ -54,8 +55,9 @@
     hp = "!. ~/.githelpers && show_git_head"
     r = !git l -30
     ra = !git r --all
+    ll = !git r --all
     l = "!. ~/.githelpers && pretty_git_log"
-    ll = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
+    # ll = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
     la = !git l --all
     unstage = reset HEAD
 [merge]
