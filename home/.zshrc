@@ -122,10 +122,6 @@ _ignore_listed_zshd_commands(){
   fi
 }
 
-
-# HACK
-# clear
-
 _set_colors(){
   # Colors.
   red='\e[0;31m'
@@ -143,11 +139,8 @@ _set_colors(){
   NC='\e[0m'
 
 }
-# Public Functions
 
-reload () {
-  exec "${SHELL}" "$@"
-}
+# Public Functions
 
 _prompt_char () {
   git branch >/dev/null 2>/dev/null && echo '●' && return
