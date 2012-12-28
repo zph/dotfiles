@@ -11,7 +11,10 @@
     di = diff
     dc = diff --cached
     amend = commit --amend
+    a = add
     aa = add --all
+    ap = add -p
+    ai = add -i
     head = !git l -1
     h = !git head
     hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
