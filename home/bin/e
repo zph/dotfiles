@@ -9,14 +9,50 @@
 #
 #   $ e
 #   # => opens the current directory in your editor
-#
 #   $ e .
 #   $ e /usr/local
 #   # => opens the specified directory in your editor
+#   
+#   $ e local
+#    =>  opens that folder if it's available in fasd's index
+#   $ e -i local
+#    =>  opens interactive selection menu if it's available in fasd's index
+#TODO
+# - allow it to work w/ more than one file
+#
+interactive_mode="0"
 
-if [[ $1 == "" ]]
-then
-  exec $EDITOR .
-else
-  exec $EDITOR "$1"
+if [[ $1 == "-i" ]]; then
+  interactive_mode="1"
+  shift 1
+  echo "Now we're at $@"
 fi
+_smart_editor_select_error_unknown_path(){
+    echo "Can't find path with normal"
+    echo "or extraordinary methods."
+    return 1
+}
+
+_smart_editor_select(){
+  # echo $interactive_mode
+  if [[ $1 == "" ]]; then
+    exec $EDITOR .
+  elif [[ -f $1 || -d $1 ]]; then
+    exec $EDITOR "$1"
+  elif [[ -x $(which fasd) ]]; then
+    if [[ $interactive_mode == "1" ]];then
+      local dir=$(fasd -sia $1)
+      if [[ $dir == "" ]]; then
+        _smart_editor_select_error_unknown_path
+      else
+        exec $EDITOR "$dir"
+      fi
+    else
+      exec fasd -a -e "$EDITOR" "$1"
+    fi
+  else
+    _smart_editor_select_error_unknown_path
+  fi
+}
+
+_smart_editor_select $1
