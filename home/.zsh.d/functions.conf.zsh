@@ -27,3 +27,4 @@ cdi(){
     cd $dir
   fi
 }
+
