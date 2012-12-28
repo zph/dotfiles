@@ -17,3 +17,13 @@ reload () {
 poweroff() { _confirm_wrapper --root $0 "$@"; }
 reboot() { _confirm_wrapper --root $0 "$@"; }
 hibernate() { _confirm_wrapper --root $0 "$@"; }
+
+cdi(){
+  local dir=$(fasd -sia $@)
+  if [[ $dir == "" ]]; then
+    echo "No dir in index with similar name."
+    return 1
+  else
+    cd $dir
+  fi
+}
