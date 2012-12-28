@@ -68,3 +68,5 @@ case $(echo $SHELL) in
     ;;
 esac
 }
+
+alias set_time="dpkg-reconfigure tzdata"
