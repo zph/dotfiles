@@ -174,6 +174,10 @@ _confirm_wrapper() {
 	_confirm "${runcommand}" "$@"
 }
 
+reload () {
+          exec "${SHELL}" "$@"
+}
+
 poweroff() { _confirm_wrapper --root $0 "$@"; }
 reboot() { _confirm_wrapper --root $0 "$@"; }
 hibernate() { _confirm_wrapper --root $0 "$@"; }
