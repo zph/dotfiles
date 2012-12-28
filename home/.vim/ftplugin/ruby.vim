@@ -15,7 +15,7 @@ let s:cpo_save = &cpo
 set cpo&vim
 
 if has("gui_running") && !has("gui_win32")
-  setlocal keywordprg=ri\ -T
+  setlocal keywordprg=ri\ -T\ -f\ bs
 else
   setlocal keywordprg=ri
 endif
@@ -39,6 +39,10 @@ if exists("loaded_matchit") && !exists("b:match_words")
 	\ "ConditionalModifier\\|RepeatModifier\\|OptionalDo\\|" .
 	\ "Function\\|BlockArgument\\|KeywordAsMethod\\|ClassVariable\\|" .
 	\ "InstanceVariable\\|GlobalVariable\\|Symbol\\)\\>'"
+endif
+
+if exists('g:loaded_surround') && !exists('b:surround_'.char2nr(':'))
+  let b:surround_{char2nr(':')} = ":\r"
 endif
 
 setlocal formatoptions-=t formatoptions+=croql
