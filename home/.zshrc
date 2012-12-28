@@ -1,19 +1,20 @@
 # .zshrc
-# Original Author: Piotr Karbowski <piotr.karbowski@gmail.com>
-# License: beerware.
 # Refactored and modified by: ZPH <zander@civet.ws>
 # License on modifications: Bourbonware.
+# Original Author: Piotr Karbowski <piotr.karbowski@gmail.com>
+# License: beerware.
+# Additional Credits: Gary Bernhardt, Wunjo, Others...
+# If you're not listed and see original code of yours, please notify me, ZPH,
+#   at email listed above.  I've pieced together this zshrc over time and it's
+#   undergone significant revisions.
 #############
 # Private Functions
 _pre_init(){
-  #
   # TODO
   # -force symlinking of primary directories
   # -force run of homesick, i.e. this doesn't work without homesick being run
   # -add pre-sourcing?, ie a before hook
-  #
   _set_zshddir(){
-
     __dotfile_warning(){
       echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
       echo "Please symlink dotfiles/home/.zsh.d into standard location"
@@ -36,7 +37,6 @@ _pre_init(){
       __dotfile_warning
     fi
   }
-
   _load_RVM_source_file_zsh(){
     [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
   }
@@ -64,7 +64,6 @@ _pre_init(){
   # for zsh-completions and prompt
   fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func)
   export TERM=xterm-256color
-
 }
 
 _set_zsh_settings(){
@@ -104,22 +103,22 @@ _set_zsh_settings(){
 }
 
 _source_zshd(){
-  # Finally, source all the files in zsh.d
-  # executed in alpha order
-  for zshd in $(find ${ZSHDDIR}/*.zsh ); do
+  # Finally, source all the files in zsh.d (ALPHA order)
+  for zshd in $(find ${ZSHDDIR}/*.zsh | sort ); do
     source "${zshd}"
   done
 }
 
-
 _ignore_listed_zshd_commands(){
   # Function to add nocorrect for certain commands, one per line in .zsh_nocorrect
   # It fails if any line is a blankline
-  if [ -f ~/.config/zsh.d/.zsh_nocorrect ]; then
-      while read -r COMMAND; do
-          alias $COMMAND="nocorrect $COMMAND"
-      done < ~/.config/zsh.d/.zsh_nocorrect
+  ZSHNOCORRECT="${ZSHDDIR}/.zsh_nocorrect"
+  if [ -f ${ZSHNOCORRECT} ]; then
+    while read -r COMMAND; do
+        alias $COMMAND="nocorrect $COMMAND"
+    done < ${ZSHNOCORRECT}
   fi
+  unset ZSHNOCORRECT
 }
 
 _set_colors(){
@@ -137,10 +136,7 @@ _set_colors(){
   cyan='\e[0;36m'
   CYAN='\e[1;36m'
   NC='\e[0m'
-
 }
-
-# Public Functions
 
 _prompt_char () {
   git branch >/dev/null 2>/dev/null && echo '●' && return
@@ -173,14 +169,6 @@ _confirm_wrapper() {
 	fi
 	_confirm "${runcommand}" "$@"
 }
-
-reload () {
-          exec "${SHELL}" "$@"
-}
-
-poweroff() { _confirm_wrapper --root $0 "$@"; }
-reboot() { _confirm_wrapper --root $0 "$@"; }
-hibernate() { _confirm_wrapper --root $0 "$@"; }
 
 _termtitle() {
 	case "$TERM" in
@@ -280,7 +268,6 @@ _set_prompt(){
   prompt grb
 }
 
-######
 ## DEPRECATED PRIVATE FUNCTIONS
 _execute_alert(){
   if [ -f ~/.alert ]; then cat ~/.alert; fi
@@ -304,33 +291,21 @@ __set_rprompt_with_task_info(){
     #   echo ""
     # fi
   }
-  todo_count2(){
-    # if $(which todo.sh &> /dev/null)
-    # if $(which task &> /dev/null)
-    # then
-    #   # num=$(echo $(todo.sh ls | grep "^[0-9]" | wc -l))
-    #   num=$(echo $(task status:pending count))
-    #   let todos=num
-    #   if [ $todos != 0 ]
-    #   then
-    #     echo "$todos"
-    #   else
-    #     echo ""
-    #   fi
-    # else
-    #   echo ""
-    # fi
-  }
 }
-############
-#
-# Execute Functions
-_pre_init
-_set_zsh_settings
-_source_zshd
-_ignore_listed_zshd_commands
-_termtitle
-_add_homebin_to_dir
-_export_editor_and_tmp_dirs
-_normalize_keys
-_set_prompt
+
+### Main function
+_main(){
+  ############
+  # Execute Functions
+  _pre_init
+  _set_zsh_settings
+  _source_zshd
+  _ignore_listed_zshd_commands
+  _termtitle
+  _add_homebin_to_dir
+  _export_editor_and_tmp_dirs
+  _normalize_keys
+  _set_prompt
+}
+
+_main
