@@ -51,6 +51,7 @@
     r = !git l -30
     ra = !git r --all
     l = "!. ~/.githelpers && pretty_git_log"
+    ll = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
     la = !git l --all
     unstage = reset HEAD
 [merge]
