@@ -33,7 +33,7 @@
 require 'pry'
 require 'systemu'
 require 'pathname'
-require 'RMagick'
+# require 'RMagick'
 
 # binding.pry
 def process_file(file)
