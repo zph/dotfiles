@@ -4,8 +4,13 @@
 # Original Author: Piotr Karbowski <piotr.karbowski@gmail.com>
 # License: beerware.
 # Additional Credits: Gary Bernhardt, Wunjo, Others...
+#    Wunjo
+#    -http://www.wunjo.org/zsh-git
+#    Gary Bernhardt
+#    -https://github.com/garybernhardt/dotfiles
+#
 # If you're not listed and see original code of yours, please notify me, ZPH,
-#   at email listed above.  I've pieced together this zshrc over time and it's
+#   at email listed above.  I've pieced together this zshrc over time and it has
 #   undergone significant revisions.
 #############
 # Private Functions
