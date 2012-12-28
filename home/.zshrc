@@ -9,7 +9,7 @@
 #   undergone significant revisions.
 #############
 # Private Functions
-_pre_init(){
+_zshrc_pre_init(){
   # TODO
   # -force symlinking of primary directories
   # -force run of homesick, i.e. this doesn't work without homesick being run
@@ -294,10 +294,10 @@ __set_rprompt_with_task_info(){
 }
 
 ### Main function
-_main(){
+_zshrc_main(){
   ############
   # Execute Functions
-  _pre_init
+  _zshrc_pre_init
   _set_zsh_settings
   _source_zshd
   _ignore_listed_zshd_commands
@@ -308,4 +308,4 @@ _main(){
   _set_prompt
 }
 
-_main
+_zshrc_main
