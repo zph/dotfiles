@@ -212,7 +212,7 @@ prompt_grb_setup() {
   # }
 
   # RPROMPT below MUST have escaping \ before $
-  # RPROMPT="$pc[scm_status_staged] \$(prior_cmd_return_value)$pc[reset]"
+  RPROMPT="$pc[scm_status_staged] \$(prior_cmd_return_value)$pc[reset]"
 
 	export PROMPT RPROMPT
   precmd_functions+='prompt_wunjo_precmd'
