@@ -41,6 +41,14 @@ colorword() {
 	echo "%{"$'\e['${(j:;:)s}m"%}"
 }
 
+_prompt_char () {
+  git branch >/dev/null 2>/dev/null && echo '±' && return
+  hg root >/dev/null 2>/dev/null && echo '☿' && return
+  echo '●' # ○
+}
+
+
+
 function minutes_since_last_commit {
     now=`date +%s`
     last_commit=`git log --pretty=format:'%at' -1 2>/dev/null`
@@ -171,19 +179,43 @@ prompt_grb_setup() {
 #    PROMPT+="
 #"
 	#PROMPT+="($pc[hist]%h$pc[reset])"
+  set_color_per_return_value(){
+    # if [[ $prior_cmd_return_value == 0 ]];then
+    #   echo $prior_cmd_return_value
+      # echo "$pc[scm_status_staged]\$(_prompt_char)$pc[reset]"
+    # else
+    #   echo "$pc[scm_status_dirty]\$(_prompt_char)$pc[reset]"
+  # fi
+  }
 	PROMPT+=":$pc[shortpath]%1~$pc[reset]"
     PROMPT+="($pc[scm_branch]\$(prompt_wunjo_scm_branch)$pc[reset])"
 	PROMPT+=" $pc[#]$pc[reset]"
 
-    #RPROMPT=
-    #if [ $verbose ]; then
-    #	RPROMPT+="$p_date "
-    #fi
-    #RPROMPT+="$pc[user]%n$pc[reset]"
-    #RPROMPT+=" $p_line"
+    # pc[scm_status_dirty]='Red'
+    # pc[scm_status_staged]='Green'
+
+  prior_cmd_return_value(){
+    prior_val=$status
+    if [[ $prior_val -eq 0 ]]; then
+    else
+      echo "$prior_val $(_prompt_char)"
+    fi
+  }
+  # WORKING FUNCTION
+  # prior_cmd_return_value(){
+  #   prior_val=$status
+  #   if [[ $prior_val -eq 0 ]]; then
+  #     echo "Good $prior_val"
+  #   else
+  #     echo "BAD: $prior_val"
+  #   fi
+  # }
+
+  # RPROMPT below MUST have escaping \ before $
+  # RPROMPT="$pc[scm_status_staged] \$(prior_cmd_return_value)$pc[reset]"
 
 	export PROMPT RPROMPT
-	precmd_functions+='prompt_wunjo_precmd'
+  precmd_functions+='prompt_wunjo_precmd'
 }
 
 prompt_wunjo_precmd() {

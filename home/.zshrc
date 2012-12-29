@@ -143,11 +143,6 @@ _set_colors(){
   NC='\e[0m'
 }
 
-_prompt_char () {
-  git branch >/dev/null 2>/dev/null && echo '●' && return
-  hg root >/dev/null 2>/dev/null && echo '☿' && return
-  echo '○'
-}
 
 _confirm() {
 	local answer
