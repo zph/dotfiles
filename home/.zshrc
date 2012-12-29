@@ -273,25 +273,25 @@ _execute_alert(){
   if [ -f ~/.alert ]; then cat ~/.alert; fi
 }
 
-__set_rprompt_with_task_info(){
-  todo_count(){
-    # # if $(which todo.sh &> /dev/null)
-    # if $(which task &> /dev/null)
-    # then
-    #   # num=$(echo $(todo.sh ls | grep "^[0-9]" | wc -l))
-    #   num=$(echo $(task status:pending proj:INBOX count))
-    #   let todos=num
-    #   if [ $todos != 0 ]
-    #   then
-    #     echo "$todos"
-    #   else
-    #     echo ""
-    #   fi
-    # else
-    #   echo ""
-    # fi
-  }
-}
+# __set_rprompt_with_task_info(){
+#   todo_count(){
+#     # # if $(which todo.sh &> /dev/null)
+#     # if $(which task &> /dev/null)
+#     # then
+#     #   # num=$(echo $(todo.sh ls | grep "^[0-9]" | wc -l))
+#     #   num=$(echo $(task status:pending proj:INBOX count))
+#     #   let todos=num
+#     #   if [ $todos != 0 ]
+#     #   then
+#     #     echo "$todos"
+#     #   else
+#     #     echo ""
+#     #   fi
+#     # else
+#     #   echo ""
+#     # fi
+#   }
+# }
 
 ### Main function
 _zshrc_main(){
