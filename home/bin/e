@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Quick shortcut to an editor.
 #
@@ -27,6 +27,7 @@ if [[ $1 == "-i" ]]; then
   shift 1
   echo "Now we're at $@"
 fi
+
 _smart_editor_select_error_unknown_path(){
     echo "Can't find path with normal"
     echo "or extraordinary methods."
