@@ -83,8 +83,8 @@ set smartcase
 set incsearch
 set hlsearch
 nnoremap <Leader><space> :noh<cr>
-nnoremap <tab> %
-vnoremap <tab> %
+" nnoremap <tab> %
+" vnoremap <tab> %
 
 " Remap F1 to escape
 inoremap <F1> <ESC>
@@ -384,8 +384,10 @@ vmap <Leader>s :SlimuxREPLSendSelection<CR>
 map <Leader>d :SlimuxShellLast<CR>
 
 " For jumplist... since tab is clobbered
-nnoremap g, <C-o>
-nnoremap g. <C-i>
+" go back
+nnoremap g, <C-O>
+" go forward
+nnoremap g. <C-I>
 nnoremap <C-k> <C-i>
 
 " Shortcut '%%' to enter PWD on commandline 
