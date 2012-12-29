@@ -37,10 +37,18 @@ install_rvm(){
   if [[ -d "${HOME}/.rvm" ]]; then
     echo "RVM already installed"
   else
-    curl -L https://get.rvm.io | bash -s stable --ruby --gems=homesick,pry
+    curl -L https://get.rvm.io | bash -s stable --ruby --gems=pry
   fi
 
   source ${HOME}/.rvm/scripts/rvm
+}
+
+install_homesick(){
+  cd ~/tmp
+  git clone https://github.com/muratayusuke/homesick.git
+  cd homesick/gems
+  gem install homesick.gem
+
 }
 
 download_dotfiles(){
@@ -48,13 +56,12 @@ download_dotfiles(){
   if [[ -d ~/dotfiles ]]; then
     git clone ssh://zander@xen1/home/zander/repos/dotfiles ~/dotfiles
     homesick symlink ~/dotfiles
-    ln -s ~/dotfiles/home/bin ~/bin
   fi
 }
 
 download_private_dotfiles(){
   cd ~
-  if [[ -d "~/dotfiles_private" ]]; then
+  if [[ -d ~/dotfiles_private ]]; then
     git clone ssh://zander@xen1/home/zander/repos/dotfiles_private ~/dotfiles_private
     homesick symlink ~/dotfiles_private
   fi
@@ -65,12 +72,12 @@ resource_zshrc(){
 }
 
 setup_zsh(){
-  # if [[ $SHELL =~ '/bin/zsh' ]]; then
-  #   echo "ZSH already set"
-  # else
+  if [[ $(ps -p$$ -ocommand | tail -n1 | grep zsh) ]]; then
+    echo "ZSH already set"
+  else
     chsh -s /bin/zsh
     /bin/zsh
-  # fi
+  fi
 }
 
 prepare_dir_for_vim
@@ -79,6 +86,7 @@ setup_zsh
 download_dotfiles
 resource_zshrc
 install_rvm
+install_homesick
 install_fasd
 resource_zshrc
 
