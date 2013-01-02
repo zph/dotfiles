@@ -133,3 +133,6 @@
 [submodule "home/.vim/bundle/sweet-rspec-vim"]
 	path = home/.vim/bundle/sweet-rspec-vim
 	url = https://github.com/phanle/sweet-rspec-vim.git
+[submodule "home/.vim/bundle/vim-json"]
+	path = home/.vim/bundle/vim-json
+	url = https://github.com/leshill/vim-json.git

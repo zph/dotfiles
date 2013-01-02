@@ -368,6 +368,8 @@ function! RunTests(filename)
 endfunction
 
 command! RunTests call RunTests(expand("%"))
+map <Leader>t :RunTests<CR>
+
 
 " Set path for gf to include rubygems folder based on GEM_HOME of RVM
 " set path+=include;$GEM_HOME
