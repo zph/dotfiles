@@ -6,10 +6,11 @@ alias qlf='qlmanage -p "$@" >& /dev/null'
 alias q='exit'
 # alias mkdir='mkdir -p' # Make mkdir recursive
 alias cdd='cd - '                     # goto last dir cd'ed from
+alias cd-='cd - '
 alias df='df -kH'
 alias xt='extract'
-alias cv='cdargs'
-alias cva='cdargs -a "$@"; cd $_'
+# alias cv='cdargs'
+# alias cva='cdargs -a "$@"; cd $_'
 alias mntcd='mount -t iso9660 -o loop'
 
 #cd by .. or ... or ... or mv file ..../.
@@ -53,7 +54,6 @@ alias gcomp='g++ -g -Wall -o'
 alias h='history'
 alias l='less -30'
 
-alias f='fg'
 # Set sz as a function for sourcing base shell dotfile
 sz(){
 case $(echo $SHELL) in
