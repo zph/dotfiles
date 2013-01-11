@@ -414,6 +414,9 @@ map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
 map ZZ <esc>:w<CR>
 
+" Tell Vim not to create swp files"
+set nobackup
+set noswapfile
 " This folder is automatically created in zph's .zshrc
 set backupdir=~/tmp/vim
 set directory=~/tmp/vim " Don't clutter my dirs up with swp and tmp files
@@ -534,9 +537,6 @@ set nowrap  " Line wrapping off
 
 " Command for soft wrap
 " :set wrap linebreak textwidth=0
-" Tell Vim not to create swp files"
-" set nobackup
-" set noswapfile
 
 " Remap ; to : to save shifting
 " nnoremap ; :
