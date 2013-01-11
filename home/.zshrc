@@ -265,7 +265,7 @@ _set_prompt(){
   setopt PROMPT_SUBST
   autoload -U promptinit
   promptinit
-  prompt grb
+  prompt zph
 }
 
 ## DEPRECATED PRIVATE FUNCTIONS
