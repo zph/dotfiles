@@ -1,9 +1,8 @@
 # .zshrc
-# Refactored and modified by: ZPH <zander@civet.ws>
-# License on modifications: Bourbonware.
-# Original Author: Piotr Karbowski <piotr.karbowski@gmail.com>
-# License: beerware.
-# Additional Credits: Gary Bernhardt, Wunjo, Others...
+# Assembled, refactored and modified by: ZPH <zander@civet.ws>
+# License on modifications and original code: Bourbonware.
+# Credits: Piotr Karbowski <piotr.karbowski@gmail.com> (Licensed as Beerware)
+# Gary Bernhardt, Wunjo, Others...
 #    Wunjo
 #    -http://www.wunjo.org/zsh-git
 #    Gary Bernhardt
