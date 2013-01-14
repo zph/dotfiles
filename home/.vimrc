@@ -506,11 +506,11 @@ nnoremap <silent> <Leader>bn  :BlogNew<CR>
 nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
 
 " Sweet-rspec
-map <D-r> :SweetVimRspecRunFile<CR> " (CMD-r)  or (Apple-r)
-map <D-R> :SweetVimRspecRunFocused<CR> "(SHIFT-CMD-r) 
-map <M-D-r> :SweetVimRspecRunPrevious<CR> "(OPT-CMD-r)
-highlight RSpecFailed guibg=#671d1a
-highlight RSpecPending guibg=#54521a
+" map <D-r> :SweetVimRspecRunFile<CR> " (CMD-r)  or (Apple-r)
+" map <D-R> :SweetVimRspecRunFocused<CR> "(SHIFT-CMD-r) 
+" map <M-D-r> :SweetVimRspecRunPrevious<CR> "(OPT-CMD-r)
+" highlight RSpecFailed guibg=#671d1a
+" highlight RSpecPending guibg=#54521a
 
 " For folding
 function! FoldingOn()
@@ -520,10 +520,12 @@ function! FoldingOn()
   " Set all folds to open
   " execute "normal zR"
 endfunction
+
 command! FoldingOn call FoldingOn()
 
 set nowrap  " Line wrapping off
 " 
+" Reminders of commands b/c of infreq. use
 " command	effect
 " zi	switch folding on or off
 " za	toggle current fold open/closed
