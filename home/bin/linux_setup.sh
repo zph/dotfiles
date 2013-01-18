@@ -4,7 +4,7 @@ add_to_hosts(){
   if [[ $(cat /etc/hosts | grep xen1) ]]; then
     echo "Hosts has already been modified"
   else
-    sudo bash -c 'echo "38.109.219.145 xen1 # nrserver" >> /etc/hosts'
+    sudo bash -c 'echo "$@ xen1 # nrserver" >> /etc/hosts'
   fi
 }
 prepare_dir_for_vim(){
