@@ -35,23 +35,23 @@ set pastetoggle=<F2>
 " ctags-exuberant for OSX or comparable
 nnoremap <leader>c :TagbarOpenAutoClose<CR>
 " Buffer hotkey
-nnoremap <Leader>b :buffer 
+" nnoremap <Leader>b :buffer 
 set smartindent
 set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
 
 " Minibuffer Explorer Settings
-let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavVim    = 1
 let g:miniBufExplMapWindowNavArrows = 1
-let g:miniBufExplMapCTabSwitchBufs = 1
-let g:miniBufExplModSelTarget = 1
+let g:miniBufExplMapCTabSwitchBufs  = 1
+let g:miniBufExplModSelTarget       = 1
 
 " Use control and hjkl to move between splits
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+" nnoremap <C-h> <C-w>h
+" nnoremap <C-j> <C-w>j
+" nnoremap <C-k> <C-w>k
+" nnoremap <C-l> <C-w>l
 
 " Leader a for ack
 nnoremap <Leader>a :Ack 
@@ -542,3 +542,21 @@ set nowrap  " Line wrapping off
 
 " Remap ; to : to save shifting
 " nnoremap ; :
+
+if has("autocmd")
+  autocmd bufwritepost .vimrc source $MYVIMRC
+endif
+
+"Tabular mappings
+"http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
+" if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+" endif
+
+" Use Ctrl-b for Easy Buffer Access
+imap <Leader>b <ESC>:CtrlPBuffer<CR>
+nmap <Leader>b :CtrlPBuffer<CR>
+
