@@ -27,6 +27,7 @@ set visualbell
 set cursorline
 set ttyfast
 set backspace=indent,eol,start
+set winwidth=80
 " Preserve large pastes 
 set pastetoggle=<F2>
 "set relativenumber
@@ -42,10 +43,10 @@ set guioptions-=T
 filetype on  " Automatically detect file types.
 
 " Minibuffer Explorer Settings
-let g:miniBufExplMapWindowNavVim    = 1
-let g:miniBufExplMapWindowNavArrows = 1
-let g:miniBufExplMapCTabSwitchBufs  = 1
-let g:miniBufExplModSelTarget       = 1
+" let g:miniBufExplMapWindowNavVim    = 1
+" let g:miniBufExplMapWindowNavArrows = 1
+" let g:miniBufExplMapCTabSwitchBufs  = 1
+" let g:miniBufExplModSelTarget       = 1
 
 " Use control and hjkl to move between splits
 " nnoremap <C-h> <C-w>h
@@ -436,8 +437,8 @@ nnoremap Q :q
 
 " Disable K looking stuff up ie instant manual lookups
 map K <Nop>
-command! K :!
-nnoremap K :!
+command! K :! 
+nnoremap K :! 
 
 " When loading text files, wrap them and don't split up words.
 " au BufNewFile,BufRead *.txt setlocal wrap 
@@ -559,4 +560,23 @@ endif
 " Use Ctrl-b for Easy Buffer Access
 imap <Leader>b <ESC>:CtrlPBuffer<CR>
 nmap <Leader>b :CtrlPBuffer<CR>
+let g:ctrlp_max_depth = 40
 
+" Multiple VCS's:
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ 'fallback': 'find %s -type f'
+  \ }
+" Sane Ignore For ctrlp
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
+  \ 'file': '\.exe$\|\.so$\|\.dat$'
+  \ }
+
+" Avoid holding shift to hit colon
+" To repeat a F or T movement double tap semicolon
+map ; :
+noremap ;; ;
