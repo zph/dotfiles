@@ -54,6 +54,7 @@ _zshrc_pre_init(){
   # Completion.
   autoload -Uz compinit
   compinit
+  setopt completealiases
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
   zstyle ':completion:*' completer _expand _complete _ignored _approximate
   zstyle ':completion:*' menu select=2
