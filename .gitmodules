@@ -148,3 +148,6 @@
 [submodule "home/.vim/bundle/TwitVim"]
 	path = home/.vim/bundle/TwitVim
 	url = https://github.com/vim-scripts/TwitVim.git
+[submodule "home/.vim/bundle/textile.vim"]
+	path = home/.vim/bundle/textile.vim
+	url = https://github.com/timcharper/textile.vim.git
