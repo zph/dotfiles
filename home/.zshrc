@@ -258,6 +258,11 @@ _normalize_keys(){
   # More Vi keybinds for searching
   bindkey '^P' history-search-backward
   bindkey '^N' history-search-forward 
+  # Keybind for opening command in full editor
+  #
+  autoload -z edit-command-line
+  zle -N edit-command-line
+  bindkey "^X^E" edit-command-line
 }
 
 _set_prompt(){
