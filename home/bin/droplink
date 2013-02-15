@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+['dropbox-api'].each do |gem|
+  begin
+    require gem
+  rescue LoadError
+    puts "You need to install #{gem}: gem install #{gem}"
+    exit!(1)
+  end
+end
+
+def convert_filename(file)
+  file.gsub(%r{^.*Dropbox}, '').rstrip
+end
+
+file = convert_filename(File.expand_path(ARGF.argv.join(" ")))
+
+app_token, app_secret, auth_token, auth_secret = File.open(File.expand_path("~/.dropboxrc"), 'r').read.split("\n")
+
+Dropbox::API::Config.app_key    = app_token
+Dropbox::API::Config.app_secret = app_secret
+Dropbox::API::Config.mode       = "dropbox"
+
+@client = Dropbox::API::Client.new(:token  => auth_token, :secret => auth_secret)
+
+dl_url = @client.ls(file)[0].direct_url['url']
+`echo #{dl_url} | pbcopy`
+puts "Sharing URL (copied to clipboard): #{dl_url}"
