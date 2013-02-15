@@ -151,3 +151,6 @@
 [submodule "home/.vim/bundle/textile.vim"]
 	path = home/.vim/bundle/textile.vim
 	url = https://github.com/timcharper/textile.vim.git
+[submodule "home/.vim/bundle/hardmode"]
+	path = home/.vim/bundle/hardmode
+	url = https://github.com/markus1189/hardmode.git
