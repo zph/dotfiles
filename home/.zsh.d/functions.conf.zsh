@@ -28,3 +28,5 @@ cdi(){
   fi
 }
 
+#Source: http://www.commandlinefu.com/commands/view/11786/move-up-through-directories-faster-set-in-your-etcprofile-or-.bash_profile
+function up { cd $(eval printf '../'%.0s {1..$1}) && pwd; }
