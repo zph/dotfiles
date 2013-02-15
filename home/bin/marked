@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  open -a Marked.app $1 &
+  open -a Marked.app "$1" &
 fi
