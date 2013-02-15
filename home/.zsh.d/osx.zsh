@@ -18,6 +18,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias trash_empty='rm -rf ~/.Trash/*'
 
   alias dsstore_rm='sudo find / -name ".DS_Store" -depth -exec rm {} \;'
-else
+  function system_urls(){
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -dump |
+    egrep "(bindings.*\:$)" | sort
+}
 
+  function dash() {
+    open dash://$@
+}
 fi
