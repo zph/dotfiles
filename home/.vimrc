@@ -35,6 +35,8 @@ set pastetoggle=<F2>
 " requires apt-get install exuberant-ctags in debian (or brew install
 " ctags-exuberant for OSX or comparable
 nnoremap <leader>c :TagbarOpenAutoClose<CR>
+" close
+nnoremap <leader>cl :close<CR>
 " Buffer hotkey
 " nnoremap <Leader>b :buffer 
 set smartindent
@@ -132,13 +134,13 @@ set list
 " Show $ at end of line and trailing space as ~.... disable this as
 " it's distracting for screencasts
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
-set lcs=tab:\ \ ,trail:~,extends:>,precedes:<
+set lcs=tab:\ \ ,trail:~,extends:&,precedes:<
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
 set laststatus=2  " Always show status line.
 
 " Set font
-set guifont=Inconsolata:h13
+set guifont=Source\ Code\ Pro:h13
 " gvim specific
 set mousehide  " Hide mouse after chars typed
 set mouse=a  " Mouse in all modes
@@ -246,7 +248,7 @@ augroup vimrcEx
   " autocmd FileType text setlocal textwidth=78
   " autocmd FileType text set wrap linebreak nolist et
   " autocmd For markdown style
-  " autocmd FileType md,markdown set wrap linebreak nolist et
+  " autocmd FileType md,markdown set wrap nolist et
 
   " Jump to last cursor position
   autocmd BufReadPost *
@@ -369,7 +371,7 @@ function! RunTests(filename)
 endfunction
 
 command! RunTests call RunTests(expand("%"))
-map <Leader>t :RunTests<CR>
+map <Leader>t :w\|:RunTests<CR>
 
 
 " Set path for gf to include rubygems folder based on GEM_HOME of RVM
@@ -409,8 +411,8 @@ map <Leader>gc :Gcommit<CR>
 " remap CTRL-S as save
 " Allows aving with C-s or C-S
 " Changed from C-s to C-something else because OSX eats my C-s
-map <C-j> <esc>:w<CR>
-imap <C-J> <esc>:w<CR>
+" map <C-j> <esc>:w<CR>
+" imap <C-J> <esc>:w<CR>
 map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
 map ZZ <esc>:w<CR>
@@ -544,9 +546,9 @@ set nowrap  " Line wrapping off
 " Remap ; to : to save shifting
 " nnoremap ; :
 
-if has("autocmd")
-  autocmd bufwritepost .vimrc source $MYVIMRC
-endif
+" if has("autocmd")
+"   autocmd bufwritepost .vimrc source $MYVIMRC
+" endif
 
 "Tabular mappings
 "http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
@@ -557,19 +559,24 @@ endif
   vmap <Leader>a: :Tabularize /:\zs<CR>
 " endif
 
-" Use Ctrl-b for Easy Buffer Access
+" Use leader-b for Easy Buffer Access
+"TODO : write function to open MRU instead of 'files' if pwd is ~/
 imap <Leader>b <ESC>:CtrlPBuffer<CR>
 nmap <Leader>b :CtrlPBuffer<CR>
-let g:ctrlp_max_depth = 40
+imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
+nmap <Leader>mr :CtrlPMRUFiles<CR>
+let g:ctrlp_max_depth = 20
 
+"" Custom CtrlP Config
 " Multiple VCS's:
-let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.git', 'cd %s && git ls-files'],
-    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-    \ },
-  \ 'fallback': 'find %s -type f'
-  \ }
+let g:ctrlp_extensions = ['tag']
+" let g:ctrlp_user_command = {
+"   \ 'types': {
+"     \ 1: ['.git', 'cd %s && git ls-files'],
+"     \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+"     \ },
+"   \ 'fallback': 'find %s -type f'
+"   \ }
 " Sane Ignore For ctrlp
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
@@ -580,3 +587,12 @@ let g:ctrlp_custom_ignore = {
 " To repeat a F or T movement double tap semicolon
 map ; :
 noremap ;; ;
+
+" Open Marked.app
+" only works on OSX with Marked.app installed
+imap <Leader>m <ESC>:!open -a Marked.app "%"<CR><CR>
+nmap <Leader>m :!open -a Marked.app "%"<CR><CR>
+
+" Run current file in ruby
+imap <Leader>rr <ESC>:!ruby %<CR>
+nmap <Leader>rr :!ruby %<CR>
