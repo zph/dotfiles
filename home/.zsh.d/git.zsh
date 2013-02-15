@@ -57,3 +57,4 @@ compdef _git gmv=mv
 alias grm='git rm'
 compdef _git grm=rm
 alias gcop='git commit && git push'
+alias gitrm="git status | grep deleted | awk '{print $3}' | xargs git rm"
