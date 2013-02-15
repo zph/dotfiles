@@ -70,3 +70,4 @@ esac
 }
 
 alias set_time="dpkg-reconfigure tzdata"
+alias jist='jist -p -c'
