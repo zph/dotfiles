@@ -596,3 +596,38 @@ nmap <Leader>m :!open -a Marked.app "%"<CR><CR>
 " Run current file in ruby
 imap <Leader>rr <ESC>:!ruby %<CR>
 nmap <Leader>rr :!ruby %<CR>
+
+nmap <Leader>st :%s/\n//g<CR>
+nmap <Leader>sh :%!fmt -n 100<CR>
+vnoremap <Leader>sh :!fmt -n 100<CR>
+
+imap <Leader>pi <ESC>:call PryToggle()<CR>
+nmap <Leader>pi :call PryToggle()<CR>
+
+fu! PryToggle()
+    let @a = "require 'pry'; binding.pry"
+    let wordsFromLine = getline('.')
+    if @a ==? wordsFromLine
+      :normal dd
+    else
+      :normal o"ap
+    endif
+endfu
+
+" Courtesy of rking's ruby-pry.vim
+" …also, Insert Mode as bpry<space>
+iabbr bpry require'pry';binding.pry
+" And admit that the typos happen:
+iabbr bpry require'pry';binding.pry
+
+" Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
+map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
+" Alias for one-handed operation:
+map <Leader><Leader>p <Leader>bp
+
+" Keep pry from annoyingly hanging around when using, e.g. pry-rescue/minitest
+map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
+
+" Nab lines from ~/.pry_history (respects "count")
+nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=pc<cr> ~/.pry_history<cr>:.-<c-r>=pc-1<cr>:norm <c-r>=pc<cr>==<cr>
+" ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
