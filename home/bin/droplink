@@ -23,6 +23,9 @@ Dropbox::API::Config.mode       = "dropbox"
 
 @client = Dropbox::API::Client.new(:token  => auth_token, :secret => auth_secret)
 
+# unless File.within("~/Dropbox")
+#TODO 
+#- add an option to move it to ~/Dropbox/Public
 dl_url = @client.ls(file)[0].direct_url['url']
 `echo #{dl_url} | pbcopy`
 puts "Sharing URL (copied to clipboard): #{dl_url}"

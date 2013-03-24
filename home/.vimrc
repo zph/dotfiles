@@ -597,7 +597,7 @@ nmap <Leader>m :!open -a Marked.app "%"<CR><CR>
 imap <Leader>rr <ESC>:!ruby %<CR>
 nmap <Leader>rr :!ruby %<CR>
 
-nmap <Leader>st :%s/\n//g<CR>
+nmap <Leader>st :%s/\n/ /g<CR>
 nmap <Leader>sh :%!fmt -n 100<CR>
 vnoremap <Leader>sh :!fmt -n 100<CR>
 
