@@ -157,3 +157,6 @@
 [submodule "home/.vim/bundle/vim-ruby-refactoring"]
 	path = home/.vim/bundle/vim-ruby-refactoring
 	url = https://github.com/rking/vim-ruby-refactoring.git
+[submodule "home/.vim/bundle/vim-dispatch"]
+	path = home/.vim/bundle/vim-dispatch
+	url = git://github.com/tpope/vim-dispatch.git
