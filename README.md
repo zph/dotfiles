@@ -3,6 +3,10 @@ zph
 
 My dotfiles
 
+Here's an explanation of the organization of files:
+
+[Blog Post About Dotfiles](http://www.civet.ws/2013/02/getting-started-configuring-bashzsh/)
+
 Use at your own risk ;).
 
 Installation
