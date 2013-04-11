@@ -160,3 +160,9 @@
 [submodule "home/.vim/bundle/vim-dispatch"]
 	path = home/.vim/bundle/vim-dispatch
 	url = git://github.com/tpope/vim-dispatch.git
+[submodule "home/.vim/bundle/dash"]
+	path = home/.vim/bundle/dash
+	url = https://github.com/rizzatti/dash.vim.git
+[submodule "home/.vim/bundle/funcoo"]
+	path = home/.vim/bundle/funcoo
+	url = git://github.com/rizzatti/funcoo.vim.git

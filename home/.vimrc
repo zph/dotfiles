@@ -418,7 +418,7 @@ map ZX <esc>:wq<CR>
 map ZZ <esc>:w<CR>
 
 " Tell Vim not to create swp files"
-set nobackup
+" set nobackup
 set noswapfile
 " This folder is automatically created in zph's .zshrc
 set backupdir=~/tmp/vim
