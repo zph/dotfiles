@@ -631,3 +631,6 @@ map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
 " Nab lines from ~/.pry_history (respects "count")
 nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=pc<cr> ~/.pry_history<cr>:.-<c-r>=pc-1<cr>:norm <c-r>=pc<cr>==<cr>
 " ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
+
+" Wrap back to beginning
+nmap <Leader>r v^S

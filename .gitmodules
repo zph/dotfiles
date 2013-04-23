@@ -166,3 +166,12 @@
 [submodule "home/.vim/bundle/funcoo"]
 	path = home/.vim/bundle/funcoo
 	url = git://github.com/rizzatti/funcoo.vim.git
+[submodule "home/.vim/bundle/zencoding-vim"]
+	path = home/.vim/bundle/zencoding-vim
+	url = git://github.com/mattn/zencoding-vim.git
+[submodule "home/.vim/bundle/vim-rails"]
+	path = home/.vim/bundle/vim-rails
+	url = git://github.com/tpope/vim-rails.git
+[submodule "home/.vim/bundle/vim-rspec"]
+	path = home/.vim/bundle/vim-rspec
+	url = git://github.com/thoughtbot/vim-rspec.git
