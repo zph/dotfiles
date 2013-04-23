@@ -105,6 +105,10 @@ _set_zsh_settings(){
   # Automatically add directories to stack so they can
   # be referenced by 'dirs -v' or cd ~+<number>
   setopt AUTO_PUSHD
+
+  # Very helpful for pasting in URLs that would otherwise be disastrous:
+  autoload -U url-quote-magic
+  zle -N self-insert url-quote-magic
 }
 
 _source_zshd(){
@@ -199,6 +203,10 @@ _add_homebin_to_dir(){
   if ! [[ "${PATH}" =~ "^${HOME}/bin" ]]; then
     export PATH="${HOME}/bin:${PATH}"
   fi
+
+  # Add subdirs under bin to path. Used to keep contributions organized
+  # export PATH="${PATH}$(find ~/${HOME}/bin -name '.*' -prune -o -type d -printf ':%p')"
+  PATH=${PATH}:$(find ~/bin -type d | tr '\n' ':' | sed 's/:$//')
 }
 
 _export_editor_and_tmp_dirs(){
