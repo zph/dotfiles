@@ -166,7 +166,8 @@ autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
 highlight Pmenu ctermbg=238 gui=bold
 
 "colorscheme slate " Uncomment this to set a default theme
-colorscheme Tomorrow-Night-Bright
+" colorscheme Tomorrow-Night-Bright
+colo detailed
 
 " Hooray for integration with standard Ctrl-V -C -X etc
 vmap <C-c> "+yi

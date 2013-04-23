@@ -175,3 +175,12 @@
 [submodule "home/.vim/bundle/vim-rspec"]
 	path = home/.vim/bundle/vim-rspec
 	url = git://github.com/thoughtbot/vim-rspec.git
+[submodule "home/.vim/bundle/vim-detailed"]
+	path = home/.vim/bundle/vim-detailed
+	url = git://github.com/rking/vim-detailed.git
+[submodule "home/.vim/bundle/syntastic"]
+	path = home/.vim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "home/.vim/bundle/vim-joy"]
+	path = home/.vim/bundle/vim-joy
+	url = git://github.com/rking/vim-joy.git
