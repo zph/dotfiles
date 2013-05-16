@@ -184,3 +184,6 @@
 [submodule "home/.vim/bundle/vim-joy"]
 	path = home/.vim/bundle/vim-joy
 	url = git://github.com/rking/vim-joy.git
+[submodule "home/.vim/bundle/open-browser"]
+	path = home/.vim/bundle/open-browser
+	url = git://github.com/tyru/open-browser.vim.git
