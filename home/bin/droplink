@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+#
+require 'fileutils'
+require 'pathname'
+require 'pry'
 
 ['dropbox-api'].each do |gem|
   begin
@@ -9,23 +13,45 @@
   end
 end
 
+
+def auth_setup
+  app_token, app_secret, auth_token, auth_secret = File.open(File.expand_path("~/.dropboxrc"), 'r').read.split("\n")
+
+  Dropbox::API::Config.app_key    = app_token
+  Dropbox::API::Config.app_secret = app_secret
+  Dropbox::API::Config.mode       = "dropbox"
+
+  @client = Dropbox::API::Client.new(:token  => auth_token, :secret => auth_secret)
+end
+
 def convert_filename(file)
   file.gsub(%r{^.*Dropbox}, '').rstrip
 end
 
-file = convert_filename(File.expand_path(ARGF.argv.join(" ")))
+def copy_to_clipboard(dl_url)
+  `echo #{dl_url} | pbcopy`
+end
 
-app_token, app_secret, auth_token, auth_secret = File.open(File.expand_path("~/.dropboxrc"), 'r').read.split("\n")
+def retrieve_download_link(file)
+  @client.ls(file)[0].direct_url['url']
+end
+full_real_path = Pathname.new(File.expand_path(ARGF.path))
+file = full_real_path.realpath.to_s
 
-Dropbox::API::Config.app_key    = app_token
-Dropbox::API::Config.app_secret = app_secret
-Dropbox::API::Config.mode       = "dropbox"
+public_dropbox_folder = File.join(ENV['HOME'], "Dropbox", "Public")
 
-@client = Dropbox::API::Client.new(:token  => auth_token, :secret => auth_secret)
+unless file[/Dropbox/i]
+  FileUtils.copy(file, public_dropbox_folder) 
+  file = File.expand_path(File.join(public_dropbox_folder, file.realpath.basename.to_s))
+end
 
-# unless File.within("~/Dropbox")
-#TODO 
+file_relative_to_dropbox_folder = File.expand_path( file.sub(File.join(ENV['HOME'], "Dropbox"), ''))
+auth_setup
+
 #- add an option to move it to ~/Dropbox/Public
-dl_url = @client.ls(file)[0].direct_url['url']
-`echo #{dl_url} | pbcopy`
+Pry.rescue do
+dl_url = retrieve_download_link(file_relative_to_dropbox_folder)
+copy_to_clipboard(dl_url)
+
 puts "Sharing URL (copied to clipboard): #{dl_url}"
+end
