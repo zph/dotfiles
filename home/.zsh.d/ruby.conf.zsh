@@ -10,3 +10,5 @@ alias homesick_refresh='homesick symlink ~/Dropbox/dotfiles'
 homesick_add(){
 # Not sure how to do it yet, or if advisable to automate
 }
+
+export BUFFER_DEBUG=true

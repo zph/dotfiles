@@ -49,7 +49,6 @@ alias ll="ls -lah"
 
 # Mac Specific
 # alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
-# alias t='todo.sh'
 alias gcomp='g++ -g -Wall -o'
 alias h='history'
 alias l='less -30'

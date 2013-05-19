@@ -12,6 +12,7 @@ let mapleader = ","
 
 " Since we mapped , as leader, let's map ',' default backwards ;
 nnoremap \ ,
+map <Space> <Leader>
 
 " Use jk to escape
 inoremap jk <ESC>
@@ -44,12 +45,6 @@ set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
 
-" Minibuffer Explorer Settings
-" let g:miniBufExplMapWindowNavVim    = 1
-" let g:miniBufExplMapWindowNavArrows = 1
-" let g:miniBufExplMapCTabSwitchBufs  = 1
-" let g:miniBufExplModSelTarget       = 1
-
 " Use control and hjkl to move between splits
 " nnoremap <C-h> <C-w>h
 " nnoremap <C-j> <C-w>j
@@ -57,7 +52,7 @@ filetype on  " Automatically detect file types.
 " nnoremap <C-l> <C-w>l
 
 " Leader a for ack
-nnoremap <Leader>a :Ack 
+nnoremap <Leader>a :Ack
 
 " Leader g for GundoToggle
 nnoremap <Leader>g :GundoToggle<CR>
@@ -86,8 +81,6 @@ set smartcase
 set incsearch
 set hlsearch
 nnoremap <Leader><space> :noh<cr>
-" nnoremap <tab> %
-" vnoremap <tab> %
 
 " Remap F1 to escape
 inoremap <F1> <ESC>
@@ -148,7 +141,6 @@ set mouse=a  " Mouse in all modes
 " Ruby autocomplete setup
 " Credit:
 " http://www.cuberick.com/2008/10/ruby-autocomplete-in-vim.html
-" ruby
 autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
 autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
 autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
@@ -174,9 +166,6 @@ vmap <C-c> "+yi
 vmap <C-x> "+c
 vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
-
-" Configuration for Vimrepress (wordpress via vim)
-" let g:vimrepress_tags_completable = 'true'
 
 "Statusline config
 set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
@@ -206,6 +195,7 @@ function! RenameFile()
         redraw!
     endif
 endfunction
+
 " map <leader>n :call RenameFile()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -429,7 +419,7 @@ set directory=~/tmp/vim " Don't clutter my dirs up with swp and tmp files
 set undodir=~/tmp/vim
 set undofile
 " Get rid of the delay when hitting esc!
-set noesckeys
+" set noesckeys
 
 " command! Qall qall 
 " Disable Ex mode
@@ -600,7 +590,10 @@ nmap <Leader>rr :!ruby %<CR>
 
 nmap <Leader>st :%s/\n/ /g<CR>
 nmap <Leader>sh :%!fmt -n 100<CR>
+nmap <Leader>shh <Leader>st<Leader>sh
 vnoremap <Leader>sh :!fmt -n 100<CR>
+nmap <Leader>sm :%!fmt -n 75<CR>
+vnoremap <Leader>sm :!fmt -n 75<CR>
 
 imap <Leader>pi <ESC>:call PryToggle()<CR>
 nmap <Leader>pi :call PryToggle()<CR>
