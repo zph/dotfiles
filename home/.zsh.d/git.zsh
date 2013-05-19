@@ -27,6 +27,12 @@ alias gci='git commit'
 compdef _git gcom=git-commit
 alias gcim='git commit -m'
 compdef _git gcom=git-commit
+function gcimpu(){
+git commit -m $@;
+git push
+}
+compdef _git gcom=git-commit
+
 alias gco='git checkout'
 compdef _git gco=git-checkout
 alias gcm='git checkout master'

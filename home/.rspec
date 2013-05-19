@@ -1,4 +1,4 @@
 # /.rspec
 
---format nested
+--format progress
 --color
