@@ -190,3 +190,6 @@
 [submodule "home/.vim/bundle/gundo"]
 	path = home/.vim/bundle/gundo
 	url = git://github.com/sjl/gundo.vim.git
+[submodule "home/.vim/bundle/vim-git"]
+	path = home/.vim/bundle/vim-git
+	url = https://github.com/tpope/vim-git.git
