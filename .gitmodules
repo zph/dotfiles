@@ -187,3 +187,6 @@
 [submodule "home/.vim/bundle/open-browser"]
 	path = home/.vim/bundle/open-browser
 	url = git://github.com/tyru/open-browser.vim.git
+[submodule "home/.vim/bundle/gundo"]
+	path = home/.vim/bundle/gundo
+	url = git://github.com/sjl/gundo.vim.git
