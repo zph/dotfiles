@@ -104,7 +104,8 @@ set clipboard+=unnamed  " Yanks go on clipboard instead.
 set autowrite  " Writes on make/shell commands
 set ruler  " Ruler on
 set nu  " Line numbers on
-set timeoutlen=250  " Time to wait after ESC (default causes an annoying)
+" Time to wait after ESC and LEADER, 250 is awful
+set timeoutlen=1000  " Time to wait after ESC (default causes an annoying)
 
 " Formatting (some of these are for coding in C and C++)
 set ts=2  " Tabs are 2 spaces
