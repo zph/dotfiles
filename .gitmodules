@@ -43,9 +43,6 @@
 [submodule "home/.vim/bundle/taglist.vim"]
 	path = home/.vim/bundle/taglist.vim
 	url = git://github.com/vim-scripts/taglist.vim.git
-[submodule "home/.vim/bundle/ultisnips"]
-	path = home/.vim/bundle/ultisnips
-	url = git://github.com/SirVer/ultisnips.git
 [submodule "home/.vim/bundle/vim-blackboard"]
 	path = home/.vim/bundle/vim-blackboard
 	url = git://github.com/nelstrom/vim-blackboard.git
