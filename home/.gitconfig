@@ -7,7 +7,7 @@
 	ui = true
 [alias]
     st = status
-    ci = commit
+    ci = commit -v
     cim = commit -m
     co = checkout
     di = diff
@@ -82,4 +82,4 @@
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [push]
-	default = simple
+	default = current
