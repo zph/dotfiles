@@ -190,3 +190,18 @@
 [submodule "home/.vim/bundle/vim-git"]
 	path = home/.vim/bundle/vim-git
 	url = https://github.com/tpope/vim-git.git
+[submodule "home/.vim/bundle/UltiSnips"]
+	path = home/.vim/bundle/UltiSnips
+	url = git://github.com/vim-scripts/UltiSnips.git
+[submodule "home/.vim/bundle/vim-rubocop"]
+	path = home/.vim/bundle/vim-rubocop
+	url = git://github.com/zph/vim-rubocop.git
+[submodule "home/.vim/bundle/vim-easytags"]
+	path = home/.vim/bundle/vim-easytags
+	url = git://github.com/xolox/vim-easytags.git
+[submodule "home/.vim/bundle/vim-misc"]
+	path = home/.vim/bundle/vim-misc
+	url = git://github.com/xolox/vim-misc.git
+[submodule "home/.vim/bundle/ag.vim"]
+	path = home/.vim/bundle/ag.vim
+	url = git://github.com/rking/ag.vim.git

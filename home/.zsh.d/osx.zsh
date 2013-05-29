@@ -9,7 +9,7 @@ fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
   # OSX Hack for recompiling Ruby using gnu-gcc rather than clang
-  export CC=/usr/local/bin/gcc-4.2
+  # export CC=/usr/local/bin/gcc-4.2
 
   # OSX Specific Aliases
   alias pbc='pbcopy'

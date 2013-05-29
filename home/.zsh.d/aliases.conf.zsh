@@ -1,3 +1,6 @@
+alias c='cd'
+alias cd='echo "DONT USE CD use c" && cd'
+alias git='echo "DONT USE GIT use g" && git'
 alias rsync='rsync -v --progress --partial'
 alias dstamp='date +%Y-%m-%d'
 alias ack='noglob ack -i --nogroup'
@@ -31,7 +34,7 @@ alias mv='mv -iv'
 alias rm='rm -iv'
 alias re="reload"
 # alias d="dirs -v"
-alias c="clear"
+alias cl="clear"
 alias v-='view -'
 # alias dcd="cd ~+"
 if which colordiff > /dev/null 2>&1; then
@@ -69,5 +72,5 @@ esac
 }
 
 alias set_time="dpkg-reconfigure tzdata"
-alias jist='jist -p --copy_js'
+# alias jist='jist -p --copy_js'
 alias jistc='jist -p -c'

@@ -104,12 +104,12 @@ endfunction
 
 "{{{ ri functions
 
-function! <SID>RCT_new_ri_window()
-  execute "new"
-  execute "set bufhidden=delete buftype=nofile noswapfile nobuflisted"
-  execute 'nmap <buffer><silent> <C-T> 2u'
-  execute 'nmap <buffer><silent> <C-]> :call' . s:sid . 'RCT_execute_ri(expand("<cWORD>"))<cr>'
-endfunction
+" function! <SID>RCT_new_ri_window()
+"   execute "new"
+"   execute "set bufhidden=delete buftype=nofile noswapfile nobuflisted"
+"   execute 'nmap <buffer><silent> <C-T> 2u'
+"   execute 'nmap <buffer><silent> <C-]> :call' . s:sid . 'RCT_execute_ri(expand("<cWORD>"))<cr>'
+" endfunction
 
 function! <SID>RCT_execute_ri(query_term)
   silent %delete _
@@ -164,10 +164,10 @@ endfunction
 if v:version >= 700
     execute "au Filetype ruby setlocal completefunc=" . s:sid . "RCT_completion"
 endif
-execute 'au Filetype ruby nmap <buffer><silent> <C-]> :exec "call ' .
-         \ 'RCT_find_tag_or_ri(''" . expand("<cword>") . "'')"<cr>'
-execute 'au Filetype ruby nmap <buffer><silent>' . s:GetOption("RCT_ri_binding", "<LocalLeader>r") .
-        \ ' :call ' .  s:sid . 'RCT_smart_ri()<cr>'
-execute 'au Filetype ruby nmap <buffer><silent>' . s:GetOption("RCT_toggle_binding", "<LocalLeader>t") .
-        \ ' :call ' .  s:sid . 'RCT_ruby_toggle()<cr>'
+" execute 'au Filetype ruby nmap <buffer><silent> <C-]> :exec "call ' .
+"          \ 'RCT_find_tag_or_ri(''" . expand("<cword>") . "'')"<cr>'
+" execute 'au Filetype ruby nmap <buffer><silent>' . s:GetOption("RCT_ri_binding", "<LocalLeader>r") .
+"         \ ' :call ' .  s:sid . 'RCT_smart_ri()<cr>'
+" execute 'au Filetype ruby nmap <buffer><silent>' . s:GetOption("RCT_toggle_binding", "<LocalLeader>t") .
+"         \ ' :call ' .  s:sid . 'RCT_ruby_toggle()<cr>'
 let &cpo = s:save_cpo

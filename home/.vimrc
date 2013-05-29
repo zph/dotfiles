@@ -1,3 +1,6 @@
+" Hack for speeding up vim load when using rvm
+let g:ruby_path = system('rvm current')
+
 call pathogen#infect()
 
 call pathogen#helptags()
@@ -52,7 +55,9 @@ filetype on  " Automatically detect file types.
 " nnoremap <C-l> <C-w>l
 
 " Leader a for ack
-nnoremap <Leader>a :Ack
+" nnoremap <Leader>a :Ack 
+nnoremap <Leader>a :Ag 
+
 
 " Leader g for GundoToggle
 nnoremap <Leader>g :GundoToggle<CR>
@@ -105,7 +110,7 @@ set autowrite  " Writes on make/shell commands
 set ruler  " Ruler on
 set nu  " Line numbers on
 " Time to wait after ESC and LEADER, 250 is awful
-set timeoutlen=1000  " Time to wait after ESC (default causes an annoying)
+set timeoutlen=700  " Time to wait after ESC (default causes an annoying)
 
 " Formatting (some of these are for coding in C and C++)
 set ts=2  " Tabs are 2 spaces
@@ -147,18 +152,9 @@ autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
 autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
 autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" For Vimux : hack to make it work with vim and ruby 1.9.2
-" ruby << EOF
-" class Object
-"   def flush; end unless Object.new.respond_to?(:flush)
-" end
-" EOF
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "improve autocomplete menu color
 highlight Pmenu ctermbg=238 gui=bold
 
-"colorscheme slate " Uncomment this to set a default theme
 " colorscheme Tomorrow-Night-Bright
 colo detailed
 
@@ -167,6 +163,7 @@ vmap <C-c> "+yi
 vmap <C-x> "+c
 vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
+
 
 "Statusline config
 set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
@@ -443,9 +440,9 @@ au BufNewFile,BufRead *.snippet set syntax=snippet ft=snippet foldmethod=indent
 " for ruby omnicomplete and supertab combo
 " let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 " Ultisnip sane tab behavior
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" let g:UltiSnipsExpandTrigger="<tab>"
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
+" let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 function! IncludeRCodeTools()
   " For rcodetools
@@ -629,3 +626,17 @@ nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=p
 
 " Wrap back to beginning
 nmap <Leader>r v^S
+
+" RuboCop from Anywhere
+nmap <Leader>ru :RuboCop<CR>
+imap <Leader>ru <ESC>:RuboCop<CR>
+
+nmap <Leader>rua :!rubocop<CR>
+imap <Leader>rua <ESC>:rubocop<CR>
+
+" " Ctags Shortcuts
+" " main mapping, go to first matching tag
+map <Leader>tt <c-]>
+" move forward and back through matching tags
+map <Leader>tp :tprevious<CR>
+map <Leader>tn :tnext<CR>
