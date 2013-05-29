@@ -1,0 +1,3 @@
+#!/bin/bash
+sack_shortcut=$(sed -n "$1p" < ~/.sack_shortcuts)
+$EDITOR +$sack_shortcut
