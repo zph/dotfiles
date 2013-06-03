@@ -32,38 +32,26 @@ set cursorline
 set ttyfast
 set backspace=indent,eol,start
 set winwidth=80
-" Preserve large pastes 
+" Preserve large pastes
 set pastetoggle=<F2>
-"set relativenumber
 " For TagBar Toggle Plugin
 " requires apt-get install exuberant-ctags in debian (or brew install
 " ctags-exuberant for OSX or comparable
-nnoremap <leader>c :TagbarOpenAutoClose<CR>
-" close
+nnoremap <leader>ta :TagbarOpenAutoClose<CR>
+nnoremap <leader>tg :!ctags -R .<CR>
+
 nnoremap <leader>cl :close<CR>
-" Buffer hotkey
-" nnoremap <Leader>b :buffer 
 set smartindent
 set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
 
-" Use control and hjkl to move between splits
-" nnoremap <C-h> <C-w>h
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
-
-" Leader a for ack
-" nnoremap <Leader>a :Ack 
 nnoremap <Leader>a :Ag 
 
-
-" Leader g for GundoToggle
 nnoremap <Leader>g :GundoToggle<CR>
 
 " XML Linting
-nnoremap <Leader>x :%!xmllint --format -<CR>
+nnoremap <Leader>xm :%!xmllint --format -<CR>
 
 " Quickly edit/reload the vimrc file
 nmap <silent> <Leader>ev :e $MYVIMRC<CR>
@@ -125,8 +113,6 @@ set autoindent
 set smarttab
 set expandtab
 
-" Visual
-
 set showmatch  " Show matching brackets.
 set mat=5  " Bracket blinking.
 set list
@@ -164,7 +150,6 @@ vmap <C-x> "+c
 vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
 
-
 "Statusline config
 set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
      "              | | | | |  |   |      |  |     |    |
@@ -193,8 +178,6 @@ function! RenameFile()
         redraw!
     endif
 endfunction
-
-" map <leader>n :call RenameFile()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ARROW KEYS ARE UNACCEPTABLE
@@ -263,79 +246,6 @@ endfunction
 :command! PromoteToLet :call PromoteToLet()
 :map <Leader>u :PromoteToLet<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" SWITCH BETWEEN TEST AND PRODUCTION CODE
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" function! OpenTestAlternate()
-"   let new_file = AlternateForCurrentFile()
-"   exec ':e ' . new_file
-" endfunction
-" function! AlternateForCurrentFile()
-"   let current_file = expand("%")
-"   let new_file = current_file
-"   let in_spec = match(current_file, '^spec/') != -1
-"   let going_to_spec = !in_spec
-"   let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1
-"   let in_lib = match(current_file, '\<lib\>') != -1
-"   if going_to_spec
-"     if in_app
-"       let new_file = substitute(new_file, '^app/', '', '')
-"     end
-"     if in_lib
-"       let new_file = substitute(new_file, '^lib/', '', '')
-"     end
-"     let new_file = substitute(new_file, '\.rb$', '_spec.rb', '')
-"     let new_file = 'spec/' . new_file
-"   else
-"     let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
-"     let new_file = substitute(new_file, '^spec/', '', '')
-"     if in_app
-"       let new_file = 'app/' . new_file
-"     end
-"     if in_lib
-"       let new_file = 'lib/' . new_file
-"     end
-
-"   endif
-"   return new_file
-" endfunction
-" nnoremap <leader>. :call OpenTestAlternate()<cr>
-""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" RUNNING TESTS
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" map <leader>t :call RunTestFile()<cr>
-" map <leader>T :call RunNearestTest()<cr>
-" " map <leader>a :call RunTests('')<cr>
-" map <leader>c :w\|:!script/features<cr>
-" map <leader>w :w\|:!script/features --profile wip<cr>
-
-" function! RunTestFile(...)
-"     if a:0
-"         let command_suffix = a:1
-"     else
-"         let command_suffix = ""
-"     endif
-
-"     " Run the tests for the previously-marked file.
-"     let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
-"     if in_test_file
-"         call SetTestFile()
-"     elseif !exists("t:grb_test_file")
-"         return
-"     end
-"     call RunTests(t:grb_test_file . command_suffix)
-" endfunction
-
-" function! RunNearestTest()
-"     let spec_line_number = line('.')
-"     call RunTestFile(":" . spec_line_number . " -b")
-" endfunction
-
-" function! SetTestFile()
-"     " Set the spec file that tests will be run for.
-"     let t:grb_test_file=@%
-" endfunction
 
 function! RunTests(filename)
     " Write the file and run tests for the given filename
@@ -361,13 +271,6 @@ endfunction
 
 command! RunTests call RunTests(expand("%"))
 map <Leader>t :w\|:RunTests<CR>
-
-
-" Set path for gf to include rubygems folder based on GEM_HOME of RVM
-" set path+=include;$GEM_HOME
-
-" :command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> -
-" :command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> - |fmt -csw78
 
 " Slime tmux settings
 let g:slime_target = "tmux"
@@ -397,17 +300,10 @@ map <Leader>gs :Gstatus<CR>
 map <Leader>gc :Gcommit<CR>
 
 " From Ben Orenstein
-" remap CTRL-S as save
-" Allows aving with C-s or C-S
-" Changed from C-s to C-something else because OSX eats my C-s
-" map <C-j> <esc>:w<CR>
-" imap <C-J> <esc>:w<CR>
 map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
 map ZZ <esc>:w<CR>
 
-" Tell Vim not to create swp files"
-" set nobackup
 set noswapfile
 " This folder is automatically created in zph's .zshrc
 set backupdir=~/tmp/vim
@@ -417,7 +313,7 @@ set directory=~/tmp/vim " Don't clutter my dirs up with swp and tmp files
 set undodir=~/tmp/vim
 set undofile
 " Get rid of the delay when hitting esc!
-" set noesckeys
+set noesckeys
 
 " command! Qall qall 
 " Disable Ex mode
@@ -432,17 +328,8 @@ command! K :!
 nnoremap K :! 
 
 " When loading text files, wrap them and don't split up words.
-" au BufNewFile,BufRead *.txt setlocal wrap 
-" au BufNewFile,BufRead *.txt setlocal lbr
-au BufNewFile,BufRead *.snip set syntax=snippet ft=snippet foldmethod=indent
-au BufNewFile,BufRead *.snippet set syntax=snippet ft=snippet foldmethod=indent
-
-" for ruby omnicomplete and supertab combo
-" let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
-" Ultisnip sane tab behavior
-" let g:UltiSnipsExpandTrigger="<tab>"
-" let g:UltiSnipsJumpForwardTrigger="<tab>"
-" let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+au BufNewFile,BufRead *.txt setlocal wrap
+au BufNewFile,BufRead *.txt setlocal lbr
 
 function! IncludeRCodeTools()
   " For rcodetools
@@ -475,7 +362,6 @@ function! IncludeRCodeTools()
   nmap <silent> <S-F12> V<S-F12>
   imap <silent> <S-F12> <ESC><S-F12>a
 
-
   function! RemoveRubyEval() range
     let begv = a:firstline
     let endv = a:lastline
@@ -497,13 +383,6 @@ nnoremap <silent> <Leader>bl  :BlogList<CR>
 nnoremap <silent> <Leader>bn  :BlogNew<CR>
 nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
 
-" Sweet-rspec
-" map <D-r> :SweetVimRspecRunFile<CR> " (CMD-r)  or (Apple-r)
-" map <D-R> :SweetVimRspecRunFocused<CR> "(SHIFT-CMD-r) 
-" map <M-D-r> :SweetVimRspecRunPrevious<CR> "(OPT-CMD-r)
-" highlight RSpecFailed guibg=#671d1a
-" highlight RSpecPending guibg=#54521a
-
 " For folding
 function! FoldingOn()
   nnoremap <Space> za
@@ -516,7 +395,6 @@ endfunction
 command! FoldingOn call FoldingOn()
 
 set nowrap  " Line wrapping off
-" 
 " Reminders of commands b/c of infreq. use
 " command	effect
 " zi	switch folding on or off
@@ -525,19 +403,6 @@ set nowrap  " Line wrapping off
 " zR	open all folds
 " zM	close all folds
 " zv	expand folds to reveal cursor
-
-" How to redirect output from shell into vim below current line
-" :r !COMMAND_GOES_HERE
-
-" Command for soft wrap
-" :set wrap linebreak textwidth=0
-
-" Remap ; to : to save shifting
-" nnoremap ; :
-
-" if has("autocmd")
-"   autocmd bufwritepost .vimrc source $MYVIMRC
-" endif
 
 "Tabular mappings
 "http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
@@ -624,9 +489,6 @@ map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
 nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=pc<cr> ~/.pry_history<cr>:.-<c-r>=pc-1<cr>:norm <c-r>=pc<cr>==<cr>
 " ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
 
-" Wrap back to beginning
-nmap <Leader>r v^S
-
 " RuboCop from Anywhere
 nmap <Leader>ru :RuboCop<CR>
 imap <Leader>ru <ESC>:RuboCop<CR>
@@ -640,3 +502,6 @@ map <Leader>tt <c-]>
 " move forward and back through matching tags
 map <Leader>tp :tprevious<CR>
 map <Leader>tn :tnext<CR>
+
+" TODO
+" use _ as 2nd leader to prefixing commands
