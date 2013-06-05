@@ -93,7 +93,10 @@ let g:rails_default_file='config/database.yml'
 """"""""""""""""
 " syntax enable
 set cf  " Enable error files & error jumping.
-set clipboard+=unnamed  " Yanks go on clipboard instead.
+" Necessary when using Vim in Tmux
+if $TMUX == ''
+    set clipboard+=unnamed
+endif
 set autowrite  " Writes on make/shell commands
 set ruler  " Ruler on
 set nu  " Line numbers on
@@ -168,6 +171,59 @@ set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
      "              +-- full path to file in the buffer
  " }
  "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Test functions from gary bernhardt
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! RunTestFile(...)
+    if a:0
+        let command_suffix = a:1
+    else
+        let command_suffix = ""
+    endif
+
+    " Run the tests for the previously-marked file.
+    let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
+    if in_test_file
+        call SetTestFile()
+    elseif !exists("t:grb_test_file")
+        return
+    end
+    call RunTests(t:grb_test_file . command_suffix)
+endfunction
+
+function! RunNearestTest()
+    let spec_line_number = line('.')
+    call RunTestFile(":" . spec_line_number . " -b")
+endfunction
+
+function! SetTestFile()
+    " Set the spec file that tests will be run for.
+    let t:grb_test_file=@%
+endfunction
+
+function! RunTests(filename)
+    " Write the file and run tests for the given filename
+    :w
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    if match(a:filename, '\.feature$') != -1
+        exec ":!script/features " . a:filename
+    else
+        if filereadable("script/test")
+            exec ":!script/test " . a:filename
+        elseif filereadable("Gemfile")
+            exec ":!bundle exec rspec --color " . a:filename
+        else
+            exec ":!rspec --color " . a:filename
+        end
+    end
+endfunction
+
+autocmd BufWritePost *.rb :call RunTestFile()
 " Taken from Gary Bernhardt's Dotfiles on github
 function! RenameFile()
     let old_name = expand('%')
@@ -178,6 +234,26 @@ function! RenameFile()
         redraw!
     endif
 endfunction
+
+" autocmd BufWritePost *.rb :call RunTestFile()
+map <Leader>t :call RunTestFile()
+
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Always strip trailing whitespace
+" Courtesy of MarkSim: https://github.com/marksim/.dotfiles/blob/master/.vimrc#L120-L130
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+fun! <SID>StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfun
+
+autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ARROW KEYS ARE UNACCEPTABLE
@@ -270,7 +346,12 @@ function! RunTests(filename)
 endfunction
 
 command! RunTests call RunTests(expand("%"))
-map <Leader>t :w\|:RunTests<CR>
+" map <Leader>t :w\|:RunTests<CR>
+"
+" Rspec.vim mappings
+map <Leader><Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader><Leader>s :call RunNearestSpec()<CR>
+map <Leader><Leader>l :call RunLastSpec()<CR>
 
 " Slime tmux settings
 let g:slime_target = "tmux"
@@ -300,9 +381,9 @@ map <Leader>gs :Gstatus<CR>
 map <Leader>gc :Gcommit<CR>
 
 " From Ben Orenstein
-map ZX <esc>:wq<CR>
+" map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
-map ZZ <esc>:w<CR>
+map <Leader>z <esc>:w<CR>
 
 set noswapfile
 " This folder is automatically created in zph's .zshrc
@@ -393,6 +474,8 @@ function! FoldingOn()
 endfunction
 
 command! FoldingOn call FoldingOn()
+
+nnoremap <Leader><Leader>f :FoldingOn<CR>
 
 set nowrap  " Line wrapping off
 " Reminders of commands b/c of infreq. use
@@ -505,3 +588,12 @@ map <Leader>tn :tnext<CR>
 
 " TODO
 " use _ as 2nd leader to prefixing commands
+map - <Leader><Leader>
+
+" Proper linewrap behavior
+"http://vimcasts.org/episodes/soft-wrapping-text/
+" command! -nargs=* Wrap set wrap linebreak nolist
+" nnoremap <Leader><Leader>wr :Wrap<CR>
+
+" Easy Save shortcut
+map <Leader>j :write<CR>
