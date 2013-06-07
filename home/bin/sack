@@ -521,7 +521,7 @@ if [[ "$sack__profile_name" == "no_profile" ]]; then
     # We add the pwd as last argument to ack so the file names of output
     # are displayed as absolute paths, so that they can be shared across
     # multiple terminal / shell sessions
-    sack__flags=""
+    sack__flags="-i"
     sack__cwd=$(pwd)
 else
     echo "===> using $sack__profile_name"
