@@ -40,9 +40,6 @@
 [submodule "home/.vim/bundle/tagbar"]
 	path = home/.vim/bundle/tagbar
 	url = git://github.com/majutsushi/tagbar.git
-[submodule "home/.vim/bundle/taglist.vim"]
-	path = home/.vim/bundle/taglist.vim
-	url = git://github.com/vim-scripts/taglist.vim.git
 [submodule "home/.vim/bundle/vim-blackboard"]
 	path = home/.vim/bundle/vim-blackboard
 	url = git://github.com/nelstrom/vim-blackboard.git
@@ -196,15 +193,15 @@
 [submodule "home/.vim/bundle/vim-rubocop"]
 	path = home/.vim/bundle/vim-rubocop
 	url = git://github.com/zph/vim-rubocop.git
-[submodule "home/.vim/bundle/vim-easytags"]
-	path = home/.vim/bundle/vim-easytags
-	url = git://github.com/xolox/vim-easytags.git
-[submodule "home/.vim/bundle/vim-misc"]
-	path = home/.vim/bundle/vim-misc
-	url = git://github.com/xolox/vim-misc.git
 [submodule "home/.vim/bundle/ag.vim"]
 	path = home/.vim/bundle/ag.vim
 	url = git://github.com/rking/ag.vim.git
 [submodule "home/.vim/bundle/vim-indent-object"]
 	path = home/.vim/bundle/vim-indent-object
 	url = https://github.com/michaeljsmith/vim-indent-object.git
+[submodule "home/.vim/bundle/vim-easytags"]
+	path = home/.vim/bundle/vim-easytags
+	url = https://github.com/xolox/vim-easytags.git
+[submodule "home/.vim/bundle/vim-misc"]
+	path = home/.vim/bundle/vim-misc
+	url = https://github.com/xolox/vim-misc.git
