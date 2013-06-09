@@ -122,7 +122,10 @@ set list
 " Show $ at end of line and trailing space as ~.... disable this as
 " it's distracting for screencasts
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
-set lcs=tab:\ \ ,trail:~,extends:&,precedes:<
+set lcs=tab:\ \ ,extends:&,precedes:<
+" Courtesy of @alindeman
+set listchars+=trail:💔 
+
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
 set laststatus=2  " Always show status line.
