@@ -205,3 +205,9 @@
 [submodule "home/.vim/bundle/vim-misc"]
 	path = home/.vim/bundle/vim-misc
 	url = https://github.com/xolox/vim-misc.git
+[submodule "home/.vim/bundle/ctrlp-mark"]
+	path = home/.vim/bundle/ctrlp-mark
+	url = git@github.com:mattn/ctrlp-mark.git
+[submodule "home/.vim/bundle/ctrlp-register"]
+	path = home/.vim/bundle/ctrlp-register
+	url = git@github.com:mattn/ctrlp-register.git
