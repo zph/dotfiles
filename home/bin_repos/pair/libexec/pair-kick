@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Usage: pair kick
+# Summary: Kicks pair user from server
+# Help: This will kick the user from server:
+# `pair kick USERNAME`
+set -e
+
+# USER=( $1 || "pair" )
+if [[ $# -eq 0 ]];then
+  USER="pair";
+else
+  USER="$1"
+fi
+
+sudo pkill -KILL -u $USER

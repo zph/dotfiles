@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Usage: pair keys
+# Summary: Gathers user's keys from github
+# Help: This will grab user's keys from github:
+# `pair keys USERNAME`
+set -e
+
+GITHUB_PAIR_NAME="$1"
+
+sudo bash -c "curl https://github.com/$GITHUB_PAIR_NAME.keys"

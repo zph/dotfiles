@@ -1,3 +1,10 @@
 #!/bin/bash
-sack_shortcut=$(sed -n "$1p" < ~/.sack_shortcuts)
+# Conditional checks if $1 is empty & goes to Answer 1 if so
+if [[ $1 == "" ]]; then
+  sack_shortcut=$(sed -n "1p" < ~/.sack_shortcuts)
+else
+  sack_shortcut=$(sed -n "$1p" < ~/.sack_shortcuts)
+  echo $sack_shortcut
+fi
+
 $EDITOR +$sack_shortcut

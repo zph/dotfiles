@@ -20,6 +20,9 @@ map <Space> <Leader>
 " Use jk to escape
 inoremap jk <ESC>
 
+" Save marks and leaders for X files, currently 100, including Globals
+set viminfo='100,f1
+
 " Basic standards of sanity
 set encoding=utf-8
 set scrolloff=3
@@ -32,6 +35,7 @@ set cursorline
 set ttyfast
 set backspace=indent,eol,start
 set winwidth=80
+set nowrap  " Line wrapping off
 " Preserve large pastes
 set pastetoggle=<F2>
 " For TagBar Toggle Plugin
@@ -226,7 +230,7 @@ function! RunTests(filename)
     end
 endfunction
 
-autocmd BufWritePost *.rb :call RunTestFile()
+" autocmd BufWritePost *.rb :call RunTestFile()
 " Taken from Gary Bernhardt's Dotfiles on github
 function! RenameFile()
     let old_name = expand('%')
@@ -239,7 +243,7 @@ function! RenameFile()
 endfunction
 
 " autocmd BufWritePost *.rb :call RunTestFile()
-map <Leader>t :call RunTestFile()
+" map <Leader>t :call RunTestFile()
 
 
 
@@ -296,8 +300,8 @@ imap <c-k> <space>->
 augroup vimrcEx
   " Clear all autocommand groups
   autocmd!
-  " autocmd FileType text setlocal textwidth=78
-  " autocmd FileType text set wrap linebreak nolist et
+  autocmd FileType text setlocal textwidth=78
+  autocmd FileType text set wrap linebreak nolist et
   " autocmd For markdown style
   " autocmd FileType md,markdown set wrap nolist et
 
@@ -350,11 +354,6 @@ endfunction
 
 command! RunTests call RunTests(expand("%"))
 " map <Leader>t :w\|:RunTests<CR>
-"
-" Rspec.vim mappings
-map <Leader><Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader><Leader>s :call RunNearestSpec()<CR>
-map <Leader><Leader>l :call RunLastSpec()<CR>
 
 " Slime tmux settings
 let g:slime_target = "tmux"
@@ -371,7 +370,7 @@ nnoremap g, <C-O>
 nnoremap g. <C-I>
 nnoremap <C-k> <C-i>
 
-" Shortcut '%%' to enter PWD on commandline 
+" Shortcut '%%' to enter PWD on commandline
 cnoremap <expr> %%  getcmdtype() == ':' ? expand('%:h').'/' : '%%'
 
 " Command to create non-existant directory after trying to save file as such
@@ -386,7 +385,7 @@ map <Leader>gc :Gcommit<CR>
 " From Ben Orenstein
 " map ZX <esc>:wq<CR>
 " Override standard VIM save and exit command (ZZ)
-map <Leader>z <esc>:w<CR>
+" map <Leader>z <esc>:w<CR>
 
 set noswapfile
 " This folder is automatically created in zph's .zshrc
@@ -480,7 +479,6 @@ command! FoldingOn call FoldingOn()
 
 nnoremap <Leader><Leader>f :FoldingOn<CR>
 
-set nowrap  " Line wrapping off
 " Reminders of commands b/c of infreq. use
 " command	effect
 " zi	switch folding on or off
@@ -505,11 +503,13 @@ imap <Leader>b <ESC>:CtrlPBuffer<CR>
 nmap <Leader>b :CtrlPBuffer<CR>
 imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
 nmap <Leader>mr :CtrlPMRUFiles<CR>
-let g:ctrlp_max_depth = 20
+imap <Leader>p <ESC>:CtrlPMixed<CR>
+nmap <Leader>p :CtrlPMixed<CR>
+let g:ctrlp_max_depth = 10
 
 "" Custom CtrlP Config
 " Multiple VCS's:
-let g:ctrlp_extensions = ['tag']
+let g:ctrlp_extensions = ['tag', 'mark', 'register']
 " let g:ctrlp_user_command = {
 "   \ 'types': {
 "     \ 1: ['.git', 'cd %s && git ls-files'],
@@ -566,7 +566,7 @@ iabbr bpry require'pry';binding.pry
 " Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
 map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
 " Alias for one-handed operation:
-map <Leader><Leader>p <Leader>bp
+" map <Leader><Leader>p <Leader>bp
 
 " Keep pry from annoyingly hanging around when using, e.g. pry-rescue/minitest
 map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
@@ -583,11 +583,15 @@ nmap <Leader>rua :!rubocop<CR>
 imap <Leader>rua <ESC>:rubocop<CR>
 
 " " Ctags Shortcuts
+set tags=$HOME/.vimtags,%:p,$HOME
+
 " " main mapping, go to first matching tag
-map <Leader>tt <c-]>
+map <Leader>tt <C-]>
 " move forward and back through matching tags
 map <Leader>tp :tprevious<CR>
 map <Leader>tn :tnext<CR>
+" Easytags - turn off highlighting
+let b:easytags_auto_highlight = 0
 
 " TODO
 " use _ as 2nd leader to prefixing commands
@@ -595,8 +599,86 @@ map - <Leader><Leader>
 
 " Proper linewrap behavior
 "http://vimcasts.org/episodes/soft-wrapping-text/
-" command! -nargs=* Wrap set wrap linebreak nolist
-" nnoremap <Leader><Leader>wr :Wrap<CR>
+command! -nargs=* Wrap set wrap linebreak nolist
+nnoremap <Leader><Leader>wr :Wrap<CR>
 
 " Easy Save shortcut
 map <Leader>j :write<CR>
+
+" Set ft=text for prose editing
+map <Leader>text :set ft=text<CR>
+
+" Settings for path
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" http://vim.wikia.com/wiki/Change_to_the_directory_of_the_current_file
+let s:default_path = escape(&path, '\ ') " store default value of 'path'
+
+" Always add the current file's directory to the path and tags list if not
+" already there. Add it to the beginning to speed up searches.
+autocmd BufRead *
+      \ let s:tempPath=escape(escape(expand("%:p:h"), ' '), '\ ') |
+      \ exec "set path-=".s:tempPath |
+      \ exec "set path-=".s:default_path |
+      \ exec "set path^=".s:tempPath |
+      \ exec "set path^=".s:default_path
+
+" Filetype shortcut
+map <Leader>ft :set ft=
+
+map <Leader>t :SweetVimRspecRunFile<CR>
+map <Leader>s :SweetVimRspecRunFocused<CR>
+map <Leader>l :SweetVimRspecRunPrevious<CR>
+
+" ZenCoding Shortcut
+vmap <Leader>z <C-Y>,
+nmap <Leader>z <C-Y>,
+imap <Leader>z <ESC><C-Y>,a
+
+" Tidy Html and XML
+"
+:command Thtml :%!tidy -q -i --show-errors 0
+:command Txml  :%!tidy -q -i --show-errors 0 -xml
+" Hex Vim
+" ex command for toggling hex mode - define mapping if desired
+command -bar Hexmode call ToggleHex()
+
+" helper function to toggle hex mode
+function ToggleHex()
+  " hex mode should be considered a read-only operation
+  " save values for modified and read-only for restoration later,
+  " and clear the read-only flag for now
+  let l:modified=&mod
+  let l:oldreadonly=&readonly
+  let &readonly=0
+  let l:oldmodifiable=&modifiable
+  let &modifiable=1
+  if !exists("b:editHex") || !b:editHex
+    " save old options
+    let b:oldft=&ft
+    let b:oldbin=&bin
+    " set new options
+    setlocal binary " make sure it overrides any textwidth, etc.
+    let &ft="xxd"
+    " set status
+    let b:editHex=1
+    " switch to hex editor
+    %!xxd
+  else
+    " restore old options
+    let &ft=b:oldft
+    if !b:oldbin
+      setlocal nobinary
+    endif
+    " set status
+    let b:editHex=0
+    " return to normal editing
+    %!xxd -r
+  endif
+  " restore values for modified and read only state
+  let &mod=l:modified
+  let &readonly=l:oldreadonly
+  let &modifiable=l:oldmodifiable
+endfunction
+
+" Hardmode
+nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>

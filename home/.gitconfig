@@ -7,6 +7,7 @@
 	ui = true
 [alias]
     st = status
+    cl = clone
     ci = commit -v
     cim = commit -m
     co = checkout
@@ -83,3 +84,5 @@
 	trustExitCode = true
 [push]
 	default = current
+[web]
+	browser = chrome
