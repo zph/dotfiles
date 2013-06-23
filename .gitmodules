@@ -147,7 +147,7 @@
 	url = https://github.com/timcharper/textile.vim.git
 [submodule "home/.vim/bundle/hardmode"]
 	path = home/.vim/bundle/hardmode
-	url = https://github.com/markus1189/hardmode.git
+	url = git@github.com:wikitopian/hardmode.git
 [submodule "home/.vim/bundle/vim-ruby-refactoring"]
 	path = home/.vim/bundle/vim-ruby-refactoring
 	url = https://github.com/rking/vim-ruby-refactoring.git

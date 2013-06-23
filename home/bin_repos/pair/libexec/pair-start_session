@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Usage: pair start_session
+# Summary: Starts a pairing session with the user
+# Help: This will create a pairing session with the user:
+# `pair start_session USERNAME`
+set -e
+
+source "./share/pair/pair-session"
+
+tmux_session
