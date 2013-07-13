@@ -74,3 +74,4 @@ esac
 alias set_time="dpkg-reconfigure tzdata"
 # alias jist='jist -p --copy_js'
 alias jistc='jist -p -c'
+alias :q='exit'

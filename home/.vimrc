@@ -50,7 +50,7 @@ set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
 
-nnoremap <Leader>a :Ag 
+nnoremap <Leader>a :Ack 
 
 nnoremap <Leader>g :GundoToggle<CR>
 
@@ -591,7 +591,8 @@ map <Leader>tt <C-]>
 map <Leader>tp :tprevious<CR>
 map <Leader>tn :tnext<CR>
 " Easytags - turn off highlighting
-let b:easytags_auto_highlight = 0
+autocmd FileType * let b:easytags_auto_highlight = 0
+" let b:easytags_auto_highlight = 0
 
 " TODO
 " use _ as 2nd leader to prefixing commands
@@ -682,3 +683,10 @@ endfunction
 
 " Hardmode
 nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
+
+" Async Test Running courtesy of Gary Bernhardt
+" must start ~/bin/run_test.sh
+" map <Leader>at :w\| :silent !echo rspec spec > test-commands
+"
+map <leader>q :q
+command Rake :!rake

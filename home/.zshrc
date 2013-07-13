@@ -64,7 +64,7 @@ _zshrc_pre_init(){
   ZDOTDIR=${ZDOTDIR:-${HOME}}
   _set_zshddir
   HISTFILE="${ZDOTDIR}/.zsh_history"
-  HISTSIZE='1000000'
+  HISTSIZE='1000000000'
   SAVEHIST="${HISTSIZE}"
   # for zsh-completions and prompt
   fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func)
@@ -75,6 +75,23 @@ _set_zsh_settings(){
   # Le features!
   # Set Vi Mode
   bindkey -v
+  bindkey -M viins 'jk' vi-cmd-mode
+
+  # ctrl-p ctrl-n history navigation
+  bindkey '^P' up-history
+  bindkey '^N' down-history
+
+  # backspace and ^h working even after returning from command mode
+  bindkey '^?' backward-delete-char
+  bindkey '^h' backward-delete-char
+
+  # ctrl-w removed word backwards
+  bindkey '^w' backward-kill-word
+
+  # ctrl-r starts searching history backward
+  bindkey '^r' history-incremental-search-backward
+
+  #############################
   # extended globbing, awesome!
   setopt extendedGlob
 
@@ -271,6 +288,20 @@ _normalize_keys(){
   autoload -z edit-command-line
   zle -N edit-command-line
   bindkey "^X^E" edit-command-line
+  #
+  # bind UP and DOWN arrow keys
+  zmodload zsh/terminfo
+  bindkey "$terminfo[kcuu1]" history-substring-search-up
+  bindkey "$terminfo[kcud1]" history-substring-search-down
+
+  # bind P and N for EMACS mode
+  bindkey -M emacs '^P' history-substring-search-up
+  bindkey -M emacs '^N' history-substring-search-down
+
+  # bind k and j for VI mode
+  bindkey -M vicmd 'k' history-substring-search-up
+  bindkey -M vicmd 'j' history-substring-search-down
+
 }
 
 _set_prompt(){
