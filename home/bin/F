@@ -2,9 +2,30 @@
 # Conditional checks if $1 is empty & goes to Answer 1 if so
 if [[ $1 == "" ]]; then
   sack_shortcut=$(sed -n "1p" < ~/.sack_shortcuts)
+  $EDITOR +$sack_shortcut
+elif [[ $# -ge 2 ]]; then
+  echo "We'd love to open multiple items"
+  declare -a files
+  echo "Array $@"
+  echo "Asterisk $*"
+  files="$@"
+  echo "$files"
+  all_files=""
+  for i in "$@"
+  do
+    echo "This is $i"
+    current_sack_shortcut=$(sed -n "$i"p < ~/.sack_shortcuts)
+    current_sack_line=$(sed -n "$i"p < ~/.sack_shortcuts | awk '{print $1}')
+    echo $current_sack_line
+    current_sack_file=$(sed -n "$i"p < ~/.sack_shortcuts | awk '{print $2}')
+    echo $current_sack_file
+    all_files="$all_files edit +$current_sack_line $current_sack_file;"
+  done
+  echo $all_files
+  $EDITOR '-c$all_files'
+  # echo $(sed -n "$1p" < ~/.sack_shortcuts)
 else
   sack_shortcut=$(sed -n "$1p" < ~/.sack_shortcuts)
   echo $sack_shortcut
+  $EDITOR +$sack_shortcut
 fi
-
-$EDITOR +$sack_shortcut
