@@ -26,4 +26,5 @@ if [[ "$OSTYPE" == darwin* ]]; then
   function dash() {
     open dash://$@
 }
+
 fi

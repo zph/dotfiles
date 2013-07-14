@@ -286,10 +286,10 @@ nnoremap <Leader>, :b#<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Maps ctrl L to hash rocket
-imap <c-l> <space>=><space>
+imap <c-h> <space>=><space>
 
 " Maps ctrl k to stabby lambda
-imap <c-k> <space>->
+imap <c-l> <space>->
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Clear search buffer when hitting return (also from Gary Bernhardt)
@@ -477,7 +477,7 @@ endfunction
 
 command! FoldingOn call FoldingOn()
 
-nnoremap <Leader><Leader>f :FoldingOn<CR>
+" nnoremap <Leader><Leader>f :FoldingOn<CR>
 
 " Reminders of commands b/c of infreq. use
 " command	effect
@@ -601,7 +601,7 @@ map - <Leader><Leader>
 " Proper linewrap behavior
 "http://vimcasts.org/episodes/soft-wrapping-text/
 command! -nargs=* Wrap set wrap linebreak nolist
-nnoremap <Leader><Leader>wr :Wrap<CR>
+" nnoremap <Leader><Leader>wr :Wrap<CR>
 
 " Easy Save shortcut
 map <Leader>j :write<CR>
@@ -627,7 +627,7 @@ autocmd BufRead *
 map <Leader>ft :set ft=
 
 map <Leader>t :SweetVimRspecRunFile<CR>
-map <Leader>s :SweetVimRspecRunFocused<CR>
+" map <Leader>s :SweetVimRspecRunFocused<CR>
 map <Leader>l :SweetVimRspecRunPrevious<CR>
 
 " ZenCoding Shortcut
@@ -688,5 +688,36 @@ nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 " must start ~/bin/run_test.sh
 " map <Leader>at :w\| :silent !echo rspec spec > test-commands
 "
+"
 map <leader>q :q
 command Rake :!rake
+
+" YCM and UltiSnips Working Together
+"set runtimepath+=~/.vim/bundle/ul
+" let g:UltiSnipsExpandTrigger="<S-enter>"
+" unlet g:UltiSnipsJumpForwardTrigger
+" unlet g:UltiSnipsJumpBackwardTrigger
+
+" function! g:UltiSnips_Complete()
+"     call UltiSnips_ExpandSnippet()
+"     if g:ulti_expand_res == 0
+"         if pumvisible()
+"             return "\<C-n>"
+"         else
+"             call UltiSnips_JumpForwards()
+"             if g:ulti_jump_forwards_res == 0
+"                return "\<TAB>"
+"             endif
+"         endif
+"     endif
+"     return ""
+" endfunction
+
+" au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+
+" let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+let g:ycm_filetype_specific_completion_to_disable = { 'ruby' : 1 }
