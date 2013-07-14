@@ -1,31 +1,33 @@
-#!/bin/bash
-# Conditional checks if $1 is empty & goes to Answer 1 if so
-if [[ $1 == "" ]]; then
-  sack_shortcut=$(sed -n "1p" < ~/.sack_shortcuts)
-  $EDITOR +$sack_shortcut
-elif [[ $# -ge 2 ]]; then
-  echo "We'd love to open multiple items"
-  declare -a files
-  echo "Array $@"
-  echo "Asterisk $*"
-  files="$@"
-  echo "$files"
-  all_files=""
-  for i in "$@"
-  do
-    echo "This is $i"
-    current_sack_shortcut=$(sed -n "$i"p < ~/.sack_shortcuts)
-    current_sack_line=$(sed -n "$i"p < ~/.sack_shortcuts | awk '{print $1}')
-    echo $current_sack_line
-    current_sack_file=$(sed -n "$i"p < ~/.sack_shortcuts | awk '{print $2}')
-    echo $current_sack_file
-    all_files="$all_files edit +$current_sack_line $current_sack_file;"
-  done
-  echo $all_files
-  $EDITOR '-c$all_files'
-  # echo $(sed -n "$1p" < ~/.sack_shortcuts)
-else
-  sack_shortcut=$(sed -n "$1p" < ~/.sack_shortcuts)
-  echo $sack_shortcut
-  $EDITOR +$sack_shortcut
-fi
+#!/usr/bin/env ruby
+# Ruby replacement for F, which is a ~/bin/F for github.com/zph/sack
+# Which was created by another author and tweaked by @ZPH
+def main
+  args = ARGV
+    sack_shortcuts = File.open(File.expand_path "~/.sack_shortcuts").readlines.map(&:chomp)
+  case args.count
+  when 0
+    sack_shortcut = sack_shortcuts[0]
+    system "$EDITOR +#{sack_shortcut}"
+  when 1
+    sack_shortcut = sack_shortcuts[args.first.to_i - 1]
+    system "$EDITOR +#{sack_shortcut}"
+  else
+    vim_commands = args.map.with_index do |value, index|
+      current_sack = sack_shortcuts[index + 1]
+      line_no = current_sack.split[0]
+      filename = current_sack.split[1]
+      command = [
+      "-c ",
+      "'tabe +#{line_no} #{filename}'"
+      ].join
+    end.reverse
+
+    complete_command = "$EDITOR #{vim_commands.join(" ")} -c 'tabclose 1'"
+    system complete_command
+  end
+rescue => e
+  raise e, "Something went wrong"
+  exit 1
+end
+
+main
