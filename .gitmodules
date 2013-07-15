@@ -229,3 +229,9 @@
 [submodule "home/.vim/bundle/ultisnips"]
 	path = home/.vim/bundle/ultisnips
 	url = git@github.com:SirVer/ultisnips.git
+[submodule "home/bin_repos/sack"]
+	path = home/bin_repos/sack
+	url = git@github.com:zph/sack.git
+[submodule "home/.vim/bundle/YouCompleteMe"]
+	path = home/.vim/bundle/YouCompleteMe
+	url = git@github.com:Valloric/YouCompleteMe.git
