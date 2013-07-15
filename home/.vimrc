@@ -517,12 +517,20 @@ let g:ctrlp_extensions = ['tag', 'mark', 'register']
 "     \ },
 "   \ 'fallback': 'find %s -type f'
 "   \ }
+let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
+  \ 'fallback': 'find %s -type f'
+  \ }
 " Sane Ignore For ctrlp
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
-  \ 'file': '\.exe$\|\.so$\|\.dat$'
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
+  \ 'file': '\v\.(exe|so|dll)$|\.exe$\|\.so$\|\.dat$',
   \ }
 
+"\.git\/$\|
 " Avoid holding shift to hit colon
 " To repeat a F or T movement double tap semicolon
 map ; :
