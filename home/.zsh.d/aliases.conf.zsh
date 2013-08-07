@@ -15,6 +15,7 @@ alias xt='extract'
 # alias cv='cdargs'
 # alias cva='cdargs -a "$@"; cd $_'
 alias mntcd='mount -t iso9660 -o loop'
+# alias targz = "tar cvzf " # then filename.tar.gz dir_to_compress
 
 #cd by .. or ... or ... or mv file ..../.
 alias ..="cd .."

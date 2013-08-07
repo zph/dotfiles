@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-find . -type f -print0 | xargs -0 sed -i.bak -e 's/border.*none/border: 1px solid black/g'
+find . -type f -print0 | xargs -0 sed -i -e 's/border.*none/border: 1px solid black/g'

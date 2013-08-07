@@ -7,3 +7,4 @@ function vim_plugin_update() {
         cd "$line" && git pull; cd -;
      done
 }
+

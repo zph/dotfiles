@@ -15,6 +15,7 @@
     ci = commit -v
     cim = commit -m
     cl = clone
+    #clcd = "!git clone $1 && cd !$"
     co = checkout
     dc = diff --cached
     dh = diff HEAD~1
@@ -22,6 +23,7 @@
     di = diff
     div = divergence
     ds = diff --stat=160,120
+    dw = diff --color=always --word-diff | less -r
     fa = fetch --all
     ff = merge --ff-only
     gn = goodness

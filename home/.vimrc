@@ -265,8 +265,10 @@ autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ARROW KEYS ARE UNACCEPTABLE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <Left> :echo "no!"<cr>
-map <Right> :echo "no!"<cr>
+"""" EXPERIMENTAL
+map <Left> <C-O>
+map <Right> <C-I>
+"""" Stable
 map <Up> :echo "no!"<cr>
 map <Down> :echo "no!"<cr>
 
@@ -274,7 +276,7 @@ map <Down> :echo "no!"<cr>
 " OPEN FILES IN DIRECTORY OF CURRENT FILE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
-map <leader>e :edit %%
+" map <leader>e :edit %%
 map <leader>v :view %%
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -404,11 +406,12 @@ map Q <Nop>
 " Remap Q to a useful command
 command! Q q " Bind :Q to :q
 nnoremap Q :q
+" nnoremap Q ,
 
 " Disable K looking stuff up ie instant manual lookups
 map K <Nop>
-command! K :! 
-nnoremap K :! 
+" command! K :! 
+nnoremap K :write<CR>
 
 " When loading text files, wrap them and don't split up words.
 au BufNewFile,BufRead *.txt setlocal wrap
@@ -518,10 +521,6 @@ let g:ctrlp_extensions = ['tag', 'mark', 'register']
 "   \ 'fallback': 'find %s -type f'
 "   \ }
 let g:ctrlp_user_command = {
-  \ 'types': {
-    \ 1: ['.git', 'cd %s && git ls-files'],
-    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-    \ },
   \ 'fallback': 'find %s -type f'
   \ }
 " Sane Ignore For ctrlp
@@ -533,8 +532,8 @@ let g:ctrlp_custom_ignore = {
 "\.git\/$\|
 " Avoid holding shift to hit colon
 " To repeat a F or T movement double tap semicolon
-map ; :
-noremap ;; ;
+" map ; :
+" noremap ;; ;
 
 " Open Marked.app
 " only works on OSX with Marked.app installed
@@ -727,5 +726,34 @@ command Rake :!rake
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+" Disable easytags warning
+let g:easytags_updatetime_warn = 0
 
 let g:ycm_filetype_specific_completion_to_disable = { 'ruby' : 1 }
+" for floobits
+let g:ycm_allow_changing_updatetime = 0
+
+" Trick for saving vim sessions
+" https://ajayfromiiit.wordpress.com/2009/10/15/vim-sessions/
+" ie- :mksession vim_session_name.vim and restart with- vim -S
+" vim_session_name.vim
+set sessionoptions=blank,buffers,curdir,folds,globals,help,localoptions,options,resize,tabpages,winsize,winpos
+
+" Elixir
+" open iex with current file compiled
+" :!iex %
+" command! Iex :!iex %<cr>
+nnoremap <leader>e :!iex %<CR>
+
+" So as to not conflict with multi-cursors
+let g:NumberToggleTrigger="<F5>"
+
+" HACK: to reset multi-cursor mappings to default b/c of numbertoggle
+" TODO: not working
+" overwriting them
+"" Default mapping
+" let g:multi_cursor_use_default_mapping=0
+" let g:multi_cursor_next_key='<C-m>'
+" let g:multi_cursor_prev_key='<C-p>'
+" let g:multi_cursor_skip_key='<C-x>'
+" let g:multi_cursor_quit_key='<Esc>'

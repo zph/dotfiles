@@ -46,9 +46,6 @@
 [submodule "home/.vim/bundle/vim-bundler"]
 	path = home/.vim/bundle/vim-bundler
 	url = git://github.com/tpope/vim-bundler.git
-[submodule "home/.vim/bundle/vim-coffee-script"]
-	path = home/.vim/bundle/vim-coffee-script
-	url = git://github.com/kchmck/vim-coffee-script.git
 [submodule "home/.vim/bundle/vim-commentary"]
 	path = home/.vim/bundle/vim-commentary
 	url = git://github.com/tpope/vim-commentary.git
@@ -163,9 +160,6 @@
 [submodule "home/.vim/bundle/zencoding-vim"]
 	path = home/.vim/bundle/zencoding-vim
 	url = git://github.com/mattn/zencoding-vim.git
-[submodule "home/.vim/bundle/vim-rails"]
-	path = home/.vim/bundle/vim-rails
-	url = git://github.com/tpope/vim-rails.git
 [submodule "home/.vim/bundle/vim-rspec"]
 	path = home/.vim/bundle/vim-rspec
 	url = git://github.com/thoughtbot/vim-rspec.git
@@ -187,9 +181,6 @@
 [submodule "home/.vim/bundle/vim-git"]
 	path = home/.vim/bundle/vim-git
 	url = https://github.com/tpope/vim-git.git
-[submodule "home/.vim/bundle/UltiSnips"]
-	path = home/.vim/bundle/UltiSnips
-	url = git://github.com/vim-scripts/UltiSnips.git
 [submodule "home/.vim/bundle/vim-rubocop"]
 	path = home/.vim/bundle/vim-rubocop
 	url = git://github.com/zph/vim-rubocop.git
@@ -228,10 +219,40 @@
 	url = git@github.com:Lokaltog/vim-easymotion.git
 [submodule "home/.vim/bundle/ultisnips"]
 	path = home/.vim/bundle/ultisnips
-	url = git@github.com:SirVer/ultisnips.git
+	url = git@github.com:zph/ultisnips.git
 [submodule "home/bin_repos/sack"]
 	path = home/bin_repos/sack
 	url = git@github.com:zph/sack.git
 [submodule "home/.vim/bundle/YouCompleteMe"]
 	path = home/.vim/bundle/YouCompleteMe
 	url = git@github.com:Valloric/YouCompleteMe.git
+[submodule "home/.vim/bundle/powerline"]
+	path = home/.vim/bundle/powerline
+	url = git@github.com:/Lokaltog/powerline.git
+[submodule "home/.vim/bundle/floobits"]
+	path = home/.vim/bundle/floobits
+	url = https://github.com/Floobits/floobits-vim.git
+[submodule "home/.vim/bundle/vim-textobj-ruby-block"]
+	path = home/.vim/bundle/vim-textobj-ruby-block
+	url = git@github.com:nelstrom/vim-textobj-rubyblock.git
+[submodule "home/.vim/bundle/vim-textobj-user"]
+	path = home/.vim/bundle/vim-textobj-user
+	url = git@github.com:kana/vim-textobj-user.git
+[submodule "home/.vim/bundle/vim-multiple-cursor"]
+	path = home/.vim/bundle/vim-multiple-cursor
+	url = git@github.com:terryma/vim-multiple-cursors.git
+[submodule "home/.vim/bundle/vim-unimpaired"]
+	path = home/.vim/bundle/vim-unimpaired
+	url = git@github.com:tpope/vim-unimpaired.git
+[submodule "home/.vim/bundle/vim-css-color"]
+	path = home/.vim/bundle/vim-css-color
+	url = git@github.com:ap/vim-css-color.git
+[submodule "home/.vim/bundle/vim-coffee-script"]
+	path = home/.vim/bundle/vim-coffee-script
+	url = git@github.com:kchmck/vim-coffee-script.git
+[submodule "home/.vim/bundle/rails"]
+	path = home/.vim/bundle/rails
+	url = git@github.com:tpope/vim-rails.git
+[submodule "home/.vim/bundle/ragtag"]
+	path = home/.vim/bundle/ragtag
+	url = git@github.com:tpope/vim-ragtag.git
