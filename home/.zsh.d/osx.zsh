@@ -12,6 +12,11 @@ if [[ "$OSTYPE" == darwin* ]]; then
   # export CC=/usr/local/bin/gcc-4.2
 
   # OSX Specific Aliases
+  # if [[ -e `which mvim` ]]; then
+  #   # Use macvim if installed due to prefering those compilation options
+  #   alias vim="mvim -v"
+  # fi
+
   alias pbc='pbcopy'
   alias pbp='pbpaste'
 
