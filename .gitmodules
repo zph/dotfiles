@@ -229,9 +229,6 @@
 [submodule "home/.vim/bundle/powerline"]
 	path = home/.vim/bundle/powerline
 	url = git@github.com:/Lokaltog/powerline.git
-[submodule "home/.vim/bundle/floobits"]
-	path = home/.vim/bundle/floobits
-	url = https://github.com/Floobits/floobits-vim.git
 [submodule "home/.vim/bundle/vim-textobj-ruby-block"]
 	path = home/.vim/bundle/vim-textobj-ruby-block
 	url = git@github.com:nelstrom/vim-textobj-rubyblock.git
