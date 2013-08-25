@@ -3,3 +3,9 @@ home/.config/hub
 home/.vim/.netrwhist
 config/
 var/
+
+home/.tmux.conf.osx
+home/bin/expm
+home/bin/mvim
+home/bin/shannon_push
+home/com.googlecode.iterm2.plist
