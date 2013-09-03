@@ -157,9 +157,6 @@
 [submodule "home/.vim/bundle/funcoo"]
 	path = home/.vim/bundle/funcoo
 	url = git://github.com/rizzatti/funcoo.vim.git
-[submodule "home/.vim/bundle/zencoding-vim"]
-	path = home/.vim/bundle/zencoding-vim
-	url = git://github.com/mattn/zencoding-vim.git
 [submodule "home/.vim/bundle/vim-rspec"]
 	path = home/.vim/bundle/vim-rspec
 	url = git://github.com/thoughtbot/vim-rspec.git
@@ -220,9 +217,6 @@
 [submodule "home/bin_repos/sack"]
 	path = home/bin_repos/sack
 	url = git@github.com:zph/sack.git
-[submodule "home/.vim/bundle/YouCompleteMe"]
-	path = home/.vim/bundle/YouCompleteMe
-	url = git@github.com:Valloric/YouCompleteMe.git
 [submodule "home/.vim/bundle/powerline"]
 	path = home/.vim/bundle/powerline
 	url = git@github.com:/Lokaltog/powerline.git

@@ -128,7 +128,7 @@ set list
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
 set lcs=tab:\ \ ,extends:&,precedes:<
 " Courtesy of @alindeman
-set listchars+=trail:💔 
+set listchars+=trail:💔
 
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
@@ -569,6 +569,8 @@ endfu
 iabbr bpry require'pry';binding.pry
 " And admit that the typos happen:
 iabbr bpry require'pry';binding.pry
+" And pry-remote
+iabbr bpryr require'pry-remote';binding.pry_remote
 
 " Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
 map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
