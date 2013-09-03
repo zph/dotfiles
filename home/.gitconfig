@@ -87,6 +87,10 @@
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [push]
-	default = current
+	default = matching
 [web]
 	browser = chrome
+[branch]
+	autosetuprebase = always
+[rerere]
+	enabled = 1
