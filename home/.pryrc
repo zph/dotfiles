@@ -2,8 +2,10 @@
 # OLD CONFIG
 # ===
 Pry.commands.alias_command 'x', 'exit'
-Pry.commands.alias_command 'pl', 'play -l'
 Pry.commands.alias_command 'wh', 'whereami'
+Pry.commands.alias_command 'pl', 'play -l'
+Pry.commands.alias_command 'ht', 'hist -T'
+Pry.commands.alias_command 'hr', 'hist -r'
 # Pry.commands.alias_command 'c', 'continue'
 # Pry.commands.alias_command 's', 'step'
 # Pry.commands.alias_command 'n', 'next'
