@@ -698,6 +698,7 @@ nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 " map <Leader>at :w\| :silent !echo rspec spec > test-commands
 "
 "
+nnoremap <leader><leader>r :w\| :!rspec spec<cr>
 map <leader>q :q
 command Rake :!rake
 
@@ -745,7 +746,9 @@ set sessionoptions=blank,buffers,curdir,folds,globals,help,localoptions,options,
 " open iex with current file compiled
 " :!iex %
 " command! Iex :!iex %<cr>
-nnoremap <leader>e :!iex %<CR>
+nnoremap <leader>e :!elixir %<CR>
+nnoremap <leader>ee :!iex -r % -S mix<CR>
+
 
 " So as to not conflict with multi-cursors
 let g:NumberToggleTrigger="<F5>"

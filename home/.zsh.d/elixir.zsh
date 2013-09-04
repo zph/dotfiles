@@ -1,0 +1,1 @@
+ export ELIXIR_ERL_OPTS="+P 5000000"
