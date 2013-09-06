@@ -770,3 +770,6 @@ nnoremap <leader>cr :w\|:CoffeeRun<cr>
 " project specific vimrcs
 set exrc
 set secure
+
+" Commit_massage
+nnoremap <leader>cc :normal O<cr>:r!commit_message<cr>:normal kddA<cr>:insert<cr>
