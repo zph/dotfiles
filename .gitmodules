@@ -244,3 +244,6 @@
 [submodule "home/.vim/bundle/ragtag"]
 	path = home/.vim/bundle/ragtag
 	url = git@github.com:tpope/vim-ragtag.git
+[submodule "home/.vim/bundle/vim-dandelion"]
+	path = home/.vim/bundle/vim-dandelion
+	url = git@github.com:justinxreese/vim-dandelion.git
