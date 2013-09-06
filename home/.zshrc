@@ -57,9 +57,13 @@ _zshrc_pre_init(){
   setopt completealiases
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
   zstyle ':completion:*' completer _expand _complete _ignored _approximate
+  zstyle -e ':completion:*:approximate:*' \
+        max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
   zstyle ':completion:*' menu select=2
   zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
   zstyle ':completion:*:descriptions' format '%U%F{cyan}%d%f%u'
+  zstyle ':completion:*:*:kill:*' menu yes select
+  zstyle ':completion:*:kill:*'   force-list always
   # Basic zsh config.
   ZDOTDIR=${ZDOTDIR:-${HOME}}
   _set_zshddir
@@ -122,6 +126,15 @@ _set_zsh_settings(){
   # Automatically add directories to stack so they can
   # be referenced by 'dirs -v' or cd ~+<number>
   setopt AUTO_PUSHD
+
+  # try to avoid the 'zsh: no matches found...'
+  setopt nonomatch
+  # Provide more processes in completion of programs like killall:
+  zstyle ':completion:*:processes-names' command 'ps c -u ${USER} -o command | uniq'
+
+  # insert all expansions for expand completer
+  zstyle ':completion:*:expand:*'        tag-order all-expansions
+  zstyle ':completion:*:history-words'   list false
 
   # Very helpful for pasting in URLs that would otherwise be disastrous:
   autoload -U url-quote-magic
@@ -301,6 +314,9 @@ _normalize_keys(){
   # bind k and j for VI mode
   bindkey -M vicmd 'k' history-substring-search-up
   bindkey -M vicmd 'j' history-substring-search-down
+
+  # only works in newer zsh
+  zmodload -a pcre
 
 }
 
