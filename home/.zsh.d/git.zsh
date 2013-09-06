@@ -1,5 +1,5 @@
-# Git Aliases - 
-# Taken from http://www.anujgakhar.com/2012/01/08/a-better-shell-with-oh-my-zsh/ 
+# Git Aliases -
+# Taken from http://www.anujgakhar.com/2012/01/08/a-better-shell-with-oh-my-zsh/
 # and oh-my-zsh
 alias g='git'
 compdef g=git

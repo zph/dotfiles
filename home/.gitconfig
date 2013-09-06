@@ -24,6 +24,7 @@
     div = divergence
     ds = diff --stat=160,120
     dw = diff --color=always --word-diff | less -r
+    df  = diff --color-words
     fa = fetch --all
     ff = merge --ff-only
     gn = goodness

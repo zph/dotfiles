@@ -15,6 +15,7 @@ function gem_reinstall(){
 alias r='rails'
 alias rake='noglob rake'
 alias R='noglob rake'
+compdef R=rake
 
 # Homesick symlinking on OSX
 alias homesick_refresh='homesick symlink ~/Dropbox/dotfiles'
@@ -23,3 +24,19 @@ homesick_add(){
 }
 
 export BUFFER_DEBUG=true
+
+# https://gist.github.com/carols10cents/6445611
+# I found I was typing these commands wayyy too much:
+alias rt="rake test TEST="
+# I often use the tab completion on the filename, though.
+# The following lets me do:
+# $ rti some_integration_test.rb
+# $ rtu example_unit_test.rb
+# With tab completion on the filenames.
+# This guide was awesome in figuring this out: http://devmanual.gentoo.org/tasks-reference/completion/index.html
+
+_integration(){
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  COMPREPLY=( $(compgen -W "$(find spec/**/*.rb)" -- $cur) )
+}
+complete -F _integration rt
