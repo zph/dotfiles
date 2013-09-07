@@ -51,6 +51,7 @@ set guioptions-=T
 filetype on  " Automatically detect file types.
 
 nnoremap <Leader>a :Ack 
+nnoremap <Leader>aa :Ack <cword><cr>
 
 nnoremap <Leader>g :GundoToggle<CR>
 
