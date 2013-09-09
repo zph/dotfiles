@@ -5,9 +5,9 @@
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-scutil --set ComputerName "beastie"
-scutil --set HostName "beastie"
-scutil --set LocalHostName "beastie"
+# scutil --set ComputerName "beastie"
+# scutil --set HostName "beastie"
+# scutil --set LocalHostName "beastie"
 
 # Set DS_Store to not be created on remote file systems
 #defaults write com.apple.desktopservices DSDontWriteNetworkStores true

@@ -1,1 +1,1 @@
-/Users/zander/Dropbox/dotfiles/home/bin_repos/sack/sack.zsh
+/Users/zhill/bin_repos/sack/sack.zsh

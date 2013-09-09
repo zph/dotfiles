@@ -51,7 +51,7 @@ set guioptions-=T
 filetype on  " Automatically detect file types.
 
 nnoremap <Leader>a :Ack 
-nnoremap <Leader>aa :Ack <cword><cr>
+nnoremap <Leader>aa :Ack <cword><CR>
 
 nnoremap <Leader>g :GundoToggle<CR>
 
@@ -103,6 +103,7 @@ if $TMUX == ''
     set clipboard+=unnamed
 endif
 set autowrite  " Writes on make/shell commands
+set autoread
 set ruler  " Ruler on
 set nu  " Line numbers on
 " Time to wait after ESC and LEADER, 250 is awful

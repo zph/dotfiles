@@ -1,5 +1,32 @@
-if [[ "$OSTYPE" == darwin* ]]; then
-  /Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl
-else
-  /usr/bin/subl
-fi
+#!/usr/bin/env sh
+# LOCATION_ONE="/Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl"
+LOCATION_TWO='/Applications/Sublime_Text.app/Contents/SharedSupport/bin/subl'
+# FALLBACK_LOC="/usr/bin/subl"
+
+# if [[ -x $LOCATION_ONE ]]; then
+#   $LOCATION_ONE
+# elif [[ -x $LOCATION_TWO ]]; then
+  $LOCATION_TWO
+# else
+#   $FALLBACK_LOC
+# fi
+
+# location_one = "/Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl"
+# if [[ -x $location_one ]]; then
+ #  $location_one
+# fi
+# # if [[ "$OSTYPE" == darwin* ]]; then
+# #   /Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl
+# # else
+# #   /usr/bin/subl
+# # fi
+
+
+# case in
+ #  [ -x "/Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl" ])
+ #    /Applications/'Sublime Text 2.app'/Contents/SharedSupport/bin/subl
+ #  [ -x "Applications/'Sublime Text.app'/Contents/SharedSupport/bin/subl" ])
+ #    "Applications/'Sublime Text.app'/Contents/SharedSupport/bin/subl"
+ #  *)
+ #    /usr/bin/subl
+# esac

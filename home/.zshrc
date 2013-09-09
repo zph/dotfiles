@@ -48,7 +48,7 @@ _zshrc_pre_init(){
   # Executed commands
   source /etc/profile
   # Shell config. Safety feature for multiuser envs
-  umask 077
+  # umask 077
 
   _load_RVM_source_file_zsh
   # Completion.
@@ -180,7 +180,7 @@ _set_colors(){
 
 _confirm() {
 	local answer
-	echo -ne "zsh: sure you want to run '${YELLOW}$@${NC}' [yN]? "
+	echo -ne "zsh: sure you want to run '${yellow}$@${nc}' [yN]? "
 	read -q answer
 		echo
 	if [[ "${answer}" =~ ^[Yy]$ ]]; then
@@ -328,6 +328,17 @@ _set_prompt(){
   prompt zph
 }
 
+_alternate_prompt(){
+  source $HOME/.zsh.d/git-prompt/zshrc.sh
+  PROMPT="%Bmbp:%~%b$(git_super_status) %# "
+  # Standard prompt that displays my machine name
+  # PROMPT='%B%m%~%b$(git_super_status) %# '
+}
+
+_setup_colors(){
+
+}
+
 ## DEPRECATED PRIVATE FUNCTIONS
 _execute_alert(){
   if [ -f ~/.alert ]; then cat ~/.alert; fi
@@ -365,7 +376,9 @@ _zshrc_main(){
   _add_homebin_to_dir
   _export_editor_and_tmp_dirs
   _normalize_keys
+  _set_colors
   _set_prompt
+  # _alternate_prompt
 }
 
 _zshrc_main
