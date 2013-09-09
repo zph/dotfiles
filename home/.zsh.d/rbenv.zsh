@@ -5,4 +5,5 @@ if [[ -x `which rbenv` ]]; then
   gi() { gem install $@; rbenv rehash; rehash }
 
   alias rb=rbenv
+  function rrr(){ rbenv rehash ; rehash }
 fi

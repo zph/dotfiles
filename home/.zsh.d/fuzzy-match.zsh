@@ -1,1 +1,1 @@
-source $HOME/.zsh.d/fuzzy-match/fuzzy-match.zsh
+# source $HOME/.zsh.d/fuzzy-match/fuzzy-match.zsh
