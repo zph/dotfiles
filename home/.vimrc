@@ -774,3 +774,8 @@ set secure
 
 " Commit_massage
 nnoremap <leader>cc :normal O<cr>:r!commit_message<cr>:normal kddA<cr>:insert<cr>
+" Pipe request to waiting window on test-commands.sh loop
+"o:w\|:silent !echo "bundle exec m -l 92 spec/routes/routes_spec.rb" > test-commands
+":nnoremap <leader>ra :w\|:silent !echo "bundle exec m -l 92 %" > test-commands<CR>
+"
+" Redraw screen via :redraw or C-l

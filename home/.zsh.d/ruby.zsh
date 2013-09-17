@@ -1,7 +1,8 @@
-alias bi='bundle install'
+# alias bi='bundle install'
 alias be='bundle exec'
 alias ri='ri -f ansi'
 alias gemu='gem uninstall'
+alias bi="bundle install --binstubs=./.bundle/.binstubs"
 function gemul(){
   gem uninstall --executables $1
   rake install
@@ -23,11 +24,14 @@ homesick_add(){
 # Not sure how to do it yet, or if advisable to automate
 }
 
+
+# # This is because active_support has errors on our versions of rails
+# export RUBYOPT=W0
 export BUFFER_DEBUG=true
 
 # https://gist.github.com/carols10cents/6445611
 # I found I was typing these commands wayyy too much:
-alias rt="rake test TEST="
+alias rt="bundle exec rake test TEST="
 # I often use the tab completion on the filename, though.
 # The following lets me do:
 # $ rti some_integration_test.rb
