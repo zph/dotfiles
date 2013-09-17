@@ -247,3 +247,6 @@
 [submodule "home/.vim/bundle/vim-dandelion"]
 	path = home/.vim/bundle/vim-dandelion
 	url = git@github.com:justinxreese/vim-dandelion.git
+[submodule "home/.vim/bundle/youcompleteme"]
+	path = home/.vim/bundle/youcompleteme
+	url = git@github.com:Valloric/YouCompleteMe.git
