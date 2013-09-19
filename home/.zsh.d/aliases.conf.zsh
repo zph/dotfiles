@@ -7,6 +7,8 @@ alias ack='noglob ack -i --nogroup'
 alias less="less -R"
 alias qlf='qlmanage -p "$@" >& /dev/null'
 alias q='exit'
+alias pgrep='pgrep -f'
+alias zgrep='zgrep -Ein --with-filename --colour=auto'
 # alias mkdir='mkdir -p' # Make mkdir recursive
 alias cdd='cd - '                     # goto last dir cd'ed from
 alias cd-='cd - '
@@ -44,7 +46,7 @@ else
 	alias diff="diff -Nuar"
 fi
 
-alias grep='grep -i --color=auto'
+alias grep='grep -Ei --line-number --with-filename --colour=auto'
 alias egrep='egrep --color=auto'
 # alias ls='ls --color=auto --human-readable --group-directories-first --classify'
 alias g="bundle exec guard $*"

@@ -534,8 +534,8 @@ let g:ctrlp_custom_ignore = {
 "\.git\/$\|
 " Avoid holding shift to hit colon
 " To repeat a F or T movement double tap semicolon
-" map ; :
-" noremap ;; ;
+map ; :
+noremap ;; ;
 
 " Open Marked.app
 " only works on OSX with Marked.app installed
@@ -779,3 +779,19 @@ nnoremap <leader>cc :normal O<cr>:r!commit_message<cr>:normal kddA<cr>:insert<cr
 ":nnoremap <leader>ra :w\|:silent !echo "bundle exec m -l 92 %" > test-commands<CR>
 "
 " Redraw screen via :redraw or C-l
+au BufRead,BufNewFile *.jar,*.war,*.ear,*.sar,*.rar set filetype=zip
+augroup gzip
+  autocmd!
+  autocmd BufReadPre,FileReadPre *.gz set bin
+  autocmd BufReadPost,FileReadPost   *.gz '[,']!gunzip
+  autocmd BufReadPost,FileReadPost   *.gz set nobin
+  autocmd BufReadPost,FileReadPost   *.gz execute ":doautocmd BufReadPost " . expand("%:r")
+  autocmd BufWritePost,FileWritePost *.gz !mv <afile> <afile>:r
+  autocmd BufWritePost,FileWritePost *.gz !gzip <afile>:r
+  autocmd FileAppendPre      *.gz !gunzip <afile>
+  autocmd FileAppendPre      *.gz !mv <afile>:r <afile>
+  autocmd FileAppendPost     *.gz !mv <afile> <afile>:r
+  autocmd FileAppendPost     *.gz !gzip <afile>:r
+augroup END
+
+au BufRead,BufNewFile *.gem set filetype=gz
