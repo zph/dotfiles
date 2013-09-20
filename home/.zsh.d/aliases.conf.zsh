@@ -48,6 +48,7 @@ fi
 
 alias grep='grep -Ei --line-number --with-filename --colour=auto'
 alias egrep='egrep --color=auto'
+alias curl='curl -L'
 # alias ls='ls --color=auto --human-readable --group-directories-first --classify'
 alias g="bundle exec guard $*"
 alias x="exit"

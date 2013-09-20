@@ -795,3 +795,6 @@ augroup gzip
 augroup END
 
 au BufRead,BufNewFile *.gem set filetype=gz
+
+" For old vim-commentary muscle memory
+xmap \\ gcc
