@@ -6,6 +6,8 @@
  '(blink-cursor-mode nil)
  '(column-number-mode t)
  '(custom-safe-themes (quote ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+ '(erc-stamp-mode t)
+ '(org-startup-truncated nil)
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tool-bar-mode nil))

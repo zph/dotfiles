@@ -3,4 +3,4 @@
 branch_name = `git rev-parse --abbrev-ref HEAD`.chomp
 initials = "[#{branch_name.scan(/[A-Z]{2,3}/).join("/")}]"
 pivotal_number = "[#{ branch_name[/\d{5,}/] }]"
-print "#{initials}#{pivotal_number}"
+print "#{initials} #{pivotal_number}"

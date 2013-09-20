@@ -15,6 +15,7 @@
     amend = commit --amend
     ap = add -p
     b = branch
+    bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
     ci = commit -v
     cim = commit -m
     cl = clone
@@ -40,6 +41,7 @@
     la = !git l --all
     noff = merge --no-ff
     pom = push origin master
+    po = push origin
     pr = pull --rebase
     pl = pull
     pu = push
@@ -73,7 +75,7 @@
     ra = !git r --all
     unstage = reset HEAD
 [merge]
-    tool = vimdiff
+  tool = vimdiff
 [github]
 	user = zph
 	token = "# require <top-level module>"
