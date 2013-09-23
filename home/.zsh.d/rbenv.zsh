@@ -8,4 +8,5 @@ if [[ -x `which rbenv` ]]; then
   alias rb=rbenv
   function rrr(){ rbenv rehash ; rehash }
   RBENV_VERSION='1.9.3-p448'
+  alias frb="~/.rbenv/shims/ruby"
 fi

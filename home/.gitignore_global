@@ -36,6 +36,7 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+coverage.vim
 
 # Tag files
 doc/tags

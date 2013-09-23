@@ -4,7 +4,12 @@ alias ri='ri -f ansi'
 alias gemu='gem uninstall'
 alias bi="bundle install --binstubs=./.bundle/.binstubs"
 function gemul(){
-  gem uninstall --executables $1
+  if [ $1 ]; then
+    gem_name=$1
+  else
+    gem_name=`pwd | awk -F / '{print $NF}'`
+  fi
+  gem uninstall --executables "$gem_name"
   rake install
 }
 function gem_reinstall(){
