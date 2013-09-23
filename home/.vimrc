@@ -798,3 +798,11 @@ au BufRead,BufNewFile *.gem set filetype=gz
 
 " For old vim-commentary muscle memory
 xmap \\ gcc
+
+function! CoverageAutoSourcing()
+  if filereadable("coverage.vim")
+    autocmd BufWritePost *.rb :silent so coverage.vim
+  endif
+endfunction
+command! CoverageAutoSourcing call CoverageAutoSourcing()
+nnoremap <Leader>cv :CoverageAutoSourcing<CR>
