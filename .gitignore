@@ -10,3 +10,9 @@ home/bin/mvim
 home/bin/shannon_push
 home/com.googlecode.iterm2.plist
 home/.zsh.d/work_aliases.zsh
+
+home/.zsh.d/sack.zsh
+home/bin/F
+home/bin/sack
+home/bin/sag
+home/bin/sgrep
