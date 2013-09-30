@@ -806,3 +806,25 @@ function! CoverageAutoSourcing()
 endfunction
 command! CoverageAutoSourcing call CoverageAutoSourcing()
 nnoremap <Leader>cv :CoverageAutoSourcing<CR>
+
+
+function! Sack()
+  " if filereadable($HOME."/.sack_shortcuts")
+    let l:sack_output = system("cat ~/.sack_shortcuts | awk '{print sprintf(\"%s:%s:Error\", $2, $1, $3)}'")
+    let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
+    cexpr l:sack_output
+    copen
+    " Taken from Ack.vim bindings for consistency and awesomeness
+    exec "nnoremap <silent> <buffer> q :ccl<CR>"
+    exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+    exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+    exec "nnoremap <silent> <buffer> o <CR>"
+    exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+    exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+    exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+    exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+    exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+  " endif
+endfunction
+command! Sack call Sack()
+nnoremap <Leader>sa :Sack<CR>
