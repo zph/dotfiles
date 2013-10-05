@@ -28,11 +28,16 @@ alias homesick_refresh='homesick symlink ~/Dropbox/dotfiles'
 homesick_add(){
 # Not sure how to do it yet, or if advisable to automate
 }
-
+# http://samsaffron.com/archive/2013/05/03/eliminating-my-trivial-inconveniences
+export RUBY_GC_MALLOC_LIMIT=1000000000
+export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.25
+export RUBY_HEAP_MIN_SLOTS=800000
+export RUBY_FREE_MIN=600000
+# export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so
 
 # # This is because active_support has errors on our versions of rails
 # export RUBYOPT=W0
-export BUFFER_DEBUG=true
+# export BUFFER_DEBUG=true
 
 # https://gist.github.com/carols10cents/6445611
 # I found I was typing these commands wayyy too much:
