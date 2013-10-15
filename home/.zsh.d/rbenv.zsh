@@ -1,5 +1,5 @@
 if [[ -x `which rbenv` ]]; then
-  export PATH="./.bundle/.binstubs:$PATH"
+  # export PATH="./.bundle/.binstubs:$PATH"
   export PATH="$HOME/.rbenv/bin:$PATH"
   eval "$(rbenv init -)"
   # Abbreviation for "gem install".
@@ -7,6 +7,6 @@ if [[ -x `which rbenv` ]]; then
 
   alias rb=rbenv
   function rrr(){ rbenv rehash ; rehash }
-  RBENV_VERSION='1.9.3-p448'
+  export RBENV_VERSION='1.9.3-p448'
   alias frb="~/.rbenv/shims/ruby"
 fi

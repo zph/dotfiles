@@ -1,8 +1,18 @@
 # alias bi='bundle install'
-alias be='bundle exec'
+# alias be='bundle exec'
 alias ri='ri -f ansi'
 alias gemu='gem uninstall'
-alias bi="bundle install --binstubs=./.bundle/.binstubs"
+# alias bi="bundle install --binstubs=./.bundle/.binstubs"
+alias bi="bundle install"
+##############################
+# Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
+alias b="bundle"
+# alias bi="b install --path vendor"
+# alias bil="bi --local"
+# alias bu="b update"
+alias be="b exec"
+# alias binit="bi && b package && echo 'vendor/ruby' >> .gitignore"
+##############################
 function gemul(){
   if [ $1 ]; then
     gem_name=$1

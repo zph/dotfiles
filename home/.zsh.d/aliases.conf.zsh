@@ -46,7 +46,7 @@ else
 	alias diff="diff -Nuar"
 fi
 
-alias grep='grep -Ei --line-number --with-filename --colour=auto'
+alias grep='grep -Ei --colour=auto'
 alias egrep='egrep --color=auto'
 alias curl='curl -L'
 # alias ls='ls --color=auto --human-readable --group-directories-first --classify'
@@ -80,3 +80,5 @@ alias set_time="dpkg-reconfigure tzdata"
 alias jistc='jist -p -c'
 alias jist='jist -c'
 alias :q='exit'
+alias resit='!! 2>&1 | sit'
+alias -g ST='2>&1 | sit'

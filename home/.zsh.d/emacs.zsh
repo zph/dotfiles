@@ -1,1 +1,1 @@
-alias emacs 'emacsclient -a emacs \!* &'
+alias emacs='emacsclient -a emacs \!* &'
