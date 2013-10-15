@@ -515,16 +515,16 @@ let g:ctrlp_max_depth = 10
 "" Custom CtrlP Config
 " Multiple VCS's:
 let g:ctrlp_extensions = ['tag', 'mark', 'register']
-" let g:ctrlp_user_command = {
-"   \ 'types': {
-"     \ 1: ['.git', 'cd %s && git ls-files'],
-"     \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-"     \ },
-"   \ 'fallback': 'find %s -type f'
-"   \ }
 let g:ctrlp_user_command = {
+  \ 'types': {
+    \ 1: ['.git', 'cd %s && git ls-files'],
+    \ 2: ['.hg', 'hg --cwd %s locate -I .'],
+    \ },
   \ 'fallback': 'find %s -type f'
   \ }
+" let g:ctrlp_user_command = {
+"   \ 'fallback': 'find %s -type f'
+"   \ }
 " Sane Ignore For ctrlp
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
@@ -810,8 +810,8 @@ nnoremap <Leader>cv :CoverageAutoSourcing<CR>
 
 function! Sack()
   " if filereadable($HOME."/.sack_shortcuts")
-    let l:sack_output = system("cat ~/.sack_shortcuts | awk '{print sprintf(\"%s:%s:Error\", $2, $1, $3)}'")
-    let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
+    let l:sack_output = system("sit --vim")
+    " let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
     cexpr l:sack_output
     copen
     " Taken from Ack.vim bindings for consistency and awesomeness
@@ -828,3 +828,13 @@ function! Sack()
 endfunction
 command! Sack call Sack()
 nnoremap <Leader>sa :Sack<CR>
+
+" Vim resizing of splits
+" Resize windows quickly
+" reset with <c-w>=
+" http://tom-clements.com/blog/2011/12/29/vim-my-vimrc-highlights/
+" nmap <c-w>l :vertical res +20<cr>
+" nmap <c-w>h :vertical res -20<cr>
+" nmap <c-w>j :res +20<cr>
+" nmap <c-w>k :res -20<cr>
+nnoremap :vs :vsplit<cr><c-w>l

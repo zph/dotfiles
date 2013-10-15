@@ -6,7 +6,7 @@ LOCATION_TWO='/Applications/Sublime_Text.app/Contents/SharedSupport/bin/subl'
 # if [[ -x $LOCATION_ONE ]]; then
 #   $LOCATION_ONE
 # elif [[ -x $LOCATION_TWO ]]; then
-  $LOCATION_TWO
+  $LOCATION_TWO -w "$*"
 # else
 #   $FALLBACK_LOC
 # fi

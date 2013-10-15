@@ -6,57 +6,75 @@ RESET = "\e[0m"
 BOLD  = "\e[1m"
 RED   = "\e[31m"
 YELLOW = "\e[33m"
+SACK_SHORTCUTS = "~/.sack_shortcuts"
+
+options = {}
+options[:list] = nil
+options[:vim] = nil
+options[:debug] = nil
+OptionParser.new do |opts|
+  opts.banner = "Usage: echo 'bad stacktrace from ruby' | sit"
+
+  opts.on('-l', '--list') do |v|
+    options[:list] = true
+  end
+  opts.on('--vim') do |v|
+    options[:vim] = true
+  end
+  opts.on('-d', '--debug') do |v|
+    options[:debug] = true
+  end
+end.parse!
 
 def color(color, string)
   "#{color}#{string}#{RESET}"
 end
 
-options = {}
-options[:list] = nil
-OptionParser.new do |opts|
-  opts.banner = "Usage: echo 'bad stacktrace from ruby' | sit"
-  opts.on('-l', "--list") do |v|
-    options[:list] = true
-  end
-end.parse!
-if options[:list] == true
-  content = File.read(File.expand_path("~/.sack_shortcuts"))
+def sack_shortcuts
+  File.read(File.expand_path(SACK_SHORTCUTS))
+end
 
+def read_file(io,lines)
+  io.readlines.each { |line| lines << line.chomp }
+end
+
+def extract_fields(string)
+  string.scan(%r{(?<whole_line>(?<file_name>#{ENV['HOME']}.*):(?<lineno>\d+):(?<msg>.*))}) #.map{ |i| i.reverse }
+end
+
+
+case
+when options[:list] == true
+  content = sack_shortcuts
   output = content.split("\n").map{ |line| line.split }
   response = output.map.with_index { |a,i|"#{BOLD}#{RED}[#{i+1}]#{RESET}  #{color(YELLOW, a[0])}:#{a[1]}" }.join("\n")
   puts response
   exit 0
+when options[:vim] == true
+  content = sack_shortcuts
+  output = content.split("\n").map{ |line| line.split }
+  # format desired filename:linenumber:comment
+  response = output.map.with_index { |a,i|"#{[ a[1], a[0],  a[2..-1].join(" ") ].join(":")}" }.join("\n")
+  puts response
+  exit 0
 else
-  input = ARGF.read
 
-  arrays = input.scan(/(?<whole_line>(from\W(?<file_name>.*):(?<lineno>\d+):in.*))/).map{ |i| i.reverse }
-  sack_shortcuts = arrays.map { |a| [a[0], a[1]].join(" ") }.join("\n")
-  File.write(File.expand_path("~/.sack_shortcuts"), sack_shortcuts)
-
-  # puts out the nice format that Sack uses for screen viewing
-  # TODO: Add color
-
-  output = arrays.map.with_index { |a,i| "[#{i+1}] #{a[0]}:#{a[1]}" }.join("\n")
-  puts output
-
+lines = []
+if ARGV.empty?
+  while !STDIN.eof?
+    lines += read_file(STDIN,lines)
   end
+else
+  ARGV.each { |file| read_file(File.open(file),lines) }
+end
 
-__END__
-/Users/zhill/source/old_generator/.simplecov:1:in `require': cannot load such file -- cadre/simplecov (LoadError)
-from /Users/zhill/source/old_generator/.simplecov:1:in `<top (required)>'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/simplecov-0.6.4/lib/simplecov/defaults.rb:57:in `load'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/simplecov-0.6.4/lib/simplecov/defaults.rb:57:in `<top (required)>'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/simplecov-0.6.4/lib/simplecov.rb:120:in `require'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/simplecov-0.6.4/lib/simplecov.rb:120:in `<top (required)>'
-from /Users/zhill/source/old_generator/spec/spec_helper.rb:3:in `require'
-from /Users/zhill/source/old_generator/spec/spec_helper.rb:3:in `<top (required)>'
-from /Users/zhill/source/old_generator/spec/models/city_state_spec.rb:1:in `require_relative'
-from /Users/zhill/source/old_generator/spec/models/city_state_spec.rb:1:in `<top (required)>'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/configuration.rb:780:in `load'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/configuration.rb:780:in `block in load_spec_file
-s'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/configuration.rb:780:in `map'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/configuration.rb:780:in `load_spec_files'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/command_line.rb:22:in `run'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/runner.rb:69:in `run'
-from /Users/zhill/.rbenv/versions/1.9.3-p327/lib/ruby/gems/1.9.1/gems/rspec-core-2.11.1/lib/rspec/core/runner.rb:8:in `block in autorun'`
+input = lines.sort.join("\n")
+puts "Input #{input}" if options[:debug]
+  arrays = extract_fields(input)
+  puts "Arrays #{arrays}" if options[:debug]
+  content = arrays.map { |a| [a[2], a[1], a[3..-1]].join(" ") }.join("\n")
+  puts "Content: #{content}" if options[:debug]
+  File.write(File.expand_path("~/.sack_shortcuts"), content)
+  output = arrays.map.with_index { |a,i| "[#{color(YELLOW,i+1)}] #{a[1]}:#{color(YELLOW,a[2])}:#{color(BOLD, color(RED,a[3..-1].join(" ")))}" }.join("\n")
+  # puts output
+end

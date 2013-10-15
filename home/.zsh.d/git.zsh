@@ -43,6 +43,8 @@ alias gcount='git shortlog -sn'
 compdef gcount=git
 alias gcp='git cherry-pick'
 compdef _git gcp=git-cherry-pick
+alias gl='git log --pretty=oneline --abbrev-commit'
+compdef _git gll=git-log
 alias gll="git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
 compdef _git gll=git-log
 alias glg='git log --stat --max-count=5'

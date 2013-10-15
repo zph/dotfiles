@@ -37,6 +37,8 @@ Icon?
 ehthumbs.db
 Thumbs.db
 coverage.vim
+# Bundle location
+vendor/*
 
 # Tag files
 doc/tags

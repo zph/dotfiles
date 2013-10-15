@@ -16,7 +16,8 @@
     ap = add -p
     b = branch
     bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
-    ci = commit -v
+    ci = commit
+    cv = commit -v
     cim = commit -m
     cl = clone
     #clcd = "!git clone $1 && cd !$"
@@ -50,6 +51,9 @@
     r = !git l -30
     ra = !git r --all
     st = status
+    sf = show --pretty="format:" --name-only
+    spp = "!git stash && git pull && git stash pop"
+    srp = "!git stash && git rebase dev && git stash pop"
     # Divergence (commits we added and commits remote added)
     # div = divergence
 
