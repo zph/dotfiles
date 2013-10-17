@@ -6,13 +6,12 @@
  ;; If there is more than one, they won't work right.
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(custom-safe-themes (quote ("1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
+ '(custom-safe-themes (quote ("628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" default)))
  '(erc-stamp-mode t)
-  '(org-datetree-add-timestamp (quote inactive))
+ '(org-datetree-add-timestamp (quote inactive))
  '(org-default-notes-file "~/Dropbox/org_mode/incoming.org")
  '(org-directory "~/Dropbox/org_mode/")
  '(org-startup-truncated nil)
-
  '(show-paren-mode t)
  '(size-indication-mode t)
  '(tool-bar-mode nil))
@@ -115,7 +114,24 @@
      ;(shell-command (concat "open x-devonthink-item:" record-location))
 
 (global-set-key "\C-c\C-p" 'pivotal-open-story-on-web)
+(set-face-attribute 'default nil :font "Source Code Pro-13")
 ;; Authenticate Pivotal API
 (load "~/.emacs_auth")
+(require 'yasnippet)
+(yas-global-mode 1)
+;; fix some org-mode + yasnippet conflicts:
+(defun yas/org-very-safe-expand ()
+  (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (make-variable-buffer-local 'yas/trigger-key)
+            (setq yas/trigger-key [tab])
+            (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+            (define-key yas/keymap [tab] 'yas/next-field)))
+(require 'org-latex)
 (provide 'custom)
 ;;;END CUSTOM
+;; Notes
+;; use <sTAB to add src blocks
+;; C-c ' will open the src block in the proper highlighting and mode
