@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+['inifile', 'pathname'].each do |gem|
+  begin
+    require gem
+  rescue LoadError
+    puts "You need to install #{gem}: gem install #{gem}"
+    exit!(1)
+  end
+end
+
+EMAIL_ADDRESS = ENV.fetch('INI_EMAIL') do
+  STDERR << "Usage:\n"
+  STDERR << "INI_EMAIL=zander@civet.ws ruby #{ __FILE__ }\n"
+  STDERR << "INI_EMAIL=zander@civet.ws INI_BASE_DIR=~/source ruby #{ __FILE__ }\n"
+  STDERR << "INI_EMAIL=[required] INI_BASE_DIR=[optional || ~/source] #{ __FILE__ }\n"
+  exit 1
+end
+
+BASE_DIR = Pathname.new(ENV.fetch('INI_BASE_DIR') { '~/source' })
+BASE_DIR_STR = BASE_DIR.expand_path.to_s
+
+def add_email_address(file_path, email)
+  ini = IniFile.load(file_path)
+  ini['user'] = { 'email' => email }
+  File.write(file_path, ini)
+end
+
+Dir["#{BASE_DIR_STR}/*/.git/config"].each do |file|
+  puts file
+  add_email_address(file, EMAIL_ADDRESS)
+end
