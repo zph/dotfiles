@@ -6,21 +6,7 @@ Pry.commands.alias_command 'wh', 'whereami'
 Pry.commands.alias_command 'pl', 'play -l'
 Pry.commands.alias_command 'ht', 'hist -T'
 Pry.commands.alias_command 'hr', 'hist -r'
-# Pry.commands.alias_command 'c', 'continue'
-# Pry.commands.alias_command 's', 'step'
-# Pry.commands.alias_command 'n', 'next'
 Pry.config.editor = proc { |file, line| "vim +#{line} #{file}"}
-# Prompt with ruby version
-# Pry.prompt = [proc { |obj, nest_level| "#{RUBY_VERSION} (#{obj}):#{nest_level} > " },
-#               proc { |obj, nest_level| "#{RUBY_VERSION} (#{obj}):#{nest_level} * " }]
-#
-#
-#
-####
-# NEW CONFIG from : https://raw.github.com/skwp/dotfiles/master/irb/pryrc
-# === EDITOR ===
-# Pry.editor = 'vi'
-
 # == Pry-Nav - Using pry as a debugger ==
 Pry.commands.alias_command 'c', 'continue' rescue nil
 Pry.commands.alias_command 's', 'step' rescue nil
@@ -89,8 +75,6 @@ default_command_set = Pry::CommandSet.new do
 end
 
 Pry.config.commands.import default_command_set
-
-
 # # === CONVENIENCE METHODS ===
 # # Stolen from https://gist.github.com/807492
 # # Use Array.toy or Hash.toy to get an array or hash to play with
