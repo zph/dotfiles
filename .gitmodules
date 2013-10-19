@@ -214,9 +214,6 @@
 [submodule "home/bin_repos/sack"]
 	path = home/bin_repos/sack
 	url = git@github.com:zph/sack.git
-[submodule "home/.vim/bundle/powerline"]
-	path = home/.vim/bundle/powerline
-	url = git@github.com:/Lokaltog/powerline.git
 [submodule "home/.vim/bundle/vim-textobj-ruby-block"]
 	path = home/.vim/bundle/vim-textobj-ruby-block
 	url = git@github.com:nelstrom/vim-textobj-rubyblock.git
@@ -247,3 +244,9 @@
 [submodule "home/.vim/bundle/zencoding"]
 	path = home/.vim/bundle/zencoding
 	url = git@github.com:mattn/emmet-vim.git
+[submodule "home/.vim/bundle/vim-airline"]
+	path = home/.vim/bundle/vim-airline
+	url = git@github.com:bling/vim-airline.git
+[submodule "home/.vim/bundle/vim-gitgutter"]
+	path = home/.vim/bundle/vim-gitgutter
+	url = git@github.com:airblade/vim-gitgutter.git
