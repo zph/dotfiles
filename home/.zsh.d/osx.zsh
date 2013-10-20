@@ -2,6 +2,7 @@
 if [[ "$OSTYPE" == darwin* ]]; then
   alias o='open'
   alias get='curl --continue-at - --location --progress-bar --remote-name --remote-time'
+  export PATH=$HOME/Library/Python/2.7/bin:$PATH
 else
   alias o='xdg-open'
   alias get='wget --continue --progress=bar --timestamping'

@@ -25,6 +25,7 @@ set viminfo='100,f1
 
 " Basic standards of sanity
 set encoding=utf-8
+set t_Co=256
 set scrolloff=3
 set showmode
 set showcmd
@@ -128,7 +129,7 @@ set list
 " Show $ at end of line and trailing space as ~.... disable this as
 " it's distracting for screencasts
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
-set lcs=tab:\ \ ,extends:&,precedes:<
+set lcs=tab:\|_,extends:&,precedes:<
 " Courtesy of @alindeman
 set listchars+=trail:💔
 
@@ -163,23 +164,65 @@ vmap <C-v> c<ESC>"+p
 imap <C-v> <ESC>"+pa
 
 "Statusline config
+"set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
 set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
-     "              | | | | |  |   |      |  |     |    |
-     "              | | | | |  |   |      |  |     |    + current
-     "              | | | | |  |   |      |  |     |       column
-     "              | | | | |  |   |      |  |     +-- current line
-     "              | | | | |  |   |      |  +-- current % into file
-     "              | | | | |  |   |      +-- current syntax in
-     "              | | | | |  |   |          square brackets
-     "              | | | | |  |   +-- current fileformat
-     "              | | | | |  +-- number of lines
-     "              | | | | +-- preview flag in square brackets
-     "              | | | +-- help flag in square brackets
-     "              | | +-- readonly flag in square brackets
-     "              | +-- rodified flag in square brackets
-     "              +-- full path to file in the buffer
- " }
- "
+"              | | | | |  |   |      |  |     |    |
+"              | | | | |  |   |      |  |     |    + current
+"              | | | | |  |   |      |  |     |       column
+"              | | | | |  |   |      |  |     +-- current line
+"              | | | | |  |   |      |  +-- current % into file
+"              | | | | |  |   |      +-- current syntax in
+"              | | | | |  |   |          square brackets
+"              | | | | |  |   +-- current fileformat
+"              | | | | |  +-- number of lines
+"              | | | | +-- preview flag in square brackets
+"              | | | +-- help flag in square brackets
+"              | | +-- readonly flag in square brackets
+"              | +-- modified flag in square brackets
+"              +-- full path to file in the buffer
+" }
+"
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 0
+
+let g:airline#extensions#hunks#enabled = 1
+let g:airline#extensions#hunks#non_zero_only = 1
+" let g:airline_section_b = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
+" let g:airline_section_y = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
+let g:airline_section_y = ''
+let g:airline_section_a = ''
+let g:airline_section_y = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
+let g:airline_theme = 'murmur'
+
+" let g:airline_section_b = '%{system("branch-name | cut -c 1-20 | tr -d "\n")}'
+"let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#syntastic#get_warnings(),0)}%{airline#util#wrap(airline#extensions#whitespace#check(),0)}'
+""
+"
+let g:airline#extensions#default#section_truncate_width = {
+      \ 'a' : 20,
+      \ 'b' : 10,
+      \ 'x' : 60,
+      \ 'y' : 88,
+      \ 'z' : 45,
+      \ }
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Test functions from gary bernhardt
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -18,6 +18,7 @@
 --ignore-dir=coverage
 
 --type-set=haml=.haml
+--type-set=slim=.slim
 --type-set=sass=.sass,.scss
 --type-set=coffee=.coffee
 --ignore-dir=log
