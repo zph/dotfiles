@@ -16,3 +16,4 @@ home/bin/F
 home/bin/sack
 home/bin/sag
 home/bin/sgrep
+/home/.emacs.d/image-dired/*
