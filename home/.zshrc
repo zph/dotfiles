@@ -328,11 +328,8 @@ _set_prompt(){
   prompt zph
 }
 
-_alternate_prompt(){
-  source $HOME/.zsh.d/git-prompt/zshrc.sh
-  PROMPT="%Bmbp:%~%b$(git_super_status) %# "
-  # Standard prompt that displays my machine name
-  # PROMPT='%B%m%~%b$(git_super_status) %# '
+_right_prompt(){
+  source $HOME/.zsh.d/git-prompt/git-prompt.zsh
 }
 
 _setup_colors(){
@@ -363,8 +360,13 @@ _execute_alert(){
 #     # fi
 #   }
 # }
-
+#
+# will work PS1 will be '$ '
+# PS1=
+# PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#I_#P") "$PWD")'
+# PS1='$ '$PS1
 ### Main function
+
 _zshrc_main(){
   ############
   # Execute Functions
@@ -378,7 +380,10 @@ _zshrc_main(){
   _normalize_keys
   _set_colors
   _set_prompt
+
+  PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   # _alternate_prompt
+  _right_prompt
 }
 
 _zshrc_main
