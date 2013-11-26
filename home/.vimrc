@@ -510,9 +510,9 @@ command! IncludeRCodeTools call IncludeRCodeTools()
 autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
 
 " Shortcuts for VimRepress
-nnoremap <silent> <Leader>bl  :BlogList<CR>
-nnoremap <silent> <Leader>bn  :BlogNew<CR>
-nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
+" nnoremap <silent> <Leader>bl  :BlogList<CR>
+" nnoremap <silent> <Leader>bn  :BlogNew<CR>
+" nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
 
 " For folding
 function! FoldingOn()
@@ -618,7 +618,7 @@ iabbr bpry require'pry';binding.pry
 iabbr bpryr require'pry-remote';binding.pry_remote
 
 " Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
-map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
+" map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
 " Alias for one-handed operation:
 " map <Leader><Leader>p <Leader>bp
 
@@ -881,3 +881,17 @@ nnoremap <Leader>sa :Sack<CR>
 " nmap <c-w>j :res +20<cr>
 " nmap <c-w>k :res -20<cr>
 nnoremap :vs :vsplit<cr><c-w>l
+nnoremap :hs :split<cr><c-w>j
+nnoremap :ts :tabnew<CR>
+nnoremap :tn :tabnew<CR>
+nnoremap :bd :bd<CR>
+
+" hi CursorLine   cterm=NONE ctermbg=lightblue guibg=lightblue
+set nocursorline
+
+
+function! HTMLtoSlim()
+  :r system("pbpaste | html2slim")<CR>
+endfunction
+command! HTMLtoSlim call HTMLtoSlim()
+nnoremap <Leader>gg :GitGutterDisable<CR>

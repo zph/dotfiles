@@ -1,5 +1,5 @@
 function mkdircd () { 
-	mkdir -p "$@" && eval cd "\"\$$#\"";
+  mkdir -p "$@" && eval cd "\"\$$#\"";
 }
 # move up in dir structure by typing up + #_of_levels
 # up() { [ $(( $1 + 0 )) -gt 0 ] && cd $(eval "printf '../'%.0s {1..$1}"); }
