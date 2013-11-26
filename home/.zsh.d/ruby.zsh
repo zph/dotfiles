@@ -2,16 +2,16 @@
 # alias be='bundle exec'
 alias ri='ri -f ansi'
 alias gemu='gem uninstall'
-# alias bi="bundle install --binstubs=./.bundle/.binstubs"
-alias bi="bundle install"
+# alias bi="bundle install --binstubs=./.bundle/.binstubs --path vendor"
+# alias bi="bundle install"
 ##############################
 # Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
 alias b="bundle"
-# alias bi="b install --path vendor"
-# alias bil="bi --local"
-# alias bu="b update"
+alias bi="b install --path vendor"
+alias bil="bi --local"
+alias bu="b update"
 alias be="b exec"
-# alias binit="bi && b package && echo 'vendor/ruby' >> .gitignore"
+alias binit="bi && b package && echo 'vendor/ruby' >> .gitignore"
 ##############################
 function gemul(){
   if [ $1 ]; then
@@ -29,8 +29,8 @@ function gem_reinstall(){
 
 # Rails
 alias r='rails'
-alias rake='noglob rake'
-alias R='noglob rake'
+# alias rake='noglob rake'
+# alias R='noglob rake'
 compdef R=rake
 
 # Homesick symlinking on OSX

@@ -20,6 +20,7 @@
     cv = commit -v
     cim = commit -m
     cl = clone
+    cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
     co = checkout
     dc = diff --cached
@@ -41,6 +42,10 @@
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
     noff = merge --no-ff
+    pb = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+    up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
+    pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
+    gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
     pom = push origin master
     po = push origin
     pr = pull --rebase
@@ -50,10 +55,14 @@
     pullff = pull --ff-only
     r = !git l -30
     ra = !git r --all
+    rh = reset --hard
+    rhh = "!git reset --hard && git clean -df"
     st = status
     sf = show --pretty="format:" --name-only
     spp = "!git stash && git pull && git stash pop"
     srp = "!git stash && git rebase dev && git stash pop"
+    conflicts = !git ls-files -u | cut -f 2 | sort -u
+    unapply = !git stash show -p | git apply -R
     # Divergence (commits we added and commits remote added)
     # div = divergence
 

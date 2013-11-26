@@ -1,4 +1,5 @@
 alias c='\cd'
+alias bn='branch-name'
 # alias cd='echo "DONT USE CD use c" && cd'
 # alias git='echo "DONT USE GIT use g" && git'
 alias rsync='rsync -v --progress --partial'
@@ -50,7 +51,7 @@ alias grep='grep -Ei --colour=auto'
 alias egrep='egrep --color=auto'
 alias curl='curl -L'
 # alias ls='ls --color=auto --human-readable --group-directories-first --classify'
-alias g="bundle exec guard $*"
+# alias g="bundle exec guard $*"
 alias x="exit"
 alias ll="ls -lah"
 

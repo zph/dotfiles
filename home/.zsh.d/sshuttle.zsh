@@ -1,1 +1,1 @@
-alias shuttle_start='sshuttle --dns -vvr zander@xen1 0/0'
+alias shuttle_start='sshuttle --dns -vvr zander@ritchie.abstracting.co 0/0'
