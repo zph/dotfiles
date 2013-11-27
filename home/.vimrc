@@ -895,3 +895,6 @@ function! HTMLtoSlim()
 endfunction
 command! HTMLtoSlim call HTMLtoSlim()
 nnoremap <Leader>gg :GitGutterDisable<CR>
+
+" Needed for editing crontab
+autocmd FileType crontab set nobackup nowritebackup
