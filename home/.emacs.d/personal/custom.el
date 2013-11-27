@@ -51,8 +51,6 @@
 (require 'icicles)
 (icy-mode 1)
 ;; Setting rbenv path
-(require 'rbenv)
-(global-rbenv-mode)
 (require 'exec-path-from-shell)
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize))

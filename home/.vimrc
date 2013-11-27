@@ -881,3 +881,6 @@ nnoremap <Leader>sa :Sack<CR>
 " nmap <c-w>j :res +20<cr>
 " nmap <c-w>k :res -20<cr>
 nnoremap :vs :vsplit<cr><c-w>l
+
+" Needed for editing crontab
+autocmd FileType crontab set nobackup nowritebackup
