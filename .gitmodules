@@ -180,7 +180,7 @@
 	url = git://github.com/zph/vim-rubocop.git
 [submodule "home/.vim/bundle/ag.vim"]
 	path = home/.vim/bundle/ag.vim
-	url = git://github.com/rking/ag.vim.git
+	url = git@github.com:rking/ag.vim.git
 [submodule "home/.vim/bundle/vim-indent-object"]
 	path = home/.vim/bundle/vim-indent-object
 	url = https://github.com/michaeljsmith/vim-indent-object.git
