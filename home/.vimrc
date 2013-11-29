@@ -287,12 +287,6 @@ function! RenameFile()
     endif
 endfunction
 
-" autocmd BufWritePost *.rb :call RunTestFile()
-" map <Leader>t :call RunTestFile()
-
-
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Always strip trailing whitespace
 " Courtesy of MarkSim: https://github.com/marksim/.dotfiles/blob/master/.vimrc#L120-L130
@@ -400,7 +394,6 @@ function! RunTests(filename)
 endfunction
 
 command! RunTests call RunTests(expand("%"))
-" map <Leader>t :w\|:RunTests<CR>
 
 " Slime tmux settings
 let g:slime_target = "tmux"
@@ -451,12 +444,9 @@ map Q <Nop>
 " Remap Q to a useful command
 command! Q q " Bind :Q to :q
 nnoremap Q :q
-" nnoremap Q ,
 
 " Disable K looking stuff up ie instant manual lookups
 map K <Nop>
-" command! K :! 
-nnoremap K :write<CR>
 
 " When loading text files, wrap them and don't split up words.
 au BufNewFile,BufRead *.txt setlocal wrap
@@ -538,12 +528,12 @@ command! FoldingOn call FoldingOn()
 
 "Tabular mappings
 "http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
-" if exists(":Tabularize")
+if exists(":Tabularize")
   nmap <Leader>a= :Tabularize /=<CR>
   vmap <Leader>a= :Tabularize /=<CR>
   nmap <Leader>a: :Tabularize /:\zs<CR>
   vmap <Leader>a: :Tabularize /:\zs<CR>
-" endif
+endif
 
 " Use leader-b for Easy Buffer Access
 "TODO : write function to open MRU instead of 'files' if pwd is ~/
@@ -565,16 +555,11 @@ let g:ctrlp_user_command = {
     \ },
   \ 'fallback': 'find %s -type f'
   \ }
-" let g:ctrlp_user_command = {
-"   \ 'fallback': 'find %s -type f'
-"   \ }
 " Sane Ignore For ctrlp
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$|\.yardoc\|public\/images\|public\/system\|data\|log\|tmp$',
   \ 'file': '\v\.(exe|so|dll)$|\.exe$\|\.so$\|\.dat$',
   \ }
-
-"\.git\/$\|
 " Avoid holding shift to hit colon
 " To repeat a F or T movement double tap semicolon
 map ; :
@@ -596,45 +581,49 @@ vnoremap <Leader>sh :!fmt -n 100<CR>
 nmap <Leader>sm :%!fmt -n 75<CR>
 vnoremap <Leader>sm :!fmt -n 75<CR>
 
-imap <Leader>pi <ESC>:call PryToggle()<CR>
-nmap <Leader>pi :call PryToggle()<CR>
 
-fu! PryToggle()
-    let @a = "require 'pry'; binding.pry"
-    let wordsFromLine = getline('.')
-    if @a ==? wordsFromLine
-      :normal dd
-    else
-      :normal o"ap
-    endif
-endfu
+if executable('pry')
+  imap <Leader>pi <ESC>:call PryToggle()<CR>
+  nmap <Leader>pi :call PryToggle()<CR>
 
-" Courtesy of rking's ruby-pry.vim
-" …also, Insert Mode as bpry<space>
-iabbr bpry require'pry';binding.pry
-" And admit that the typos happen:
-iabbr bpry require'pry';binding.pry
-" And pry-remote
-iabbr bpryr require'pry-remote';binding.pry_remote
+  fu! PryToggle()
+      let @a = "require 'pry'; binding.pry"
+      let wordsFromLine = getline('.')
+      if @a ==? wordsFromLine
+        :normal dd
+      else
+        :normal o"ap
+      endif
+  endfu
+  " Courtesy of rking's ruby-pry.vim
+  " …also, Insert Mode as bpry<space>
+  iabbr bpry require'pry';binding.pry
+  " And admit that the typos happen:
+  iabbr bpry require'pry';binding.pry
+  " And pry-remote
+  iabbr bpryr require'pry-remote';binding.pry_remote
 
-" Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
-" map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
-" Alias for one-handed operation:
-" map <Leader><Leader>p <Leader>bp
+  " Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
+  " map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
+  " Alias for one-handed operation:
+  " map <Leader><Leader>p <Leader>bp
 
-" Keep pry from annoyingly hanging around when using, e.g. pry-rescue/minitest
-map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
+  " Keep pry from annoyingly hanging around when using, e.g. pry-rescue/minitest
+  map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
 
-" Nab lines from ~/.pry_history (respects "count")
-nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=pc<cr> ~/.pry_history<cr>:.-<c-r>=pc-1<cr>:norm <c-r>=pc<cr>==<cr>
-" ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
+  " Nab lines from ~/.pry_history (respects "count")
+  nmap <Leader>ph :<c-u>let pc = (v:count1 ? v:count1 : 1)<cr>:read !tail -<c-r>=pc<cr> ~/.pry_history<cr>:.-<c-r>=pc-1<cr>:norm <c-r>=pc<cr>==<cr>
+  " ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
+endif
 
-" RuboCop from Anywhere
-nmap <Leader>ru :RuboCop<CR>
-imap <Leader>ru <ESC>:RuboCop<CR>
+if executable('rubocop')
+  " RuboCop from Anywhere
+  nmap <Leader>ru :RuboCop<CR>
+  imap <Leader>ru <ESC>:RuboCop<CR>
 
-nmap <Leader>rua :!rubocop<CR>
-imap <Leader>rua <ESC>:rubocop<CR>
+  nmap <Leader>rua :!rubocop<CR>
+  imap <Leader>rua <ESC>:rubocop<CR>
+endif
 
 " " Ctags Shortcuts
 set tags=$HOME/.vimtags,%:p,$HOME
@@ -851,26 +840,28 @@ command! CoverageAutoSourcing call CoverageAutoSourcing()
 nnoremap <Leader>cv :CoverageAutoSourcing<CR>
 
 
-function! Sack()
-  " if filereadable($HOME."/.sack_shortcuts")
-    let l:sack_output = system("sit --vim")
-    " let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
-    cexpr l:sack_output
-    copen
-    " Taken from Ack.vim bindings for consistency and awesomeness
-    exec "nnoremap <silent> <buffer> q :ccl<CR>"
-    exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-    exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-    exec "nnoremap <silent> <buffer> o <CR>"
-    exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-    exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-    exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-    exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-    exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
-  " endif
-endfunction
-command! Sack call Sack()
-nnoremap <Leader>sa :Sack<CR>
+if executable('sack')
+  function! Sack()
+    " if filereadable($HOME."/.sack_shortcuts")
+      let l:sack_output = system("sit --vim")
+      " let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
+      cexpr l:sack_output
+      copen
+      " Taken from Ack.vim bindings for consistency and awesomeness
+      exec "nnoremap <silent> <buffer> q :ccl<CR>"
+      exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+      exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+      exec "nnoremap <silent> <buffer> o <CR>"
+      exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+      exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+      exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+      exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+      exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+    " endif
+  endfunction
+  command! Sack call Sack()
+  nnoremap <Leader>sa :Sack<CR>
+endif
 
 " Vim resizing of splits
 " Resize windows quickly
@@ -889,12 +880,31 @@ nnoremap :bd :bd<CR>
 " hi CursorLine   cterm=NONE ctermbg=lightblue guibg=lightblue
 set nocursorline
 
+if executable('html2slim')
+  function! HTMLtoSlim()
+    :r system("pbpaste | html2slim")<CR>
+  endfunction
+  command! HTMLtoSlim call HTMLtoSlim()
+  nnoremap <Leader>gg :GitGutterDisable<CR>
+endif
 
-function! HTMLtoSlim()
-  :r system("pbpaste | html2slim")<CR>
-endfunction
-command! HTMLtoSlim call HTMLtoSlim()
-nnoremap <Leader>gg :GitGutterDisable<CR>
+" The Silver Searcher
+" http://robots.thoughtbot.com/faster-grepping-in-vim/
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = {
+    \ 'fallback': 'ag %s -l --nocolor -g ""'
+    \ }
+
+  "ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+
+  nnoremap <Leader>a :Ag<SPACE>
+  nnoremap <Leader>aa :Ag <cword><CR>
+endif
 
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup

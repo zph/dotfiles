@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-@zsh_history = %x(cat ~/.zsh_history |sed 's/\xc2\x91\|\xc2\x92\|\xc2\xa0\|\xe2\x80\x8e//').split("\n")
+@zsh_history = %x(cat ~/.zsh_history |sed 's/\xc2\x91\|\xc2\x92\|\xc2\xa0\|\xe2\x80\x8e//' 2> /dev/null).split("\n")
 @zsh_aliases = %x(zsh -i -c 'alias').split("\n")
 @git_aliases = %x(git config --get-regexp alias*).split("\n")
 
@@ -23,7 +23,7 @@ converted_history = @zsh_history.map do |line|
                       end.join(" ")
                     end
 
-converted_history.each { |l| puts l }
+# converted_history.each { |l| puts l }
 
 history_count = Hash.new(0)
 
@@ -31,4 +31,6 @@ converted_history.each { |item| history_count[item] += 1 }
 
 sorted_history = history_count.sort_by { |k,v| v }.reverse
 
-require'pry';binding.pry
+sorted_history.each do |arr|
+  puts "#{arr[1]}: #{arr[0]}"
+end
