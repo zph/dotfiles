@@ -63,6 +63,7 @@
     srp = "!git stash && git rebase dev && git stash pop"
     conflicts = !git ls-files -u | cut -f 2 | sort -u
     unapply = !git stash show -p | git apply -R
+    remove-deleted = !git ls-files --deleted | xargs git rm
     # Divergence (commits we added and commits remote added)
     # div = divergence
 
@@ -87,6 +88,40 @@
     r = !git l -30
     ra = !git r --all
     unstage = reset HEAD
+    # Mark a file as "assume unchanged", which means that Git will treat it
+    # as though there are no changes to it even if there are. Useful for
+    # temporary changes to tracked files
+    assume = update-index --assume-unchanged
+    # Reverse the above
+    unassume = update-index --no-assume-unchanged
+    # Show the files that are currently assume-unchanged
+    assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+
+    # Wil Moore III
+    # http://git.io/gopyOg
+    # open files with conflict markers in your configured editor
+    edit-conflicted   = !$EDITOR $(git grep --name-only --full-name '<<<<<<< HEAD' | awk '{print $NF}')
+    # locate commit where a particular file was introduced
+    added-file        = log --diff-filter=A --
+    # list aliases
+    aliases           = !git config --get-regexp '^alias.' | awk -F '[. ]' '{ print $2 }'
+    # list git bins (lots of gems in there)
+    bin               = !find $(git --exec-path) -type f | xargs basename | $(git config --get core.pager)
+    # list commits not yet pushed to remote
+    local             = log --branches --not --remotes
+    # show commits where my github user name is the author
+    log-github-user   = !git log --author="$(git config --get github.user)"
+    # markdown-friendly list of topic/branch related logs (great for Github pull requests)
+    markdown          = !BN=$(git name-rev --name-only HEAD) && git log --no-merges --grep=$BN --pretty=oneline | awk -F"$BN: " '{print \"-\", $NF}' | uniq
+    # show branches that have been merged into current (HEAD) branch
+    merged            = !git fetch --all --prune && git branch --all --merged HEAD
+    # show branches that have not been merged into current (HEAD) branch
+    not-merged        = !git fetch --all --prune && git branch --all --no-merged HEAD
+    # fetch and rebase from upstream/master then push current branch to origin
+    sync              = !git pull --no-rebase --ff upstream master && git push -u origin +HEAD
+    # same as `git sync` but also rebases
+    sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
+
 [merge]
   tool = vimdiff
 [github]

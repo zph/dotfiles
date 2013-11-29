@@ -1,0 +1,5 @@
+#!/bin/bash
+
+branch="${1:-master}"
+echo $branch
+# git outgoing $branch | tac | xargs -L 1 git show

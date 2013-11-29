@@ -5,6 +5,8 @@ function mkdircd () {
 # up() { [ $(( $1 + 0 )) -gt 0 ] && cd $(eval "printf '../'%.0s {1..$1}"); }
 up () { if [ "${1/[^0-9]/}" == "$1" ]; then p=./; for i in $(seq 1 $1); do p=${p}../; done; cd $p; else echo 'usage: up N'; fi }
 
+tac () { tail -r }
+
 headless() {
   [ $# -lt 1 ] && echo "Usage: $FUNCNAME vm_name" && return
   VBoxHeadless -startvm $1&
