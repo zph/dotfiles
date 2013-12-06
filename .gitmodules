@@ -250,3 +250,6 @@
 [submodule "home/.vim/bundle/vim-gitgutter"]
 	path = home/.vim/bundle/vim-gitgutter
 	url = git@github.com:airblade/vim-gitgutter.git
+[submodule "home/.vim/bundle/vim-abolish"]
+	path = home/.vim/bundle/vim-abolish
+	url = git@github.com:tpope/vim-abolish.git
