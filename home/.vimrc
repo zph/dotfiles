@@ -908,3 +908,16 @@ endif
 
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
+
+function! CamelToUnderscore()
+  :'<,'>s/\([A-Z]\)/_\l\1/g
+endfunction
+command! CamelToUnderscore call CamelToUnderscore()
+
+" function! UnderscoreToCamel()
+"   :'<,'>s/\_([A-Za-z]\)/\u\1/g
+" endfunction
+" command! UnderscoreToCamel call UnderscoreToCamel()
+"
+" SED command for converting :foo => to foo:
+" %s/:\(.*\) =>/\1:/gc
