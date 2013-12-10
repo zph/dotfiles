@@ -64,3 +64,11 @@ _integration(){
   COMPREPLY=( $(compgen -W "$(find spec/**/*.rb)" -- $cur) )
 }
 complete -F _integration rt
+
+# Credit: @rauchy
+# https://twitter.com/rauchy/status/408616673026260993
+ # Go Away Pry - removes any binding.pry you may have scattered lately
+# alias pry_rm="sed -E \"s/[require\'pry\';]*binding\.pry\s*//g\" `git diff --name-only`"
+
+# alias console_rm='sed -i "" "s/console\.log\([^\)]\s*\)//g" `git diff --name-only`'
+
