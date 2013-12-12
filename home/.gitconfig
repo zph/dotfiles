@@ -43,6 +43,7 @@
     la = !git l --all
     noff = merge --no-ff
     pbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+    upbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
     up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
     pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
     gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
@@ -142,7 +143,8 @@
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [push]
-	default = matching
+	; default = matching
+  default = current
 [web]
 	browser = chrome
 [branch]
