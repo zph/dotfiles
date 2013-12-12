@@ -34,12 +34,19 @@ _smart_editor_select_error_unknown_path(){
     return 1
 }
 
+file_without_line_number=`echo "$1" | grep -Ei ':\d+$' | awk -F':' '{print $1}' `
+formatted_file_with_line_number=`echo "$1" | grep -Ei ':\d+$' | awk -F':' '{print $1 " +"$2}' `
 _smart_editor_select(){
   # echo $interactive_mode
   if [[ $1 == "" ]]; then
     exec $EDITOR .
   elif [[ -f $1 || -d $1 ]]; then
     exec $EDITOR "$1"
+  elif [[ -f $file_without_line_number ]]; then
+    # add change in here to tolerate filename.rb:234 format and convert to filename +234
+    # echo "/usr/bin/ruby.rb:124" | grep -Ei ':\d+$' | awk -F':' '{print $1 " +"$2}'
+      # echo $EDITOR `grep -Ei ':\d+$' | awk -F':' '{print $1 " +$2"}'`
+    exec $EDITOR $formatted_file_with_line_number
   elif [[ -x $(which fasd) ]]; then
     if [[ $interactive_mode == "1" ]];then
       local dir=$(fasd -sia $1)
