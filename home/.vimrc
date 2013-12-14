@@ -129,7 +129,7 @@ set list
 " Show $ at end of line and trailing space as ~.... disable this as
 " it's distracting for screencasts
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
-set lcs=tab:\|_,extends:&,precedes:<
+" set lcs=tab:\|_,
 " Courtesy of @alindeman
 set listchars+=trail:💔
 
@@ -395,13 +395,13 @@ endfunction
 
 command! RunTests call RunTests(expand("%"))
 
-" Slime tmux settings
-let g:slime_target = "tmux"
+" " Slime tmux settings
+" let g:slime_target = "tmux"
 
-" Slimux settings
-map <Leader>s :SlimuxREPLSendLine<CR>
-vmap <Leader>s :SlimuxREPLSendSelection<CR>
-map <Leader>d :SlimuxShellLast<CR>
+" " Slimux settings
+" map <Leader>s :SlimuxREPLSendLine<CR>
+" vmap <Leader>s :SlimuxREPLSendSelection<CR>
+" map <Leader>d :SlimuxShellLast<CR>
 
 " For jumplist... since tab is clobbered
 " go back
@@ -921,3 +921,63 @@ command! CamelToUnderscore call CamelToUnderscore()
 "
 " SED command for converting :foo => to foo:
 " %s/:\(.*\) =>/\1:/gc
+nnoremap <Leader>s :Switch<CR>
+
+" Don't bother about checking whether Escape is being used as a means to enter
+" " a Meta-key combination, just register Escape immediately
+set noesckeys
+"
+" " Don't bother drawing the screen while executing macros or other automated
+" or
+" " scripted processes, just draw the screen as it is when the operation
+" " completes
+set lazyredraw
+"
+" " Improve redrawing smoothness by assuming that my terminal is reasonably
+" " fast
+set ttyfast
+"
+" " Never use any kind of bell, visual or not
+" set visualbell t_vb=
+"
+" " Require less than one second between keys for mappings to work correctly
+set timeout
+set timeoutlen=1000
+"
+" " Require less than a twentieth of a second between keys for key codes to
+" work
+" " correctly; I don't use Escape as a meta key anyway
+set ttimeout
+set ttimeoutlen=50"
+
+" Yank from cursor to end of line
+nnoremap Y y$
+
+" Insert newline
+map <leader><Enter> o<ESC>
+
+" Search and replace word under cursor (,*)
+nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
+
+" Strip trailing whitespace (,ss)
+function! StripWhitespace ()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    :%s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfunction
+noremap <leader>ss :call StripWhitespace ()<CR>
+
+" Join lines and restore cursor location (J)
+nnoremap J mjJ`j
+
+" Indent/unident block (,]) (,[)
+nnoremap <leader>] >i{<CR>
+nnoremap <leader>[ <i{<CR>
+
+" set lcs=tab:›\ ,trail:·,eol:¬,nbsp:_,extends:&,precedes:<
+set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
+set listchars+=trail:💔
+set fcs=fold:-
+nnoremap <silent> <leader>c :set nolist!<CR>
