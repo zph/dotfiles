@@ -160,9 +160,6 @@
 [submodule "home/.vim/bundle/vim-detailed"]
 	path = home/.vim/bundle/vim-detailed
 	url = git://github.com/rking/vim-detailed.git
-[submodule "home/.vim/bundle/syntastic"]
-	path = home/.vim/bundle/syntastic
-	url = https://github.com/scrooloose/syntastic.git
 [submodule "home/.vim/bundle/vim-joy"]
 	path = home/.vim/bundle/vim-joy
 	url = git://github.com/rking/vim-joy.git
@@ -253,3 +250,6 @@
 [submodule "home/.vim/bundle/vim-abolish"]
 	path = home/.vim/bundle/vim-abolish
 	url = git@github.com:tpope/vim-abolish.git
+[submodule "home/.vim/bundle/switch.vim"]
+	path = home/.vim/bundle/switch.vim
+	url = git@github.com:AndrewRadev/switch.vim.git
