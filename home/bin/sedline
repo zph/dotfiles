@@ -1,0 +1,3 @@
+#!/bin/bash
+#TEST LINE
+sed -i '' "$2d" "$1"

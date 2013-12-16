@@ -34,7 +34,8 @@ alias ......="cd ../../../../.."
 
 # Because swapping to fg, bg, etc should be seamless
 alias j="jobs"
-alias f="fg"
+alias f='fg'
+# compdef f=fg
 alias b='bg'
 alias cp='cp -iv'
 alias rcp='rsync -v --progress'
@@ -68,17 +69,17 @@ alias l='less -30'
 
 # Set sz as a function for sourcing base shell dotfile
 sz(){
-case $(echo $SHELL) in
-  "/bin/zsh")
-    source ~/.zshrc
-    ;;
-  "/bin/bash")
-    source ~/.bashrc
-    ;;
-  *)
-    echo "Unknown Shell"
-    ;;
-esac
+  case $(echo $SHELL) in
+    "/bin/zsh")
+      source ~/.zshrc
+      ;;
+    "/bin/bash")
+      source ~/.bashrc
+      ;;
+    *)
+      echo "Unknown Shell"
+      ;;
+  esac
 }
 
 alias set_time="dpkg-reconfigure tzdata"
