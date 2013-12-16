@@ -1,3 +1,8 @@
+
+# reminders
+# Delete a line from specific file
+# sed -i 8d ~/.ssh/known_hosts
+
 alias c='\cd'
 alias bn='branch-name'
 # alias cd='echo "DONT USE CD use c" && cd'
