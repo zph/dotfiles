@@ -253,3 +253,6 @@
 [submodule "home/.vim/bundle/switch.vim"]
 	path = home/.vim/bundle/switch.vim
 	url = git@github.com:AndrewRadev/switch.vim.git
+[submodule "home/.vim/bundle/emmet-vim"]
+	path = home/.vim/bundle/emmet-vim
+	url = git@github.com:mattn/emmet-vim.git

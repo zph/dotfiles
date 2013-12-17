@@ -669,9 +669,9 @@ autocmd BufRead *
 " Filetype shortcut
 map <Leader>ft :set ft=
 
-map <Leader>t :SweetVimRspecRunFile<CR>
-" map <Leader>s :SweetVimRspecRunFocused<CR>
-map <Leader>l :SweetVimRspecRunPrevious<CR>
+" map <Leader>t :SweetVimRspecRunFile<CR>
+" " map <Leader>s :SweetVimRspecRunFocused<CR>
+" map <Leader>l :SweetVimRspecRunPrevious<CR>
 
 " ZenCoding Shortcut
 vmap <Leader>z <C-Y>,
@@ -679,9 +679,9 @@ nmap <Leader>z <C-Y>,
 imap <Leader>z <ESC><C-Y>,a
 
 " Tidy Html and XML
-"
 :command Thtml :%!tidy -q -i --show-errors 0
 :command Txml  :%!tidy -q -i --show-errors 0 -xml
+
 " Hex Vim
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
@@ -909,18 +909,6 @@ endif
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
 
-function! CamelToUnderscore()
-  :'<,'>s/\([A-Z]\)/_\l\1/g
-endfunction
-command! CamelToUnderscore call CamelToUnderscore()
-
-" function! UnderscoreToCamel()
-"   :'<,'>s/\_([A-Za-z]\)/\u\1/g
-" endfunction
-" command! UnderscoreToCamel call UnderscoreToCamel()
-"
-" SED command for converting :foo => to foo:
-" %s/:\(.*\) =>/\1:/gc
 nnoremap <Leader>s :Switch<CR>
 
 " Don't bother about checking whether Escape is being used as a means to enter
@@ -943,7 +931,7 @@ set ttyfast
 " " Require less than one second between keys for mappings to work correctly
 set timeout
 set timeoutlen=1000
-"
+
 " " Require less than a twentieth of a second between keys for key codes to
 " work
 " " correctly; I don't use Escape as a meta key anyway
@@ -981,3 +969,9 @@ set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
 set listchars+=trail:💔
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
+
+" resize current buffer by +/- 5
+nnoremap <C-left> :vertical resize +3<cr>
+nnoremap <C-down> :resize +3<cr>
+nnoremap <C-up> :resize -3<cr>
+nnoremap <C-right> :vertical resize -3<cr>"
