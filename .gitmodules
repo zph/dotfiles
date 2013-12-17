@@ -172,9 +172,6 @@
 [submodule "home/.vim/bundle/vim-git"]
 	path = home/.vim/bundle/vim-git
 	url = https://github.com/tpope/vim-git.git
-[submodule "home/.vim/bundle/vim-rubocop"]
-	path = home/.vim/bundle/vim-rubocop
-	url = git://github.com/zph/vim-rubocop.git
 [submodule "home/.vim/bundle/ag.vim"]
 	path = home/.vim/bundle/ag.vim
 	url = git@github.com:rking/ag.vim.git
