@@ -253,3 +253,6 @@
 [submodule "home/.vim/bundle/emmet-vim"]
 	path = home/.vim/bundle/emmet-vim
 	url = git@github.com:mattn/emmet-vim.git
+[submodule "home/.vim/bundle/vim-vinegar"]
+	path = home/.vim/bundle/vim-vinegar
+	url = git@github.com:tpope/vim-vinegar.git
