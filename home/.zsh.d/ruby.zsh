@@ -52,6 +52,8 @@ export RUBY_FREE_MIN=600000
 # https://gist.github.com/carols10cents/6445611
 # I found I was typing these commands wayyy too much:
 alias rt="bundle exec rake test TEST="
+alias pry_console="bundle exec pry --gem"
+
 # I often use the tab completion on the filename, though.
 # The following lets me do:
 # $ rti some_integration_test.rb

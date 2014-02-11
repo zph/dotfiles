@@ -5,6 +5,7 @@
 
 alias c='\cd'
 alias bn='branch-name'
+# alias tree='tree -L 2 -fi'
 # alias cd='echo "DONT USE CD use c" && cd'
 # alias git='echo "DONT USE GIT use g" && git'
 alias rsync='rsync -v --progress --partial'
@@ -48,9 +49,9 @@ alias cl="clear"
 alias v-='view -'
 # alias dcd="cd ~+"
 if which colordiff > /dev/null 2>&1; then
-	alias diff="colordiff -Nuar"
+  alias diff="colordiff -Nuar"
 else
-	alias diff="diff -Nuar"
+  alias diff="diff -Nuar"
 fi
 
 alias grep='grep -Ei --colour=auto'

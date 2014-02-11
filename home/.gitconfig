@@ -144,7 +144,7 @@
 	trustExitCode = true
 [push]
 	; default = matching
-  default = current
+	default = matching
 [web]
 	browser = chrome
 [branch]
