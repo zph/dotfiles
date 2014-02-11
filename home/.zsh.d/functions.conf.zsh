@@ -36,3 +36,9 @@ function up { cd $(eval printf '../'%.0s {1..$1}) && pwd; }
 function rerun(){
 #TODO: rerun specific command
 }
+
+
+function copy_empty_dir_tree(){
+  # untested but should turn into mkdir -p spec/lib/gemname/crazy-nesting/folders
+  find . -type d | xargs mkdir -p "$1{}"
+}
