@@ -256,3 +256,6 @@
 [submodule "home/.vim/bundle/vim-vinegar"]
 	path = home/.vim/bundle/vim-vinegar
 	url = git@github.com:tpope/vim-vinegar.git
+[submodule "home/.vim/bundle/vim-golang"]
+	path = home/.vim/bundle/vim-golang
+	url = https://github.com/jnwhiteh/vim-golang.git
