@@ -39,6 +39,7 @@
     head = !git l -1
     hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
     hp = "!source ~/.githelpers && show_git_head"
+    implode = "!git reset --hard && git clean -df"
     l = "!source ~/.githelpers && pretty_git_log"
     la = !git l --all
     noff = merge --no-ff
@@ -51,6 +52,7 @@
     po = push origin
     pr = pull --rebase
     pl = pull
+    p = pull
     #pu = push
     pul = pull --ff-only
     pullff = pull --ff-only
@@ -87,6 +89,7 @@
     l = "!. ~/.githelpers && pretty_git_log"
     la = !git l --all
     ll = !git r --all
+    lo = !git log --oneline
     r = !git l -30
     ra = !git r --all
     unstage = reset HEAD
