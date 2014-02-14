@@ -23,7 +23,8 @@ end
 remove_symlinks_and_relink("sack.zsh", "~/bin_repos/sack/", "~/.zsh.d/")
 
 # recompile YouCompleteMe
-Dir.chdir(File.expand_path "~/.vim/bundle/youcompleteme") do |dir|
- system "sh ./install.sh"
+you_complete_me_dir = Dir["home/.vim/bundle/youcompleteme"].first
+Dir.chdir(File.expand_path you_complete_me_dir) do |dir|
+ system "./install.sh"
 end
 
