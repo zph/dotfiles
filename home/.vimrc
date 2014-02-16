@@ -975,3 +975,5 @@ nnoremap <C-left> :vertical resize +3<cr>
 nnoremap <C-down> :resize +3<cr>
 nnoremap <C-up> :resize -3<cr>
 nnoremap <C-right> :vertical resize -3<cr>"
+
+let g:NumberToggleTrigger="<F8>"
