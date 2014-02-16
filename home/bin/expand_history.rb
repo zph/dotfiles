@@ -1,8 +1,18 @@
 #!/usr/bin/env ruby
 
-@zsh_history = %x(cat ~/.zsh_history |sed 's/\xc2\x91\|\xc2\x92\|\xc2\xa0\|\xe2\x80\x8e//' 2> /dev/null).split("\n")
-@zsh_aliases = %x(zsh -i -c 'alias').split("\n")
-@git_aliases = %x(git config --get-regexp alias*).split("\n")
+class String
+  ENCODING_OPTS = {invalid: :replace, undef: :replace, replace: '', universal_newline: true}
+  def remove_non_ascii
+    self.encode(Encoding.find('ASCII'), ENCODING_OPTS)
+  end
+end
+
+# @zsh_history = %x(cat ~/.zsh_history |sed 's/\xc2\x91\|\xc2\x92\|\xc2\xa0\|\xe2\x80\x8e//' 2> /dev/null).split("\n")
+# opts = {invalid: :replace, undef: :replace, replace: '', universal_newline: true}
+@zsh_history = %x(cat ~/.zsh_history).remove_non_ascii.split("\n")
+@zsh_aliases = %x(zsh -i -c 'alias').remove_non_ascii.split("\n")
+@git_aliases = %x(git config --get-regexp alias*).remove_non_ascii.split("\n")
+
 
 ZSH_ALIASES = {}
 @zsh_aliases.map do |a|
@@ -31,6 +41,10 @@ converted_history.each { |item| history_count[item] += 1 }
 
 sorted_history = history_count.sort_by { |k,v| v }.reverse
 
-sorted_history.each do |arr|
-  puts "#{arr[1]}: #{arr[0]}"
+all_items = sorted_history.each do |arr|
+  begin
+    $stdout.puts "#{arr[1]}: #{arr[0]}"
+  rescue Errno::EPIPE
+    exit(74)
+  end
 end

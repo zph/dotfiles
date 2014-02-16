@@ -172,9 +172,6 @@
 [submodule "home/.vim/bundle/vim-git"]
 	path = home/.vim/bundle/vim-git
 	url = https://github.com/tpope/vim-git.git
-[submodule "home/.vim/bundle/vim-rubocop"]
-	path = home/.vim/bundle/vim-rubocop
-	url = git://github.com/zph/vim-rubocop.git
 [submodule "home/.vim/bundle/ag.vim"]
 	path = home/.vim/bundle/ag.vim
 	url = git@github.com:rking/ag.vim.git
@@ -256,9 +253,9 @@
 [submodule "home/.vim/bundle/emmet-vim"]
 	path = home/.vim/bundle/emmet-vim
 	url = git@github.com:mattn/emmet-vim.git
-[submodule "home/.vim/bundle/ultrablog"]
-	path = home/.vim/bundle/ultrablog
-	url = https://github.com/xbot/UltraBlog.vim.git
-[submodule "home/.vim/bundle/rust.vim"]
-	path = home/.vim/bundle/rust.vim
-	url = git@github.com:wting/rust.vim.git
+[submodule "home/.vim/bundle/vim-vinegar"]
+	path = home/.vim/bundle/vim-vinegar
+	url = git@github.com:tpope/vim-vinegar.git
+[submodule "home/.vim/bundle/vim-golang"]
+	path = home/.vim/bundle/vim-golang
+	url = https://github.com/jnwhiteh/vim-golang.git

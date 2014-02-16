@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Usage $1= filename, $2= linenumber in question
+
+\git show $(git blame $1 -L $2,$2 | awk '{print $1}')
