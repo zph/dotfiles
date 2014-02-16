@@ -395,13 +395,13 @@ endfunction
 
 command! RunTests call RunTests(expand("%"))
 
-" " Slime tmux settings
-" let g:slime_target = "tmux"
+" Slime tmux settings
+let g:slime_target = "tmux"
 
-" " Slimux settings
-" map <Leader>s :SlimuxREPLSendLine<CR>
-" vmap <Leader>s :SlimuxREPLSendSelection<CR>
-" map <Leader>d :SlimuxShellLast<CR>
+" Slimux settings
+map <Leader>s :SlimuxREPLSendLine<CR>
+vmap <Leader>s :SlimuxREPLSendSelection<CR>
+map <Leader>d :SlimuxShellLast<CR>
 
 " For jumplist... since tab is clobbered
 " go back
@@ -909,7 +909,7 @@ endif
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
 
-nnoremap <Leader>s :Switch<CR>
+" nnoremap <Leader>ss :Switch<CR>
 
 " Don't bother about checking whether Escape is being used as a means to enter
 " " a Meta-key combination, just register Escape immediately
@@ -955,7 +955,7 @@ function! StripWhitespace ()
     call setpos('.', save_cursor)
     call setreg('/', old_query)
 endfunction
-noremap <leader>ss :call StripWhitespace ()<CR>
+" noremap <leader>ss :call StripWhitespace ()<CR>
 
 " Join lines and restore cursor location (J)
 nnoremap J mjJ`j

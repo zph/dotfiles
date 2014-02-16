@@ -256,3 +256,9 @@
 [submodule "home/.vim/bundle/emmet-vim"]
 	path = home/.vim/bundle/emmet-vim
 	url = git@github.com:mattn/emmet-vim.git
+[submodule "home/.vim/bundle/ultrablog"]
+	path = home/.vim/bundle/ultrablog
+	url = https://github.com/xbot/UltraBlog.vim.git
+[submodule "home/.vim/bundle/rust.vim"]
+	path = home/.vim/bundle/rust.vim
+	url = git@github.com:wting/rust.vim.git
