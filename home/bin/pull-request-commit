@@ -3,11 +3,17 @@
 branch_name = `git rev-parse --abbrev-ref HEAD`.chomp
 DIVIDERS = %r{[-|_|/|\/]}
 
-parts = branch_name.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+begin
+  parts = branch_name.match(/(?<initials>[\w{2,3}|#{DIVIDERS}]+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+  require'pry';binding.pry
+rescue
+  # parts = branch_name.match(/(?<initials>[\w{2,3}|#{DIVIDERS}]+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+end
 
-INITIALS = parts[:initials].split(DIVIDERS).join("/").upcase
-PIVOTAL_NUMBER = parts[:number]
-DESCRIPTION = parts[:description].gsub(/#{DIVIDERS}/, ' ')
+
+INITIALS = parts.fetch(:initials).split(DIVIDERS).join("/").upcase
+PIVOTAL_NUMBER = parts.fetch( :number ) || "000000"
+DESCRIPTION = parts.fetch( :description ).gsub(/#{DIVIDERS}/, ' ')
 
 PR_CHECKLIST = if File.exists?(File.expand_path("~/.prchecklist"))
                  File.read File.expand_path("~/.prchecklist")
