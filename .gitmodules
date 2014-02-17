@@ -262,3 +262,6 @@
 [submodule "home/.vim/bundle/rust.vim"]
 	path = home/.vim/bundle/rust.vim
 	url = git@github.com:wting/rust.vim.git
+[submodule "home/.vim/bundle/vundle"]
+	path = home/.vim/bundle/vundle
+	url = https://github.com/gmarik/vundle.git
