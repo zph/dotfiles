@@ -1,9 +1,115 @@
 " Hack for speeding up vim load when using rvm
 let g:ruby_path = system('rvm current')
 
-call pathogen#infect()
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
 
-call pathogen#helptags()
+" let Vundle manage Vundle
+" " required! 
+Bundle 'gmarik/vundle'
+
+Bundle 'mileszs/ack.vim'
+Bundle 'vim-scripts/AutoTag'
+Bundle 'kien/ctrlp.vim'
+Bundle 'Raimondi/delimitMate'
+Bundle 'sethbc/fuzzyfinder_textmate'
+Bundle 'tpope/gem-ctags'
+Bundle 'gregsexton/gitv'
+Bundle 'sjl/gundo.vim'
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/neosnippet'
+Bundle 'epeli/slimux'
+Bundle 'honza/vim-snippets'
+Bundle 'ervandew/supertab'
+Bundle 'majutsushi/tagbar'
+Bundle 'nelstrom/vim-blackboard'
+Bundle 'tpope/vim-bundler'
+Bundle 'tpope/vim-commentary'
+Bundle 'skwp/vim-conque'
+Bundle 'tpope/vim-endwise'
+Bundle 'tpope/vim-eunuch'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-haml'
+Bundle 'tpope/vim-markdown'
+Bundle 'jeffkreeftmeijer/vim-numbertoggle'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-rsi'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'skwp/vim-ruby-conque'
+Bundle 'tpope/vim-rvm'
+Bundle 'slim-template/vim-slim'
+Bundle 'jpalardy/vim-slime'
+Bundle 'tpope/vim-surround'
+Bundle 'vimoutliner/vimoutliner'
+Bundle 'benmills/vimux'
+Bundle 'sukima/xmledit'
+Bundle 'vim-scripts/ZoomWin'
+Bundle 'phanle/sweet-rspec-vim'
+Bundle 'leshill/vim-json'
+Bundle 'godlygeek/tabular'
+Bundle 'mattn/gist-vim'
+Bundle 'mattn/webapi-vim'
+Bundle 'vim-scripts/TwitVim'
+Bundle 'timcharper/textile.vim'
+Bundle 'wikitopian/hardmode'
+Bundle 'rking/vim-ruby-refactoring'
+Bundle 'tpope/vim-dispatch'
+Bundle 'rizzatti/dash.vim'
+Bundle 'rizzatti/funcoo.vim'
+Bundle 'thoughtbot/vim-rspec'
+Bundle 'rking/vim-detailed'
+Bundle 'rking/vim-joy'
+Bundle 'tyru/open-browser.vim'
+Bundle 'sjl/gundo.vim'
+Bundle 'tpope/vim-git'
+Bundle 'rking/ag.vim'
+Bundle 'michaeljsmith/vim-indent-object'
+Bundle 'xolox/vim-easytags'
+Bundle 'xolox/vim-misc'
+Bundle 'mattn/ctrlp-mark'
+Bundle 'mattn/ctrlp-register'
+Bundle 'visionmedia/git-extras'
+Bundle 'elixir-lang/vim-elixir'
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'zph/ultisnips'
+Bundle 'nelstrom/vim-textobj-rubyblock'
+Bundle 'kana/vim-textobj-user'
+Bundle 'terryma/vim-multiple-cursors'
+Bundle 'tpope/vim-unimpaired'
+Bundle 'ap/vim-css-color'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-ragtag'
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'mattn/emmet-vim'
+Bundle 'bling/vim-airline'
+Bundle 'airblade/vim-gitgutter'
+Bundle 'tpope/vim-abolish'
+Bundle 'AndrewRadev/switch.vim'
+Bundle 'mattn/emmet-vim'
+Bundle 'tpope/vim-vinegar'
+Bundle 'jnwhiteh/vim-golang'
+Bundle 'wting/rust.vim'
+
+" My bundles here:
+"
+" original repos on GitHub
+" Bundle 'tpope/vim-fugitive'
+" Bundle 'Lokaltog/vim-easymotion'
+" Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+" Bundle 'tpope/vim-rails.git'
+" " vim-scripts repos
+" Bundle 'L9'
+" Bundle 'FuzzyFinder'
+" " non-GitHub repos
+" Bundle 'git://git.wincent.com/command-t.git'
+" " Git repos on your local machine (i.e. when working on your own plugin)
+" Bundle 'file:///Users/gmarik/path/to/plugin'
+" ...
+"
+"call pathogen#infect()
+
+"call pathogen#helptags()
 set nocompatible      " We're running Vim, not Vi!
 syntax on             " Enable syntax highlighting
 filetype on           " Enable filetype detection
