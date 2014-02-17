@@ -30,8 +30,6 @@ system "homesick symlink ~/dotfiles"
  remove_symlinks_and_relink(file, "~/bin_repos/sack/bin/", "~/bin/")
 end
 
-remove_symlinks_and_relink("sack.zsh", "~/bin_repos/sack/", "~/.zsh.d/")
-
 # recompile YouCompleteMe
 you_complete_me_dir = Dir["home/.vim/bundle/youcompleteme"].first
 Dir.chdir(File.expand_path you_complete_me_dir) do |dir|
