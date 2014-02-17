@@ -1,1 +1,0 @@
-/Users/zhill/bin_repos/sack/sack.zsh

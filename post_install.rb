@@ -14,16 +14,37 @@ Dir.chdir(File.expand_path("~/dotfiles")) do |dir|
   system "git submodule update"
 end
 
-system "homesick symlink ~/dotfiles"
-
-%w[sack sag F].each do |file|
- remove_symlinks_and_relink(file, "~/bin_repos/sack/", "~/bin/")
+def ensure_homesick_is_installed
+  require 'open3'
+  _, status = Open3.capture2('which homesick')
+  unless status.exitstatus == 0
+    `gem install homesick`
+  end
 end
 
-remove_symlinks_and_relink("sack.zsh", "~/bin_repos/sack/", "~/.zsh.d/")
+ensure_homesick_is_installed
 
+system "homesick symlink ~/dotfiles"
+
+%w[sack F].each do |file|
+ remove_symlinks_and_relink(file, "~/bin_repos/sack/bin/", "~/bin/")
+end
+
+def bring_in_vim_plugins
+  `infect`
+end
+
+bring_in_vim_plugins
+#
 # recompile YouCompleteMe
-Dir.chdir(File.expand_path "~/.vim/bundle/youcompleteme") do |dir|
- system "sh ./install.sh"
+you_complete_me_dir = Dir["home/.vim/bundle/youcompleteme"].first
+Dir.chdir(File.expand_path you_complete_me_dir) do |dir|
+
+  `git submodule update --init --recursive`
+  unless File.exists?('python/ycm_core.so')
+    system "./install.sh"
+  else
+    puts "YouCompleteMe already installed"
+  end
 end
 

@@ -16,8 +16,11 @@ end
 
 ZSH_ALIASES = {}
 @zsh_aliases.map do |a|
-  array = a.split("=", 2)
-  ZSH_ALIASES[array[0]] = array[1].gsub(/['"]?/, '')
+  begin
+    array = a.split("=", 2)
+    ZSH_ALIASES[array[0]] = array[1].gsub(/['"]?/, '')
+  rescue
+  end
 end
 
 
