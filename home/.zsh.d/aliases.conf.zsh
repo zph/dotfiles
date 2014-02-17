@@ -25,6 +25,7 @@ alias xt='extract'
 # alias cva='cdargs -a "$@"; cd $_'
 alias mntcd='mount -t iso9660 -o loop'
 alias targz="tar cvzf" # then filename.tar.gz dir_to_compress
+alias find_recent="find . -type f -mmin -60"  # Find files below the current directory that have changed within the last 60 minutes.
 
 #cd by .. or ... or ... or mv file ..../.
 alias ..="cd .."
