@@ -1,1 +1,0 @@
-/Users/zander/bin_repos/sack/sack.zsh
