@@ -41,8 +41,13 @@ homesick_add(){
 # http://samsaffron.com/archive/2013/05/03/eliminating-my-trivial-inconveniences
 export RUBY_GC_MALLOC_LIMIT=1000000000
 export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.25
-export RUBY_HEAP_MIN_SLOTS=800000
-export RUBY_FREE_MIN=600000
+if [[ $RUBY_VERSION == "ruby-2.1.0" ]]; then
+  export RUBY_GC_HEAP_INIT_SLOTS=800000
+  export RUBY_GC_HEAP_FREE_MIN=600000
+else
+  export RUBY_HEAP_MIN_SLOTS=800000
+  export RUBY_FREE_MIN=600000
+fi
 # export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so
 
 # # This is because active_support has errors on our versions of rails

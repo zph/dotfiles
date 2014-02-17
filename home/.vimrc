@@ -1,7 +1,95 @@
 " Hack for speeding up vim load when using rvm
 let g:ruby_path = system('rvm current')
 
-call pathogen#infect()
+" Sun Feb 16 21:37:02 EST 2014 - Consider trying 'infect' + pathogen
+
+"=bundle tpope/vim-pathogen
+"=bundle tpope/vim-sensible
+source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
+execute pathogen#incubate()
+
+"=bundle mileszs/ack.vim
+"=bundle vim-scripts/AutoTag
+"=bundle kien/ctrlp.vim
+"=bundle Raimondi/delimitMate
+"=bundle sethbc/fuzzyfinder_textmate
+"=bundle tpope/gem-ctags
+"=bundle gregsexton/gitv
+"=bundle sjl/gundo.vim
+"=bundle Shougo/neocomplcache
+"=bundle Shougo/neosnippet
+"=bundle epeli/slimux
+"=bundle honza/vim-snippets
+"=bundle ervandew/supertab
+"=bundle majutsushi/tagbar
+"=bundle nelstrom/vim-blackboard
+"=bundle tpope/vim-bundler
+"=bundle tpope/vim-commentary
+"=bundle skwp/vim-conque
+"=bundle tpope/vim-endwise
+"=bundle tpope/vim-eunuch
+"=bundle tpope/vim-fugitive
+"=bundle tpope/vim-haml
+"=bundle tpope/vim-markdown
+"=bundle jeffkreeftmeijer/vim-numbertoggle
+"=bundle tpope/vim-repeat
+"=bundle tpope/vim-rsi
+"=bundle vim-ruby/vim-ruby
+"=bundle skwp/vim-ruby-conque
+"=bundle tpope/vim-rvm
+"=bundle slim-template/vim-slim
+"=bundle jpalardy/vim-slime
+"=bundle tpope/vim-surround
+"=bundle vimoutliner/vimoutliner
+"=bundle benmills/vimux
+"=bundle sukima/xmledit
+"=bundle vim-scripts/ZoomWin
+"=bundle phanle/sweet-rspec-vim
+"=bundle leshill/vim-json
+"=bundle godlygeek/tabular
+"=bundle mattn/gist-vim
+"=bundle mattn/webapi-vim
+"=bundle vim-scripts/TwitVim
+"=bundle timcharper/textile.vim
+"=bundle wikitopian/hardmode
+"=bundle rking/vim-ruby-refactoring
+"=bundle tpope/vim-dispatch
+"=bundle rizzatti/dash.vim
+"=bundle rizzatti/funcoo.vim
+"=bundle thoughtbot/vim-rspec
+"=bundle rking/vim-detailed
+"=bundle rking/vim-joy
+"=bundle tyru/open-browser.vim
+"=bundle sjl/gundo.vim
+"=bundle tpope/vim-git
+"=bundle rking/ag.vim
+"=bundle michaeljsmith/vim-indent-object
+"=bundle xolox/vim-easytags
+"=bundle xolox/vim-misc
+"=bundle mattn/ctrlp-mark
+"=bundle mattn/ctrlp-register
+"=bundle visionmedia/git-extras
+"=bundle elixir-lang/vim-elixir
+"=bundle Lokaltog/vim-easymotion
+"=bundle zph/ultisnips
+"=bundle nelstrom/vim-textobj-rubyblock
+"=bundle kana/vim-textobj-user
+"=bundle terryma/vim-multiple-cursors
+"=bundle tpope/vim-unimpaired
+"=bundle ap/vim-css-color
+"=bundle kchmck/vim-coffee-script
+"=bundle tpope/vim-rails
+"=bundle tpope/vim-ragtag
+"=bundle Valloric/YouCompleteMe
+"=bundle mattn/emmet-vim
+"=bundle bling/vim-airline
+"=bundle airblade/vim-gitgutter
+"=bundle tpope/vim-abolish
+"=bundle AndrewRadev/switch.vim
+"=bundle mattn/emmet-vim
+"=bundle tpope/vim-vinegar
+"=bundle jnwhiteh/vim-golang
+"=bundle wting/rust.vim
 
 call pathogen#helptags()
 set nocompatible      " We're running Vim, not Vi!
@@ -395,13 +483,13 @@ endfunction
 
 command! RunTests call RunTests(expand("%"))
 
-" " Slime tmux settings
-" let g:slime_target = "tmux"
+" Slime tmux settings
+let g:slime_target = "tmux"
 
-" " Slimux settings
-" map <Leader>s :SlimuxREPLSendLine<CR>
-" vmap <Leader>s :SlimuxREPLSendSelection<CR>
-" map <Leader>d :SlimuxShellLast<CR>
+" Slimux settings
+map <Leader>s :SlimuxREPLSendLine<CR>
+vmap <Leader>s :SlimuxREPLSendSelection<CR>
+map <Leader>d :SlimuxShellLast<CR>
 
 " For jumplist... since tab is clobbered
 " go back
@@ -909,7 +997,7 @@ endif
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
 
-nnoremap <Leader>s :Switch<CR>
+" nnoremap <Leader>ss :Switch<CR>
 
 " Don't bother about checking whether Escape is being used as a means to enter
 " " a Meta-key combination, just register Escape immediately
@@ -955,7 +1043,7 @@ function! StripWhitespace ()
     call setpos('.', save_cursor)
     call setreg('/', old_query)
 endfunction
-noremap <leader>ss :call StripWhitespace ()<CR>
+" noremap <leader>ss :call StripWhitespace ()<CR>
 
 " Join lines and restore cursor location (J)
 nnoremap J mjJ`j

@@ -16,7 +16,5 @@ home/bin/F
 home/bin/sack
 home/bin/sag
 home/bin/sgrep
-/home/.emacs.d/image-dired/*
-home/bin/F
-home/bin/sack
-home/bin/sag
+home/.emacs.d/image-dired/*
+home/.vim/bundle/*

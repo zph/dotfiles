@@ -1,0 +1,14 @@
+#!/bin/bash
+
+filename=$1
+binname=$(echo $filename | sed 's/\.rs$//')
+
+function compile_rust(){
+  rustc $filename
+}
+
+function run_bin(){
+  ./$binname
+}
+
+compile_rust && run_bin
