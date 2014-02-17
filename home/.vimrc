@@ -1,115 +1,97 @@
 " Hack for speeding up vim load when using rvm
 let g:ruby_path = system('rvm current')
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+" Sun Feb 16 21:37:02 EST 2014 - Consider trying 'infect' + pathogen
 
-" let Vundle manage Vundle
-" " required! 
-Bundle 'gmarik/vundle'
+"=bundle tpope/vim-pathogen
+"=bundle tpope/vim-sensible
+source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
+execute pathogen#incubate()
 
-Bundle 'mileszs/ack.vim'
-Bundle 'vim-scripts/AutoTag'
-Bundle 'kien/ctrlp.vim'
-Bundle 'Raimondi/delimitMate'
-Bundle 'sethbc/fuzzyfinder_textmate'
-Bundle 'tpope/gem-ctags'
-Bundle 'gregsexton/gitv'
-Bundle 'sjl/gundo.vim'
-Bundle 'Shougo/neocomplcache'
-Bundle 'Shougo/neosnippet'
-Bundle 'epeli/slimux'
-Bundle 'honza/vim-snippets'
-Bundle 'ervandew/supertab'
-Bundle 'majutsushi/tagbar'
-Bundle 'nelstrom/vim-blackboard'
-Bundle 'tpope/vim-bundler'
-Bundle 'tpope/vim-commentary'
-Bundle 'skwp/vim-conque'
-Bundle 'tpope/vim-endwise'
-Bundle 'tpope/vim-eunuch'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-haml'
-Bundle 'tpope/vim-markdown'
-Bundle 'jeffkreeftmeijer/vim-numbertoggle'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-rsi'
-Bundle 'vim-ruby/vim-ruby'
-Bundle 'skwp/vim-ruby-conque'
-Bundle 'tpope/vim-rvm'
-Bundle 'slim-template/vim-slim'
-Bundle 'jpalardy/vim-slime'
-Bundle 'tpope/vim-surround'
-Bundle 'vimoutliner/vimoutliner'
-Bundle 'benmills/vimux'
-Bundle 'sukima/xmledit'
-Bundle 'vim-scripts/ZoomWin'
-Bundle 'phanle/sweet-rspec-vim'
-Bundle 'leshill/vim-json'
-Bundle 'godlygeek/tabular'
-Bundle 'mattn/gist-vim'
-Bundle 'mattn/webapi-vim'
-Bundle 'vim-scripts/TwitVim'
-Bundle 'timcharper/textile.vim'
-Bundle 'wikitopian/hardmode'
-Bundle 'rking/vim-ruby-refactoring'
-Bundle 'tpope/vim-dispatch'
-Bundle 'rizzatti/dash.vim'
-Bundle 'rizzatti/funcoo.vim'
-Bundle 'thoughtbot/vim-rspec'
-Bundle 'rking/vim-detailed'
-Bundle 'rking/vim-joy'
-Bundle 'tyru/open-browser.vim'
-Bundle 'sjl/gundo.vim'
-Bundle 'tpope/vim-git'
-Bundle 'rking/ag.vim'
-Bundle 'michaeljsmith/vim-indent-object'
-Bundle 'xolox/vim-easytags'
-Bundle 'xolox/vim-misc'
-Bundle 'mattn/ctrlp-mark'
-Bundle 'mattn/ctrlp-register'
-Bundle 'visionmedia/git-extras'
-Bundle 'elixir-lang/vim-elixir'
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'zph/ultisnips'
-Bundle 'nelstrom/vim-textobj-rubyblock'
-Bundle 'kana/vim-textobj-user'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'ap/vim-css-color'
-Bundle 'kchmck/vim-coffee-script'
-Bundle 'tpope/vim-rails'
-Bundle 'tpope/vim-ragtag'
-Bundle 'Valloric/YouCompleteMe'
-Bundle 'mattn/emmet-vim'
-Bundle 'bling/vim-airline'
-Bundle 'airblade/vim-gitgutter'
-Bundle 'tpope/vim-abolish'
-Bundle 'AndrewRadev/switch.vim'
-Bundle 'mattn/emmet-vim'
-Bundle 'tpope/vim-vinegar'
-Bundle 'jnwhiteh/vim-golang'
-Bundle 'wting/rust.vim'
+"=bundle mileszs/ack.vim
+"=bundle vim-scripts/AutoTag
+"=bundle kien/ctrlp.vim
+"=bundle Raimondi/delimitMate
+"=bundle sethbc/fuzzyfinder_textmate
+"=bundle tpope/gem-ctags
+"=bundle gregsexton/gitv
+"=bundle sjl/gundo.vim
+"=bundle Shougo/neocomplcache
+"=bundle Shougo/neosnippet
+"=bundle epeli/slimux
+"=bundle honza/vim-snippets
+"=bundle ervandew/supertab
+"=bundle majutsushi/tagbar
+"=bundle nelstrom/vim-blackboard
+"=bundle tpope/vim-bundler
+"=bundle tpope/vim-commentary
+"=bundle skwp/vim-conque
+"=bundle tpope/vim-endwise
+"=bundle tpope/vim-eunuch
+"=bundle tpope/vim-fugitive
+"=bundle tpope/vim-haml
+"=bundle tpope/vim-markdown
+"=bundle jeffkreeftmeijer/vim-numbertoggle
+"=bundle tpope/vim-repeat
+"=bundle tpope/vim-rsi
+"=bundle vim-ruby/vim-ruby
+"=bundle skwp/vim-ruby-conque
+"=bundle tpope/vim-rvm
+"=bundle slim-template/vim-slim
+"=bundle jpalardy/vim-slime
+"=bundle tpope/vim-surround
+"=bundle vimoutliner/vimoutliner
+"=bundle benmills/vimux
+"=bundle sukima/xmledit
+"=bundle vim-scripts/ZoomWin
+"=bundle phanle/sweet-rspec-vim
+"=bundle leshill/vim-json
+"=bundle godlygeek/tabular
+"=bundle mattn/gist-vim
+"=bundle mattn/webapi-vim
+"=bundle vim-scripts/TwitVim
+"=bundle timcharper/textile.vim
+"=bundle wikitopian/hardmode
+"=bundle rking/vim-ruby-refactoring
+"=bundle tpope/vim-dispatch
+"=bundle rizzatti/dash.vim
+"=bundle rizzatti/funcoo.vim
+"=bundle thoughtbot/vim-rspec
+"=bundle rking/vim-detailed
+"=bundle rking/vim-joy
+"=bundle tyru/open-browser.vim
+"=bundle sjl/gundo.vim
+"=bundle tpope/vim-git
+"=bundle rking/ag.vim
+"=bundle michaeljsmith/vim-indent-object
+"=bundle xolox/vim-easytags
+"=bundle xolox/vim-misc
+"=bundle mattn/ctrlp-mark
+"=bundle mattn/ctrlp-register
+"=bundle visionmedia/git-extras
+"=bundle elixir-lang/vim-elixir
+"=bundle Lokaltog/vim-easymotion
+"=bundle zph/ultisnips
+"=bundle nelstrom/vim-textobj-rubyblock
+"=bundle kana/vim-textobj-user
+"=bundle terryma/vim-multiple-cursors
+"=bundle tpope/vim-unimpaired
+"=bundle ap/vim-css-color
+"=bundle kchmck/vim-coffee-script
+"=bundle tpope/vim-rails
+"=bundle tpope/vim-ragtag
+"=bundle Valloric/YouCompleteMe
+"=bundle mattn/emmet-vim
+"=bundle bling/vim-airline
+"=bundle airblade/vim-gitgutter
+"=bundle tpope/vim-abolish
+"=bundle AndrewRadev/switch.vim
+"=bundle mattn/emmet-vim
+"=bundle tpope/vim-vinegar
+"=bundle jnwhiteh/vim-golang
+"=bundle wting/rust.vim
 
-" My bundles here:
-"
-" original repos on GitHub
-" Bundle 'tpope/vim-fugitive'
-" Bundle 'Lokaltog/vim-easymotion'
-" Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Bundle 'tpope/vim-rails.git'
-" " vim-scripts repos
-" Bundle 'L9'
-" Bundle 'FuzzyFinder'
-" " non-GitHub repos
-" Bundle 'git://git.wincent.com/command-t.git'
-" " Git repos on your local machine (i.e. when working on your own plugin)
-" Bundle 'file:///Users/gmarik/path/to/plugin'
-" ...
-"
-"call pathogen#infect()
-
-"call pathogen#helptags()
+call pathogen#helptags()
 set nocompatible      " We're running Vim, not Vi!
 syntax on             " Enable syntax highlighting
 filetype on           " Enable filetype detection

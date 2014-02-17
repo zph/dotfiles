@@ -30,9 +30,17 @@ system "homesick symlink ~/dotfiles"
  remove_symlinks_and_relink(file, "~/bin_repos/sack/bin/", "~/bin/")
 end
 
+def bring_in_vim_plugins
+  `infect`
+end
+
+bring_in_vim_plugins
+#
 # recompile YouCompleteMe
 you_complete_me_dir = Dir["home/.vim/bundle/youcompleteme"].first
 Dir.chdir(File.expand_path you_complete_me_dir) do |dir|
+
+  `git submodule update --init --recursive`
   unless File.exists?('python/ycm_core.so')
     system "./install.sh"
   else
