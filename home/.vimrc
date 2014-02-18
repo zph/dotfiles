@@ -12,7 +12,7 @@ execute pathogen#incubate()
 ""=bundle tpope/gem-ctags
 ""=bundle gregsexton/gitv
 ""=bundle mileszs/ack.vim
-""=bundle Lokaltog/vim-easymotion
+
 ""=bundle godlygeek/tabular
 ""=bundle mattn/emmet-vim
 ""=bundle michaeljsmith/vim-indent-object
@@ -27,7 +27,31 @@ execute pathogen#incubate()
 "=bundle nelstrom/vim-textobj-rubyblock
 "=bundle tsaleh/vim-matchit
 "=bundle tpope/vim-dispatch
-"=bundle wikitopian/hardmode
+"
+" Trying
+"=bundle zph/hardmode
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+"=bundle Lokaltog/vim-easymotion
+"Gif config
+let g:EasyMotion_smartcase = 1
+" Gif config
+"
+" Require tpope/vim-repeat to enable dot repeat support
+" Jump to anywhere with only `s{char}{target}`
+" `s<CR>` repeat last find motion.
+nmap s <Plug>(easymotion-s)
+" Bidirectional & within line 't' motion
+omap t <Plug>(easymotion-bd-tl)
+" Use uppercase target labels and type as a lower case
+let g:EasyMotion_use_upper = 1
+" type `l` and match `l`&`L`
+let g:EasyMotion_smartcase = 1
+" Smartsign (type `3` and match `3`&`#`)
+let g:EasyMotion_use_smartsign_us = 1
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map  n <Plug>(easymotion-next)
+map  N <Plug>(easymotion-prev)
 "
 "Keeping
 "=bundle AndrewRadev/switch.vim
@@ -134,8 +158,8 @@ set title                " change the terminal's title
 set visualbell           " don't beep
 "
 " Fix forward searching
-nnoremap / /\v
-vnoremap / /\v
+" nnoremap / /\v
+" vnoremap / /\v
 set ignorecase
 set smartcase
 
@@ -787,7 +811,7 @@ nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 " map <Leader>at :w\| :silent !echo rspec spec > test-commands
 "
 "
-nnoremap <leader><leader>r :w\| :!rspec spec<cr>
+" nnoremap <leader><leader>r :w\| :!rspec spec<cr>
 map <leader>q :q
 command Rake :!rake
 
