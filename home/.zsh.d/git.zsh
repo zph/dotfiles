@@ -2,7 +2,11 @@
 # Taken from http://www.anujgakhar.com/2012/01/08/a-better-shell-with-oh-my-zsh/
 # and oh-my-zsh
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
-alias g='git'
+if [[ -x `which hub` ]];then
+  alias g=`which hub`;
+else
+  alias g='git'
+fi
 compdef g=git
 alias gcl='git clone'
 #compdef _git gcl=git-clone
