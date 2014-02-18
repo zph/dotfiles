@@ -29,9 +29,8 @@ execute pathogen#incubate()
 "=bundle tpope/vim-dispatch
 "
 " Trying
-"=bundle zph/hardmode
-autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
 "=bundle Lokaltog/vim-easymotion
+"=bundle kbarrette/mediummode
 "Gif config
 let g:EasyMotion_smartcase = 1
 " Gif config
