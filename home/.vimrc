@@ -8,88 +8,71 @@ let g:ruby_path = system('rvm current')
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#incubate()
 
-"=bundle mileszs/ack.vim
-"=bundle vim-scripts/AutoTag
-"=bundle kien/ctrlp.vim
-"=bundle Raimondi/delimitMate
-"=bundle sethbc/fuzzyfinder_textmate
-"=bundle tpope/gem-ctags
-"=bundle gregsexton/gitv
-"=bundle sjl/gundo.vim
-"=bundle Shougo/neocomplcache
-"=bundle Shougo/neosnippet
+" Unused plugins
+""=bundle tpope/gem-ctags
+""=bundle gregsexton/gitv
+""=bundle mileszs/ack.vim
+""=bundle Lokaltog/vim-easymotion
+""=bundle godlygeek/tabular
+""=bundle mattn/emmet-vim
+""=bundle michaeljsmith/vim-indent-object
+""=bundle xolox/vim-easytags
+""=bundle xolox/vim-misc
+""=bundle vim-scripts/AutoTag
+""=bundle jnwhiteh/vim-golang
+
+" Maybe
+"
+"=bundle kana/vim-textobj-user
+"=bundle nelstrom/vim-textobj-rubyblock
+"=bundle tsaleh/vim-matchit
+"=bundle tpope/vim-dispatch
+"=bundle wikitopian/hardmode
+"
+"Keeping
+"=bundle AndrewRadev/switch.vim
+"=bundle Valloric/YouCompleteMe
+"=bundle airblade/vim-gitgutter
+"=bundle ap/vim-css-color
+"=bundle bling/vim-airline
+"=bundle elixir-lang/vim-elixir
 "=bundle epeli/slimux
-"=bundle honza/vim-snippets
 "=bundle ervandew/supertab
-"=bundle majutsushi/tagbar
-"=bundle nelstrom/vim-blackboard
-"=bundle tpope/vim-bundler
+"=bundle Raimondi/delimitMate
+"=bundle honza/vim-snippets
+"=bundle jeffkreeftmeijer/vim-numbertoggle
+"=bundle jpalardy/vim-slime
+"=bundle kchmck/vim-coffee-script
+"=bundle kien/ctrlp.vim
+"=bundle leshill/vim-json
+"=bundle mattn/ctrlp-mark
+"=bundle mattn/ctrlp-register
+"=bundle mattn/gist-vim
+"=bundle mattn/webapi-vim
+"=bundle rking/ag.vim
+"=bundle rking/vim-detailed
+"=bundle rking/vim-ruby-refactoring
+"=bundle sjl/gundo.vim
+"=bundle slim-template/vim-slim
+"=bundle tpope/vim-abolish
 "=bundle tpope/vim-commentary
-"=bundle skwp/vim-conque
 "=bundle tpope/vim-endwise
 "=bundle tpope/vim-eunuch
 "=bundle tpope/vim-fugitive
+"=bundle tpope/vim-git
 "=bundle tpope/vim-haml
 "=bundle tpope/vim-markdown
-"=bundle jeffkreeftmeijer/vim-numbertoggle
+"=bundle tpope/vim-ragtag
+"=bundle tpope/vim-rails
 "=bundle tpope/vim-repeat
 "=bundle tpope/vim-rsi
-"=bundle vim-ruby/vim-ruby
-"=bundle skwp/vim-ruby-conque
-"=bundle tpope/vim-rvm
-"=bundle slim-template/vim-slim
-"=bundle jpalardy/vim-slime
 "=bundle tpope/vim-surround
-"=bundle vimoutliner/vimoutliner
-"=bundle benmills/vimux
-"=bundle sukima/xmledit
-"=bundle vim-scripts/ZoomWin
-"=bundle phanle/sweet-rspec-vim
-"=bundle leshill/vim-json
-"=bundle godlygeek/tabular
-"=bundle mattn/gist-vim
-"=bundle mattn/webapi-vim
-"=bundle vim-scripts/TwitVim
-"=bundle timcharper/textile.vim
-"=bundle wikitopian/hardmode
-"=bundle rking/vim-ruby-refactoring
-"=bundle tpope/vim-dispatch
-"=bundle rizzatti/dash.vim
-"=bundle rizzatti/funcoo.vim
-"=bundle thoughtbot/vim-rspec
-"=bundle rking/vim-detailed
-"=bundle rking/vim-joy
-"=bundle tyru/open-browser.vim
-"=bundle sjl/gundo.vim
-"=bundle tpope/vim-git
-"=bundle rking/ag.vim
-"=bundle michaeljsmith/vim-indent-object
-"=bundle xolox/vim-easytags
-"=bundle xolox/vim-misc
-"=bundle mattn/ctrlp-mark
-"=bundle mattn/ctrlp-register
-"=bundle visionmedia/git-extras
-"=bundle elixir-lang/vim-elixir
-"=bundle Lokaltog/vim-easymotion
-"=bundle zph/ultisnips
-"=bundle nelstrom/vim-textobj-rubyblock
-"=bundle kana/vim-textobj-user
-"=bundle terryma/vim-multiple-cursors
 "=bundle tpope/vim-unimpaired
-"=bundle ap/vim-css-color
-"=bundle kchmck/vim-coffee-script
-"=bundle tpope/vim-rails
-"=bundle tpope/vim-ragtag
-"=bundle Valloric/YouCompleteMe
-"=bundle mattn/emmet-vim
-"=bundle bling/vim-airline
-"=bundle airblade/vim-gitgutter
-"=bundle tpope/vim-abolish
-"=bundle AndrewRadev/switch.vim
-"=bundle mattn/emmet-vim
 "=bundle tpope/vim-vinegar
-"=bundle jnwhiteh/vim-golang
+"=bundle vim-ruby/vim-ruby
+"=bundle vim-scripts/ZoomWin
 "=bundle wting/rust.vim
+"=bundle zph/ultisnips
 
 call pathogen#helptags()
 set nocompatible      " We're running Vim, not Vi!
@@ -101,7 +84,7 @@ filetype plugin on    " Enable filetype-specific plugins
 " Set Leader key
 let mapleader = ","
 
-" Since we mapped , as leader, let's map ',' default backwards ;
+"Since we mapped , as leader, let's map ',' default backwards ;
 nnoremap \ ,
 map <Space> <Leader>
 
@@ -127,20 +110,12 @@ set winwidth=80
 set nowrap  " Line wrapping off
 " Preserve large pastes
 set pastetoggle=<F2>
-" For TagBar Toggle Plugin
-" requires apt-get install exuberant-ctags in debian (or brew install
-" ctags-exuberant for OSX or comparable
-nnoremap <leader>ta :TagbarOpenAutoClose<CR>
-nnoremap <leader>tg :!ctags -R .<CR>
 
 nnoremap <leader>cl :close<CR>
 set smartindent
 set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
-
-nnoremap <Leader>a :Ack 
-nnoremap <Leader>aa :Ack <cword><CR>
 
 nnoremap <Leader>g :GundoToggle<CR>
 
@@ -396,8 +371,8 @@ autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <
 map <Left> <C-O>
 map <Right> <C-I>
 """" Stable
-map <Up> :echo "no!"<cr>
-map <Down> :echo "no!"<cr>
+map <Up> :bnext<cr>
+map <Down> :bprevious<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " OPEN FILES IN DIRECTORY OF CURRENT FILE
@@ -535,6 +510,7 @@ nnoremap Q :q
 
 " Disable K looking stuff up ie instant manual lookups
 map K <Nop>
+nnoremap K :r!
 
 " When loading text files, wrap them and don't split up words.
 au BufNewFile,BufRead *.txt setlocal wrap
@@ -585,12 +561,7 @@ endfunction
 
 command! IncludeRCodeTools call IncludeRCodeTools()
 " execute ":IncludeRCodeTools"
-autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
-
-" Shortcuts for VimRepress
-" nnoremap <silent> <Leader>bl  :BlogList<CR>
-" nnoremap <silent> <Leader>bn  :BlogNew<CR>
-" nnoremap <silent> <Leader>bsp :BlogSave publish<CR>
+" autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
 
 " For folding
 function! FoldingOn()
@@ -616,21 +587,21 @@ command! FoldingOn call FoldingOn()
 
 "Tabular mappings
 "http://vimcasts.org/episodes/aligning-text-with-tabular-vim/
-if exists(":Tabularize")
-  nmap <Leader>a= :Tabularize /=<CR>
-  vmap <Leader>a= :Tabularize /=<CR>
-  nmap <Leader>a: :Tabularize /:\zs<CR>
-  vmap <Leader>a: :Tabularize /:\zs<CR>
-endif
+" if exists(":Tabularize")
+"   nmap <Leader>a= :Tabularize /=<CR>
+"   vmap <Leader>a= :Tabularize /=<CR>
+"   nmap <Leader>a: :Tabularize /:\zs<CR>
+"   vmap <Leader>a: :Tabularize /:\zs<CR>
+" endif
 
 " Use leader-b for Easy Buffer Access
 "TODO : write function to open MRU instead of 'files' if pwd is ~/
 imap <Leader>b <ESC>:CtrlPBuffer<CR>
 nmap <Leader>b :CtrlPBuffer<CR>
-imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
-nmap <Leader>mr :CtrlPMRUFiles<CR>
-imap <Leader>p <ESC>:CtrlPMixed<CR>
-nmap <Leader>p :CtrlPMixed<CR>
+" imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
+" nmap <Leader>mr :CtrlPMRUFiles<CR>
+" imap <Leader>p <ESC>:CtrlPMixed<CR>
+" nmap <Leader>p :CtrlPMixed<CR>
 let g:ctrlp_max_depth = 10
 
 "" Custom CtrlP Config
@@ -662,12 +633,12 @@ nmap <Leader>m :!open -a Marked.app "%"<CR><CR>
 imap <Leader>rr <ESC>:!ruby %<CR>
 nmap <Leader>rr :!ruby %<CR>
 
-nmap <Leader>st :%s/\n/ /g<CR>
-nmap <Leader>sh :%!fmt -n 100<CR>
-nmap <Leader>shh <Leader>st<Leader>sh
-vnoremap <Leader>sh :!fmt -n 100<CR>
-nmap <Leader>sm :%!fmt -n 75<CR>
-vnoremap <Leader>sm :!fmt -n 75<CR>
+" nmap <Leader>st :%s/\n/ /g<CR>
+" nmap <Leader>sh :%!fmt -n 100<CR>
+" nmap <Leader>shh <Leader>st<Leader>sh
+" vnoremap <Leader>sh :!fmt -n 100<CR>
+" nmap <Leader>sm :%!fmt -n 75<CR>
+" vnoremap <Leader>sm :!fmt -n 75<CR>
 
 
 if executable('pry')
@@ -757,14 +728,10 @@ autocmd BufRead *
 " Filetype shortcut
 map <Leader>ft :set ft=
 
-" map <Leader>t :SweetVimRspecRunFile<CR>
-" " map <Leader>s :SweetVimRspecRunFocused<CR>
-" map <Leader>l :SweetVimRspecRunPrevious<CR>
-
 " ZenCoding Shortcut
-vmap <Leader>z <C-Y>,
-nmap <Leader>z <C-Y>,
-imap <Leader>z <ESC><C-Y>,a
+" vmap <Leader>z <C-Y>,
+" nmap <Leader>z <C-Y>,
+" imap <Leader>z <ESC><C-Y>,a
 
 " Tidy Html and XML
 :command Thtml :%!tidy -q -i --show-errors 0
@@ -824,29 +791,6 @@ nnoremap <leader><leader>r :w\| :!rspec spec<cr>
 map <leader>q :q
 command Rake :!rake
 
-" YCM and UltiSnips Working Together
-"set runtimepath+=~/.vim/bundle/ul
-" let g:UltiSnipsExpandTrigger="<S-enter>"
-" unlet g:UltiSnipsJumpForwardTrigger
-" unlet g:UltiSnipsJumpBackwardTrigger
-
-" function! g:UltiSnips_Complete()
-"     call UltiSnips_ExpandSnippet()
-"     if g:ulti_expand_res == 0
-"         if pumvisible()
-"             return "\<C-n>"
-"         else
-"             call UltiSnips_JumpForwards()
-"             if g:ulti_jump_forwards_res == 0
-"                return "\<TAB>"
-"             endif
-"         endif
-"     endif
-"     return ""
-" endfunction
-
-" au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-
 " let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsExpandTrigger="<c-j>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
@@ -871,9 +815,8 @@ set sessionoptions=blank,buffers,curdir,folds,globals,help,localoptions,options,
 nnoremap <leader>e :!elixir %<CR>
 nnoremap <leader>ee :!iex -r % -S mix<CR>
 
-
 " So as to not conflict with multi-cursors
-let g:NumberToggleTrigger="<F5>"
+" let g:NumberToggleTrigger="<F5>"
 
 " HACK: to reset multi-cursor mappings to default b/c of numbertoggle
 " TODO: not working
@@ -927,29 +870,28 @@ endfunction
 command! CoverageAutoSourcing call CoverageAutoSourcing()
 nnoremap <Leader>cv :CoverageAutoSourcing<CR>
 
-
-if executable('sack')
-  function! Sack()
-    " if filereadable($HOME."/.sack_shortcuts")
-      let l:sack_output = system("sit --vim")
-      " let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
-      cexpr l:sack_output
-      copen
-      " Taken from Ack.vim bindings for consistency and awesomeness
-      exec "nnoremap <silent> <buffer> q :ccl<CR>"
-      exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-      exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-      exec "nnoremap <silent> <buffer> o <CR>"
-      exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-      exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-      exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-      exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-      exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
-    " endif
-  endfunction
-  command! Sack call Sack()
-  nnoremap <Leader>sa :Sack<CR>
-endif
+" if executable('sack')
+"   function! Sack()
+"     " if filereadable($HOME."/.sack_shortcuts")
+"       let l:sack_output = system("sit --vim")
+"       " let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
+"       cexpr l:sack_output
+"       copen
+"       " Taken from Ack.vim bindings for consistency and awesomeness
+"       exec "nnoremap <silent> <buffer> q :ccl<CR>"
+"       exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+"       exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+"       exec "nnoremap <silent> <buffer> o <CR>"
+"       exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+"       exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+"       exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+"       exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+"       exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+"     " endif
+"   endfunction
+"   command! Sack call Sack()
+"   nnoremap <Leader>sa :Sack<CR>
+" endif
 
 " Vim resizing of splits
 " Resize windows quickly
@@ -997,7 +939,7 @@ endif
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
 
-" nnoremap <Leader>ss :Switch<CR>
+nnoremap <Leader>ss :Switch<CR>
 
 " Don't bother about checking whether Escape is being used as a means to enter
 " " a Meta-key combination, just register Escape immediately
@@ -1033,7 +975,7 @@ nnoremap Y y$
 map <leader><Enter> o<ESC>
 
 " Search and replace word under cursor (,*)
-nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
+nnoremap <leader>* :%s/\<<C-r><C-w>\>//gc<Left><Left><Left>
 
 " Strip trailing whitespace (,ss)
 function! StripWhitespace ()
