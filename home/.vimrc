@@ -30,7 +30,7 @@ execute pathogen#incubate()
 "
 " Trying
 "=bundle Lokaltog/vim-easymotion
-"=bundle kbarrette/mediummode
+""=bundle kbarrette/mediummode
 "Gif config
 let g:EasyMotion_smartcase = 1
 " Gif config
@@ -855,6 +855,7 @@ nnoremap <leader>ee :!iex -r % -S mix<CR>
 nnoremap <leader>cr :w\|:CoffeeRun<cr>
 
 " project specific vimrcs
+" ie in root of project have a .vimrc
 set exrc
 set secure
 
@@ -1029,4 +1030,39 @@ nnoremap <C-down> :resize +3<cr>
 nnoremap <C-up> :resize -3<cr>
 nnoremap <C-right> :vertical resize -3<cr>"
 
+nnoremap <leader>rs :rubydo $_.gsub! /
+vnoremap <leader>rs :rubydo $_.gsub! /
+
 let g:NumberToggleTrigger="<F8>"
+
+
+" function! Rs(val)
+" ruby << EOF
+" vim_arg = ::VIM::evaluate('a:val').to_s
+
+" def gs(param)
+"   prior, new = param.split(',', 2)
+"   $_.gsub(/#{prior}/, new)
+" end
+" EOF
+" endfunction
+
+" function! Rs(val)
+" ruby << EOF
+" def gs(a:val)
+"   prior, new = string.split(',', 2)
+"   $_.gsub(/#{prior}/, new)
+" end
+
+" # class Garnet
+" #   def initialize(s)
+" #     @buffer = VIM::Buffer.current
+" #     vimputs(s)
+" #   end
+" #   def vimputs(s)
+" #     @buffer.append(@buffer.count,s)
+" #   end
+" # end
+" # gem = Garnet.new("pretty")
+" EOF
+" endfunction

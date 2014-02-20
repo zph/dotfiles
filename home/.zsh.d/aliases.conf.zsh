@@ -6,6 +6,7 @@
 alias c='\cd'
 alias bn='branch-name'
 alias S='sack'
+alias pkill='pkill -USR1 -f -I'
 # alias tree='tree -L 2 -fi'
 # alias cd='echo "DONT USE CD use c" && cd'
 # alias git='echo "DONT USE GIT use g" && git'
