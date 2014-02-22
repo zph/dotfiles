@@ -33,6 +33,7 @@ execute pathogen#incubate()
 ""=bundle kbarrette/mediummode
 "Gif config
 let g:EasyMotion_smartcase = 1
+map <Leader>z <Plug>(easymotion-prefix)
 " Gif config
 "
 " Require tpope/vim-repeat to enable dot repeat support
@@ -1030,8 +1031,8 @@ nnoremap <C-down> :resize +3<cr>
 nnoremap <C-up> :resize -3<cr>
 nnoremap <C-right> :vertical resize -3<cr>"
 
-nnoremap <leader>rs :rubydo $_.gsub! /
-vnoremap <leader>rs :rubydo $_.gsub! /
+nnoremap <leader>rs :rubydo $_.gsub! %r{
+vnoremap <leader>rs :rubydo $_.gsub! %r{
 
 let g:NumberToggleTrigger="<F8>"
 
