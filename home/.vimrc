@@ -55,7 +55,7 @@ map  N <Plug>(easymotion-prev)
 "
 "Keeping
 "=bundle AndrewRadev/switch.vim
-"=bundle Valloric/YouCompleteMe
+"=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
 "=bundle airblade/vim-gitgutter
 "=bundle ap/vim-css-color
 "=bundle bling/vim-airline
