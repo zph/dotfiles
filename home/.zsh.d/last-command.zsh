@@ -26,6 +26,12 @@ copy-last-command-output() {
 zle -N copy-last-command-output
 bindkey "^X^L" copy-last-command-output
 
+paste-output() {
+  LBUFFER+="pbpaste | "
+}
+zle -N paste-output
+bindkey "^X^Y" paste-output
+
 # zmodload -i zsh/parameter
 # last-command-error() {
 #   result=$(eval $history[$((HISTCMD-1))] 2>| pbcopy)

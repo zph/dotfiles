@@ -125,7 +125,7 @@ _set_zsh_settings(){
 
   # Automatically add directories to stack so they can
   # be referenced by 'dirs -v' or cd ~+<number>
-  setopt AUTO_PUSHD
+  # setopt AUTO_PUSHD Set in other location
 
   # try to avoid the 'zsh: no matches found...'
   setopt nonomatch
