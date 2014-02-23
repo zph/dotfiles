@@ -628,6 +628,9 @@ nmap <Leader>b :CtrlPBuffer<CR>
 " nmap <Leader>p :CtrlPMixed<CR>
 let g:ctrlp_max_depth = 10
 
+if executable('ag')
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+endif
 "" Custom CtrlP Config
 " Multiple VCS's:
 let g:ctrlp_extensions = ['tag', 'mark', 'register']
