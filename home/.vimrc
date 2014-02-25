@@ -27,6 +27,7 @@ execute pathogen#incubate()
 "=bundle vim-scripts/AutoTag
 "=bundle xolox/vim-easytags
 "=bundle xolox/vim-misc
+"=bundle t9md/vim-ruby-xmpfilter
 "
 " Trying
 "=bundle Lokaltog/vim-easymotion
@@ -540,52 +541,73 @@ nnoremap K :r!
 au BufNewFile,BufRead *.txt setlocal wrap
 au BufNewFile,BufRead *.txt setlocal lbr
 
-function! IncludeRCodeTools()
+"function! IncludeRCodeTools()
   " For rcodetools
   " plain annotations
-  map <silent> <F10> !xmpfilter -a<cr>
-  nmap <silent> <F10> V<F10>
-  imap <silent> <F10> <ESC><F10>a
+  " map <silent> <F10> !xmpfilter -a<cr>
+  " nmap <silent> <F10> V<F10>
+  " imap <silent> <F10> <ESC><F10>a
 
-  " Test::Unit assertions; use -s to generate RSpec expectations instead
-  map <silent> <S-F10> !xmpfilter -u<cr>
-  nmap <silent> <S-F10> V<S-F10>
-  imap <silent> <S-F10> <ESC><S-F10>a
+  " " Test::Unit assertions; use -s to generate RSpec expectations instead
+  " map <silent> <S-F10> !xmpfilter -u<cr>
+  " nmap <silent> <S-F10> V<S-F10>
+  " imap <silent> <S-F10> <ESC><S-F10>a
 
-  " Annotate the full buffer
-  " I actually prefer ggVG to %; it's a sort of poor man's visual bell 
-  nmap <silent> <F11> mzggVG!xmpfilter -a<cr>'z
-  imap <silent> <F11> <ESC><F11>
+  " " Annotate the full buffer
+  " " I actually prefer ggVG to %; it's a sort of poor man's visual bell 
+  " nmap <silent> <F11> mzggVG!xmpfilter -a<cr>'z
+  " imap <silent> <F11> <ESC><F11>
 
-  " assertions
-  nmap <silent> <S-F11> mzggVG!xmpfilter -u<cr>'z
-  imap <silent> <S-F11> <ESC><S-F11>a
+  " " assertions
+  " nmap <silent> <S-F11> mzggVG!xmpfilter -u<cr>'z
+  " imap <silent> <S-F11> <ESC><S-F11>a
 
-  " Add # => markers
-  vmap <silent> <F12> !xmpfilter -m<cr>
-  nmap <silent> <F12> V<F12>
-  imap <silent> <F12> <ESC><F12>a
+  " " Add # => markers
+  " vmap <silent> <F12> !xmpfilter -m<cr>
+  " nmap <silent> <F12> V<F12>
+  " imap <silent> <F12> <ESC><F12>a
 
-  " Remove # => markers
-  vmap <silent> <S-F12> ms:call RemoveRubyEval()<CR>
-  nmap <silent> <S-F12> V<S-F12>
-  imap <silent> <S-F12> <ESC><S-F12>a
+  " " Remove # => markers
+  " vmap <silent> <S-F12> ms:call RemoveRubyEval()<CR>
+  " nmap <silent> <S-F12> V<S-F12>
+  " imap <silent> <S-F12> <ESC><S-F12>a
 
-  function! RemoveRubyEval() range
-    let begv = a:firstline
-    let endv = a:lastline
-    normal Hmt
-    set lz
-    execute ":" . begv . "," . endv . 's/\s*# \(=>\|!!\).*$//e'
-    normal 'tzt`s
-    set nolz
-    redraw
-  endfunction
-endfunction
+  " function! RemoveRubyEval() range
+  "   let begv = a:firstline
+  "   let endv = a:lastline
+  "   normal Hmt
+  "   set lz
+  "   execute ":" . begv . "," . endv . 's/\s*# \(=>\|!!\).*$//e'
+  "   normal 'tzt`s
+  "   set nolz
+  "   redraw
+  " endfunction
+" endfunction
 
-command! IncludeRCodeTools call IncludeRCodeTools()
-" execute ":IncludeRCodeTools"
-" autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
+" command! IncludeRCodeTools call IncludeRCodeTools()
+" " execute ":IncludeRCodeTools"
+" " autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
+
+  let g:xmpfilter_cmd = "seeing_is_believing"
+
+  " auto insert mark at appropriate spot.
+  autocmd FileType ruby nmap <buffer> <F6> <Plug>(seeing_is_believing-run)
+  autocmd FileType ruby xmap <buffer> <F6> <Plug>(seeing_is_believing-run)
+  autocmd FileType ruby imap <buffer> <F6> <Plug>(seeing_is_believing-run)
+
+  autocmd FileType ruby nmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
+  autocmd FileType ruby xmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
+  autocmd FileType ruby imap <buffer> <F7> <Plug>(seeing_is_believing-mark)
+
+  autocmd FileType ruby nmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
+  autocmd FileType ruby xmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
+  autocmd FileType ruby imap <buffer> <F8> <Plug>(seeing_is_believing-clean)
+
+  " xmpfilter compatible
+  autocmd FileType ruby nmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+  autocmd FileType ruby xmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+  autocmd FileType ruby imap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+
 
 " For folding
 function! FoldingOn()
