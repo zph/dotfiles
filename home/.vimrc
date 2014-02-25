@@ -9,16 +9,12 @@ source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#incubate()
 
 " Unused plugins
-""=bundle tpope/gem-ctags
 ""=bundle gregsexton/gitv
 ""=bundle mileszs/ack.vim
 
 ""=bundle godlygeek/tabular
 ""=bundle mattn/emmet-vim
 ""=bundle michaeljsmith/vim-indent-object
-""=bundle xolox/vim-easytags
-""=bundle xolox/vim-misc
-""=bundle vim-scripts/AutoTag
 ""=bundle jnwhiteh/vim-golang
 
 " Maybe
@@ -27,6 +23,10 @@ execute pathogen#incubate()
 "=bundle nelstrom/vim-textobj-rubyblock
 "=bundle tsaleh/vim-matchit
 "=bundle tpope/vim-dispatch
+"=bundle tpope/gem-ctags
+"=bundle vim-scripts/AutoTag
+"=bundle xolox/vim-easytags
+"=bundle xolox/vim-misc
 "
 " Trying
 "=bundle Lokaltog/vim-easymotion
@@ -622,16 +622,13 @@ command! FoldingOn call FoldingOn()
 "TODO : write function to open MRU instead of 'files' if pwd is ~/
 imap <Leader>b <ESC>:CtrlPBuffer<CR>
 nmap <Leader>b :CtrlPBuffer<CR>
-" imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
-" nmap <Leader>mr :CtrlPMRUFiles<CR>
-" imap <Leader>p <ESC>:CtrlPMixed<CR>
-" nmap <Leader>p :CtrlPMixed<CR>
+imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
+nmap <Leader>mr :CtrlPMRUFiles<CR>
+imap <Leader>p <ESC>:CtrlPMixed<CR>
+nmap <Leader>p :CtrlPMixed<CR>
 let g:ctrlp_max_depth = 10
 
-if executable('ag')
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-endif
-"" Custom CtrlP Config
+" Custom CtrlP Config
 " Multiple VCS's:
 let g:ctrlp_extensions = ['tag', 'mark', 'register']
 let g:ctrlp_user_command = {
