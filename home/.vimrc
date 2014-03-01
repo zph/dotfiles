@@ -29,6 +29,17 @@ execute pathogen#incubate()
 "=bundle xolox/vim-misc
 "=bundle t9md/vim-ruby-xmpfilter
 "
+" Clojure Plugins
+"=bundle kien/rainbow_parentheses.vim
+"=bundle tpope/vim-classpath
+"=bundle guns/vim-clojure-static
+"=bundle tpope/vim-fireplace
+" For specclj
+" https://github.com/guns/vim-clojure-static/pull/45/files
+augroup CustomEvents
+  autocmd!
+  autocmd FileType clojure setlocal lispwords+=describe,it,context,around,should=,should-not,should,should-be,with
+augroup END
 " Trying
 "=bundle Lokaltog/vim-easymotion
 ""=bundle kbarrette/mediummode

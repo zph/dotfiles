@@ -15,22 +15,22 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias pbc='pbcopy'
   alias pbp='pbpaste'
 
-  function pbcopy(){
-    if [ "$TERM" = "screen" -a -n "$TMUX" ]; then
-      reattach-to-user-namespace pbcopy
-    else
-      pbcopy
-    fi
-  }
+  # function pbcopy(){
+  #   if [ -n "$TMUX" ]; then
+  #     reattach-to-user-namespace pbcopy
+  #   else
+  #     pbcopy
+  #   fi
+  # }
 
-  function pbpaste(){
+  # function pbpaste(){
 
-    if [ "$TERM" = "screen" -a -n "$TMUX" ]; then
-      reattach-to-user-namespace pbpaste
-    else
-      pbpaste
-    fi
-  }
+  #   if [ -n "$TMUX" ]; then
+  #     reattach-to-user-namespace pbpaste
+  #   else
+  #     pbpaste
+  #   fi
+  # }
 
   alias trash_empty='rm -rf ~/.Trash/*'
 
