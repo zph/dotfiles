@@ -919,22 +919,22 @@ nnoremap <Leader>cv :CoverageAutoSourcing<CR>
 
 if executable('sack')
   function! Sack()
-    let l:sack_output = join(readfile($HOME."/.sack_shortcuts"), "\n")
-      let l:sack_output = substitute(l:sack_output, '\\"', "'", 'g')
-      let &efm='%f|%l col %c|%m'
-      " :set errorformat="%f>%l:%c:%t:%n:%m"
-      cexpr l:sack_output
-      copen
-      " Taken from Ack.vim bindings for consistency and awesomeness
-      exec "nnoremap <silent> <buffer> q :ccl<CR>"
-      exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-      exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-      exec "nnoremap <silent> <buffer> o <CR>"
-      exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-      exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-      exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-      exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-      exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+    let l:sack_output = substitute(join(readfile($HOME."/.sack_shortcuts"), "\n"), $HOME, "~", "g")
+""  let l:sack_output = substitute(l:sack_output, $HOME, "~", 'g')
+    let &efm='%f|%l col %c|%m'
+    " :set errorformat="%f>%l:%c:%t:%n:%m"
+    cexpr l:sack_output
+    copen
+    " Taken from Ack.vim bindings for consistency and awesomeness
+    exec "nnoremap <silent> <buffer> q :ccl<CR>"
+    exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+    exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+    exec "nnoremap <silent> <buffer> o <CR>"
+    exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+    exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+    exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+    exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+    exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
   endfunction
   command! Sack call Sack()
   nnoremap <Leader>sa :Sack<CR>
