@@ -1,7 +1,4 @@
-# Mac OS 
-if [[ "$OSTYPE" == darwin* ]]; then
-fi
-
+# Mac OS
 if [[ "$OSTYPE" == darwin* ]]; then
   # OSX Hack for recompiling Ruby using gnu-gcc rather than clang
   # export CC=/usr/local/bin/gcc-4.2
@@ -12,25 +9,11 @@ if [[ "$OSTYPE" == darwin* ]]; then
   #   alias vim="mvim -v"
   # fi
 
+  # turn off Startup sound
+  # sudo nvram SystemAudioVolume=" "
+  #
   alias pbc='pbcopy'
   alias pbp='pbpaste'
-
-  # function pbcopy(){
-  #   if [ -n "$TMUX" ]; then
-  #     reattach-to-user-namespace pbcopy
-  #   else
-  #     pbcopy
-  #   fi
-  # }
-
-  # function pbpaste(){
-
-  #   if [ -n "$TMUX" ]; then
-  #     reattach-to-user-namespace pbpaste
-  #   else
-  #     pbpaste
-  #   fi
-  # }
 
   alias trash_empty='rm -rf ~/.Trash/*'
 

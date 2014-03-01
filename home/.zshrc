@@ -329,7 +329,10 @@ _set_prompt(){
 }
 
 _right_prompt(){
-  source $HOME/.zsh.d/git-prompt/git-prompt.zsh
+  if [[ -n $EMACS ]];then
+  else
+    source $HOME/.zsh.d/git-prompt/git-prompt.zsh
+  fi
 }
 
 _setup_colors(){
