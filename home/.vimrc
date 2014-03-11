@@ -108,7 +108,7 @@ map  N <Plug>(easymotion-prev)
 "=bundle vim-ruby/vim-ruby
 "=bundle vim-scripts/ZoomWin
 "=bundle wting/rust.vim
-"=bundle zph/ultisnips
+"=bundle SirVer/ultisnips
 
 call pathogen#helptags()
 set nocompatible      " We're running Vim, not Vi!
@@ -1066,6 +1066,9 @@ nnoremap <C-right> :vertical resize -3<cr>"
 
 nnoremap <leader>rs :rubydo $_.gsub! %r{
 vnoremap <leader>rs :rubydo $_.gsub! %r{
+
+" Close quickfix pane from any other pane
+nnoremap <leader>cc :cclose
 
 let g:NumberToggleTrigger="<F8>"
 
