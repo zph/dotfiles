@@ -1,5 +1,5 @@
 " Hack for speeding up vim load when using rvm
-let g:ruby_path = system('rvm current')
+let g:ruby_path = system('rvm use system')
 
 " Sun Feb 16 21:37:02 EST 2014 - Consider trying 'infect' + pathogen
 
@@ -16,6 +16,7 @@ execute pathogen#incubate()
 ""=bundle mattn/emmet-vim
 ""=bundle michaeljsmith/vim-indent-object
 ""=bundle jnwhiteh/vim-golang
+""=bundle leshill/vim-json
 
 " Maybe
 "
@@ -30,7 +31,7 @@ execute pathogen#incubate()
 "=bundle t9md/vim-ruby-xmpfilter
 "
 " Clojure Plugins
-"=bundle kien/rainbow_parentheses.vim
+""=bundle kien/rainbow_parentheses.vim
 "=bundle tpope/vim-classpath
 "=bundle guns/vim-clojure-static
 "=bundle tpope/vim-fireplace
@@ -60,10 +61,10 @@ let g:EasyMotion_use_upper = 1
 let g:EasyMotion_smartcase = 1
 " Smartsign (type `3` and match `3`&`#`)
 let g:EasyMotion_use_smartsign_us = 1
-map  / <Plug>(easymotion-sn)
-omap / <Plug>(easymotion-tn)
-map  n <Plug>(easymotion-next)
-map  N <Plug>(easymotion-prev)
+" map  / <Plug>(easymotion-sn)
+" omap / <Plug>(easymotion-tn)
+" map  n <Plug>(easymotion-next)
+" map  N <Plug>(easymotion-prev)
 "
 "Keeping
 "=bundle AndrewRadev/switch.vim
@@ -80,7 +81,6 @@ map  N <Plug>(easymotion-prev)
 "=bundle jpalardy/vim-slime
 "=bundle kchmck/vim-coffee-script
 "=bundle kien/ctrlp.vim
-"=bundle leshill/vim-json
 "=bundle mattn/ctrlp-mark
 "=bundle mattn/ctrlp-register
 "=bundle mattn/gist-vim
@@ -403,6 +403,12 @@ autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " ARROW KEYS ARE UNACCEPTABLE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Old config (disable arrow keys)
+" map <Left> <nop>
+" map <Right> <nop>
+" map <Up> <nop>
+" map <Down> <nop>
 """" EXPERIMENTAL
 map <Left> <C-O>
 map <Right> <C-I>
@@ -537,7 +543,7 @@ set undofile
 " Get rid of the delay when hitting esc!
 set noesckeys
 
-" command! Qall qall 
+" command! Qall qall
 " Disable Ex mode
 map Q <Nop>
 " Remap Q to a useful command
@@ -696,6 +702,12 @@ nmap <Leader>rr :!ruby %<CR>
 " vnoremap <Leader>sh :!fmt -n 100<CR>
 " nmap <Leader>sm :%!fmt -n 75<CR>
 " vnoremap <Leader>sm :!fmt -n 75<CR>
+
+" Courtesy of rking's ruby-pry.vim
+" …also, Insert Mode as bpry<space>
+iabbr bpry require'pry';binding.pry
+" And pry-remote
+iabbr bpryr require'pry-remote';binding.pry_remote
 
 
 if executable('pry')
@@ -990,8 +1002,8 @@ if executable('ag')
   "ag is fast enough that CtrlP doesn't need to cache
   let g:ctrlp_use_caching = 0
 
-  nnoremap <Leader>a :Ag<SPACE>
-  nnoremap <Leader>aa :Ag <cword><CR>
+  nnoremap <Leader>a :Ag!<SPACE>
+  nnoremap <Leader>aa :Ag! <cword><CR>
 endif
 
 " Needed for editing crontab
@@ -1069,6 +1081,8 @@ vnoremap <leader>rs :rubydo $_.gsub! %r{
 
 " Close quickfix pane from any other pane
 nnoremap <leader>cc :cclose
+nnoremap <leader>sh :GitGutterStageHunk
+nnoremap <leader>rh :GitGutterRevertHunk
 
 let g:NumberToggleTrigger="<F8>"
 
@@ -1103,3 +1117,4 @@ let g:NumberToggleTrigger="<F8>"
 " # gem = Garnet.new("pretty")
 " EOF
 " endfunction
+autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json

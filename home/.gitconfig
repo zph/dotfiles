@@ -103,6 +103,8 @@
     # Show the files that are currently assume-unchanged
     assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 
+
+    bs = !git bisect
     # Wil Moore III
     # http://git.io/gopyOg
     # open files with conflict markers in your configured editor

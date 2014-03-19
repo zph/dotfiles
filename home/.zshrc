@@ -390,3 +390,5 @@ _zshrc_main(){
 }
 
 _zshrc_main
+
+# Ctrl-T shows active load of the running PID
