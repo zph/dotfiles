@@ -1,0 +1,19 @@
+#!/usr/bin/ruby --disable-gems
+
+require 'net/http'
+
+exit(1) unless ARGV[0]
+
+def app_env(application)
+  ENV["#{application}_RESTART_URL"]
+end
+
+app = ARGV[0].dup.upcase
+
+
+url = app_env(app)
+
+puts url
+
+uri = URI(url)
+Net::HTTP.get(uri)
