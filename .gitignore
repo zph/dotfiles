@@ -18,3 +18,4 @@ home/bin/sag
 home/bin/sgrep
 home/.emacs.d/image-dired/*
 home/.vim/bundle/*
+home/.zsh.d/configs.local

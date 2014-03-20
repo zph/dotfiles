@@ -369,16 +369,22 @@ _execute_alert(){
 # PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#I_#P") "$PWD")'
 # PS1='$ '$PS1
 ### Main function
+_local_configs(){
+  if [[ -f "${ZSHDDIR}/configs.local" ]]; then
+    source "${ZSHDDIR}/configs.local"
+  fi
+}
 
 _zshrc_main(){
   ############
   # Execute Functions
   _zshrc_pre_init
+  _local_configs
   _set_zsh_settings
+  _add_homebin_to_dir
   _source_zshd
   _ignore_listed_zshd_commands
   _termtitle
-  _add_homebin_to_dir
   _export_editor_and_tmp_dirs
   _normalize_keys
   _set_colors
