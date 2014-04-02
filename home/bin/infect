@@ -228,6 +228,11 @@ module Infect
 
       def git(args)
         `git #{args}`
+        status = $?
+        if status != 0
+          warn "Failed to install: #{args}"
+          exit(1)
+        end
       end
     end
   end

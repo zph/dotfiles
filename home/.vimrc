@@ -6,7 +6,7 @@ let g:ruby_path = system('rvm use system')
 "=bundle tpope/vim-pathogen
 "=bundle tpope/vim-sensible
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
-execute pathogen#incubate()
+execute pathogen#interpose('bundle/{}')
 
 " Unused plugins
 ""=bundle gregsexton/gitv
@@ -22,16 +22,35 @@ execute pathogen#incubate()
 "
 "=bundle kana/vim-textobj-user
 "=bundle nelstrom/vim-textobj-rubyblock
-"=bundle tsaleh/vim-matchit
+"=bundle edsono/vim-matchit
 "=bundle tpope/vim-dispatch
 "=bundle tpope/gem-ctags
 "=bundle vim-scripts/AutoTag
 "=bundle xolox/vim-easytags
 "=bundle xolox/vim-misc
 "=bundle t9md/vim-ruby-xmpfilter
+"""""""""""""""""""""""""""""""""""""""
+"=bundle terryma/vim-expand-region
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+vnoremap <silent> s //e<C-r>=&selection=='exclusive'?'+1':''<CR><CR>
+    \:<C-u>call histdel('search',-1)<Bar>let @/=histget('search',-1)<CR>gv
+omap s :normal vs<CR>
+" vp doesn't replace paste buffer
+function! RestoreRegister()
+  let @" = s:restore_reg
+  return ''
+endfunction
+function! s:Repl()
+  let s:restore_reg = @"
+  return "p@=RestoreRegister()\<cr>"
+endfunction
+vmap <silent> <expr> p <sid>Repl()
+"=bundle skalnik/vim-vroom
+"=bundle christoomey/vim-tmux-navigator
+"""""""""""""""""""""""""""""""""""""
 "
 " Clojure Plugins
-""=bundle kien/rainbow_parentheses.vim
 "=bundle tpope/vim-classpath
 "=bundle guns/vim-clojure-static
 "=bundle tpope/vim-fireplace
@@ -41,31 +60,7 @@ augroup CustomEvents
   autocmd!
   autocmd FileType clojure setlocal lispwords+=describe,it,context,around,should=,should-not,should,should-be,with
 augroup END
-" Trying
-"=bundle Lokaltog/vim-easymotion
-""=bundle kbarrette/mediummode
-"Gif config
-let g:EasyMotion_smartcase = 1
-map <Leader>z <Plug>(easymotion-prefix)
-" Gif config
-"
-" Require tpope/vim-repeat to enable dot repeat support
-" Jump to anywhere with only `s{char}{target}`
-" `s<CR>` repeat last find motion.
-nmap s <Plug>(easymotion-s)
-" Bidirectional & within line 't' motion
-omap t <Plug>(easymotion-bd-tl)
-" Use uppercase target labels and type as a lower case
-let g:EasyMotion_use_upper = 1
-" type `l` and match `l`&`L`
-let g:EasyMotion_smartcase = 1
-" Smartsign (type `3` and match `3`&`#`)
-let g:EasyMotion_use_smartsign_us = 1
-" map  / <Plug>(easymotion-sn)
-" omap / <Plug>(easymotion-tn)
-" map  n <Plug>(easymotion-next)
-" map  N <Plug>(easymotion-prev)
-"
+
 "Keeping
 "=bundle AndrewRadev/switch.vim
 "=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
@@ -513,7 +508,7 @@ map <Leader>d :SlimuxShellLast<CR>
 nnoremap g, <C-O>
 " go forward
 nnoremap g. <C-I>
-nnoremap <C-k> <C-i>
+"nnoremap <C-k> <C-i>
 
 " Shortcut '%%' to enter PWD on commandline
 cnoremap <expr> %%  getcmdtype() == ':' ? expand('%:h').'/' : '%%'
@@ -1118,3 +1113,11 @@ let g:NumberToggleTrigger="<F8>"
 " EOF
 " endfunction
 autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json
+
+" Make those debugger statements painfully obvious
+au BufEnter *.rb syn match error contained "\<binding.pry\>"
+au BufEnter *.rb syn match error contained "\<debugger\>"
+au BufEnter *.coffee syn match error contained "\<console.log\>"
+au BufEnter *.js syn match error contained "\<console.log\>"
+
+nnoremap <leader>l :silent! \| :redraw!<cr>

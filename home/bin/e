@@ -1,66 +1,106 @@
-#!/bin/bash
+#!/usr/bin/env ruby
 #
-# Quick shortcut to an editor.
-#
-# This means that as I travel back and forth between editors, hey, I don't have
-# to re-learn any arcane commands. Neat.
-#
-# USAGE:
-#
-#   $ e
-#   # => opens the current directory in your editor
-#   $ e .
-#   $ e /usr/local
-#   # => opens the specified directory in your editor
-#   
-#   $ e local
-#    =>  opens that folder if it's available in fasd's index
-#   $ e -i local
-#    =>  opens interactive selection menu if it's available in fasd's index
-#TODO
-# - allow it to work w/ more than one file
-#
-interactive_mode="0"
+# ruby recreation of `bin/e`
 
-if [[ $1 == "-i" ]]; then
-  interactive_mode="1"
-  shift 1
-  echo "Now we're at $@"
-fi
+require 'optparse'
+require 'optparse/time'
+require 'ostruct'
+require 'pp'
 
-_smart_editor_select_error_unknown_path(){
-    echo "Can't find path with normal"
-    echo "or extraordinary methods."
-    return 1
-}
+class E
+  attr_accessor :options, :input
+  def initialize(args)
+    @options = parse(args)
+    @input = String( args[0] )
+  end
 
-file_without_line_number=`echo "$1" | grep -Ei ':\d+$' | awk -F':' '{print $1}' `
-formatted_file_with_line_number=`echo "$1" | grep -Ei ':\d+$' | awk -F':' '{print $1 " +"$2}' `
-_smart_editor_select(){
-  # echo $interactive_mode
-  if [[ $1 == "" ]]; then
-    exec $EDITOR .
-  elif [[ -f $1 || -d $1 ]]; then
-    exec $EDITOR "$1"
-  elif [[ -f $file_without_line_number ]]; then
-    # add change in here to tolerate filename.rb:234 format and convert to filename +234
-    # echo "/usr/bin/ruby.rb:124" | grep -Ei ':\d+$' | awk -F':' '{print $1 " +"$2}'
-      # echo $EDITOR `grep -Ei ':\d+$' | awk -F':' '{print $1 " +$2"}'`
-    exec $EDITOR $formatted_file_with_line_number
-  elif [[ -x $(which fasd) ]]; then
-    if [[ $interactive_mode == "1" ]];then
-      local dir=$(fasd -sia $1)
-      if [[ $dir == "" ]]; then
-        _smart_editor_select_error_unknown_path
-      else
-        exec $EDITOR "$dir"
-      fi
+  def has_linenumber?
+    !!input[/:\d+/]
+  end
+
+  def vim_command_for_linenumber
+    [filename_without_linenumber, "+#{ linenumber }"].join(' ')
+  end
+
+  def has_fasd?
+    system "which fasd > /dev/null"
+  end
+
+  def has_fasd_result?
+    fasd_result = `fasd #{input}`.chomp
+    !fasd_result.empty?
+  end
+
+  def has_ffind?
+    system "which ffind > /dev/null"
+  end
+
+  def execute
+    case
+    when input.empty?
+      exec "$EDITOR ."
+    when File.exists?(input), Dir.exists?(input)
+      # warn input
+      # warn "file exists"
+      exec "$EDITOR #{input}"
+    when has_linenumber?
+      # warn "has linenumber"
+      exec "$EDITOR #{vim_command_for_linenumber}"
+    when has_fasd? && options.interactive
+      # warn "fasd interactive"
+      fasd_filename = `fasd -sia #{input}`.chomp
+      exec "$EDITOR #{fasd_filename}"
+    when has_fasd? && has_fasd_result?
+      # warn "has_fasd plain"
+      exec "fasd -a -e '$EDITOR' #{input}"
+    when has_ffind?
+      # warn "ffinding"
+      files = `ffind #{input}`.chomp.split("\n")
+      # pp files
+      puts "Editing: #{files.first}"
+      exec "$EDITOR #{files.first}"
     else
-      exec fasd -a -e "$EDITOR" "$1"
-    fi
-  else
-    _smart_editor_select_error_unknown_path
-  fi
-}
+      error_message
+    end
+  end
 
-_smart_editor_select $1
+  def filename_without_linenumber
+    input.split(':', 2).first
+  end
+
+  def linenumber
+    @input.split(':', 2)[1]
+  end
+
+  def parse(args)
+    # The options specified on the command line will be collected in *options*.
+    # We set default values here.
+    options = OpenStruct.new
+    options.interactive = nil
+
+    opts = OptionParser.new do |opts|
+      opts.banner = "Usage: e [options]"
+
+      opts.separator ""
+      opts.separator "Specific options:"
+
+      # Mandatory argument.
+      opts.on("-i", "--interactive [true/false]", "Interactive!") do |lib|
+        options.interactive = lib.downcase.to_sym
+      end
+
+    end
+
+    opts.parse!(args)
+    options
+  end
+
+  def error_message
+    msg = "Can't find path with normal or extraordinary methods"
+    warn msg
+    warn "Exiting..."
+    exit(1)
+  end
+end
+
+E.new(ARGV).execute

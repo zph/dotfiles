@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'open-uri'
+require 'json'
+
+base_link = `git remote -v | head -1`
+
+AUTH_TOKEN = `cat ~/.config/hub | grep oauth | awk '{print $2}'`.chomp
+
+def strip_url(link)
+  link.scan(/git@github.com:(.*)\.git/).flatten.first
+end
+
+def convert_to_https(link)
+  "https://api.github.com/repos/#{link}"
+end
+
+link = convert_to_https(strip_url(base_link))
+response = `curl --silent -u #{AUTH_TOKEN}:x-oauth-basic #{link} `.chomp
+json = JSON.parse(response)
+
+puts json['default_branch']
+#"https://api.github.com/repos/primedia/ag"
+# "/repos/:owner/:repo"

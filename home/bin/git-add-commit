@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+git add --all . && git commit -m "$(date | sed 's/ /_/g') WIP commit"
