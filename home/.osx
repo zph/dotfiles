@@ -392,6 +392,14 @@ defaults write com.twitter.twitter-mac ShowFullNames -bool true
 # Hide the app in the background if it’s not the front-most window
 defaults write com.twitter.twitter-mac HideInBackground -bool true
 
+###################################
+# Local Changes - ZPH
+###################################
+# Kill spaces transitions
+defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
+killall Dock
+## to undo
+# defaults write com.apple.dock workspaces-swoosh-animation-off -bool NO
 ###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
@@ -400,3 +408,4 @@ for app in Finder Dock Mail Safari iTunes iCal Address\ Book SystemUIServer Twit
 	killall "$app" > /dev/null 2>&1
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
+

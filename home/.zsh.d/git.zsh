@@ -63,7 +63,13 @@ alias ga='git add'
 #compdef _git ga=git-add
 alias gaa='git add --all'
 #compdef _git ga=git-add
-alias gap='git add -p'
+if [[ -x $(which ffind) ]];then
+  function gap(){
+  git add --patch "$(ffind $1)"
+}
+else
+  alias gap='git add -p'
+fi
 #compdef _git ga=git-add
 alias gm='git merge'
 #compdef _git gm=git-merge
