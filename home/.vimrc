@@ -1,25 +1,16 @@
 " Hack for speeding up vim load when using rvm
-let g:ruby_path = system('rvm use system')
+"let g:ruby_path = system('rvm use system')
 
 " Sun Feb 16 21:37:02 EST 2014 - Consider trying 'infect' + pathogen
 
 "=bundle tpope/vim-pathogen
 "=bundle tpope/vim-sensible
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
-execute pathogen#interpose('bundle/{}')
-
-" Unused plugins
-""=bundle gregsexton/gitv
-""=bundle mileszs/ack.vim
-
-""=bundle godlygeek/tabular
-""=bundle mattn/emmet-vim
-""=bundle michaeljsmith/vim-indent-object
-""=bundle jnwhiteh/vim-golang
-""=bundle leshill/vim-json
+execute pathogen#infect('bundle/{}')
 
 " Maybe
 "
+"=bundle terryma/vim-multiple-cursors
 "=bundle kana/vim-textobj-user
 "=bundle nelstrom/vim-textobj-rubyblock
 "=bundle edsono/vim-matchit
@@ -51,9 +42,9 @@ vmap <silent> <expr> p <sid>Repl()
 """""""""""""""""""""""""""""""""""""
 "
 " Clojure Plugins
-"=bundle tpope/vim-classpath
-"=bundle guns/vim-clojure-static
-"=bundle tpope/vim-fireplace
+" "=bundle tpope/vim-classpath
+" "=bundle guns/vim-clojure-static
+" "=bundle tpope/vim-fireplace
 " For specclj
 " https://github.com/guns/vim-clojure-static/pull/45/files
 augroup CustomEvents
@@ -63,7 +54,7 @@ augroup END
 
 "Keeping
 "=bundle AndrewRadev/switch.vim
-"=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
+""=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
 "=bundle airblade/vim-gitgutter
 "=bundle ap/vim-css-color
 "=bundle bling/vim-airline
@@ -81,6 +72,7 @@ augroup END
 "=bundle mattn/gist-vim
 "=bundle mattn/webapi-vim
 "=bundle rking/ag.vim
+let g:ag_mapping_message=0
 "=bundle rking/vim-detailed
 "=bundle rking/vim-ruby-refactoring
 "=bundle sjl/gundo.vim
@@ -165,8 +157,8 @@ set title                " change the terminal's title
 set visualbell           " don't beep
 "
 " Fix forward searching
-" nnoremap / /\v
-" vnoremap / /\v
+nnoremap / /\v
+vnoremap / /\v
 set ignorecase
 set smartcase
 
@@ -1076,8 +1068,8 @@ vnoremap <leader>rs :rubydo $_.gsub! %r{
 
 " Close quickfix pane from any other pane
 nnoremap <leader>cc :cclose
-nnoremap <leader>sh :GitGutterStageHunk
-nnoremap <leader>rh :GitGutterRevertHunk
+nnoremap <leader>sh :GitGutterStageHunk<CR>
+nnoremap <leader>rh :GitGutterRevertHunk<CR>
 
 let g:NumberToggleTrigger="<F8>"
 
@@ -1115,9 +1107,10 @@ let g:NumberToggleTrigger="<F8>"
 autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json
 
 " Make those debugger statements painfully obvious
-au BufEnter *.rb syn match error contained "\<binding.pry\>"
-au BufEnter *.rb syn match error contained "\<debugger\>"
-au BufEnter *.coffee syn match error contained "\<console.log\>"
-au BufEnter *.js syn match error contained "\<console.log\>"
+au BufEnter,BufWritePost *.rb syn match error contained "\<binding.pry\>"
+au BufEnter,BufWritePost *.rb syn match error contained "\<debugger\>"
+au BufEnter,BufWritePost *.coffee syn match error contained "console.log"
+au BufEnter,BufWritePost *.js syn match error contained "console.log"
+au BufEnter,BufWritePost *.coffee syn match error contained "console.log"
 
 nnoremap <leader>l :silent! \| :redraw!<cr>

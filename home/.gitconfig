@@ -25,6 +25,7 @@
     co = checkout
     dc = diff --cached
     dh = diff HEAD~1
+    d = diff
     dh1 = diff HEAD~1
     di = diff
     div = divergence
@@ -63,9 +64,11 @@
     rhh = "!git reset --hard && git clean -df"
     st = status
     sf = show --pretty="format:" --name-only
+    sv = !git show -v
     spp = "!git stash && git pull && git stash pop"
     srp = "!git stash && git rebase dev && git stash pop"
     conflicts = !git ls-files -u | cut -f 2 | sort -u
+    c = !git ls-files -u | cut -f 2 | sort -u
     modified = !git ls-files -m
     unapply = !git stash show -p | git apply -R
     remove-deleted = !git ls-files --deleted | xargs git rm
