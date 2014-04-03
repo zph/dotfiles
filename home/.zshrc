@@ -41,16 +41,12 @@ _zshrc_pre_init(){
       __dotfile_warning
     fi
   }
-  _load_RVM_source_file_zsh(){
-    [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
-  }
   #################################
   # Executed commands
   source /etc/profile
   # Shell config. Safety feature for multiuser envs
   # umask 077
 
-  _load_RVM_source_file_zsh
   # Completion.
   autoload -Uz compinit
   compinit
