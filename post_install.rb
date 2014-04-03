@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# TODO:
+# - learn to install default gems || create standalones automatically
+#
 require 'fileutils'
 
 def remove_symlinks_and_relink(file, source, dest)

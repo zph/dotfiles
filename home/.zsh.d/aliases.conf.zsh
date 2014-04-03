@@ -89,8 +89,8 @@ sz(){
 
 alias set_time="dpkg-reconfigure tzdata"
 # alias jist='jist -p --copy_js'
-alias jistc='jist -p -c'
-alias jist='jist -c'
+alias jistc='gist -p -c'
+alias jist='gist -c'
 alias :q='exit'
 alias resit='!! 2>&1 | sit'
 alias -g ST='2>&1 | sit'

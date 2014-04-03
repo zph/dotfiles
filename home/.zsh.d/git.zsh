@@ -22,7 +22,7 @@ alias grc='git rebase --continue'
 #compdef _git gup=git-rebase
 alias gpu='git push'
 #compdef _git gp=git-push
-gdv() { git-diff -w "$@" | view - }
+gdv() { git diff -w "$@" | view - }
 #compdef _git gdv=git-diff
 alias gc='git commit -v'
 #compdef _git gc=git-commit
