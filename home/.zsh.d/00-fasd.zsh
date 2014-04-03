@@ -28,9 +28,15 @@ eval "$(fasd --init auto)"
 
 
 unset zz
+alias a='fasd -laR'        # any
+function a1(){
+  fasd -laR "$1" | head -1
+
+}
 alias zi='fasd_cd -d -i' # cd with interactive selection
 alias ai='$(fasd -sia)'        # any
 alias v='fasd -e vim' # quick opening files with vim
+# alias gf='fasd -a git'
 # alias m='fasd -e mplayerx' # quick opening files with mplayer
 alias o='fasd -a -e xdg-open' # quick opening files with xdg-open
 _FASD_BACKENDS="native viminfo"
