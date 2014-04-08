@@ -54,7 +54,7 @@ augroup END
 
 "Keeping
 "=bundle AndrewRadev/switch.vim
-""=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
+"=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
 "=bundle airblade/vim-gitgutter
 "=bundle ap/vim-css-color
 "=bundle bling/vim-airline
@@ -1114,3 +1114,7 @@ au BufEnter,BufWritePost *.js syn match error contained "console.log"
 au BufEnter,BufWritePost *.coffee syn match error contained "console.log"
 
 nnoremap <leader>l :silent! \| :redraw!<cr>
+nnoremap <leader>v :!bundle exec approvals verify -d vimdiff -a<cr>
+nnoremap <silent> <C-W>z :wincmd z<Bar>cclose<Bar>lclose<CR>
+let g:ycm_server_use_vim_stdout = 1
+let g:ycm_server_log_level = 'debug'

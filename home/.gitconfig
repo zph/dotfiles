@@ -11,6 +11,7 @@
     spu = smart-push
     a = add
     aa = add --all
+    aap = add --all --patch
     ai = add -i
     amend = commit --amend
     ap = add -p

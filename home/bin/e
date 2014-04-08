@@ -52,7 +52,7 @@ class E
       exec "$EDITOR #{fasd_filename}"
     when has_fasd? && has_fasd_result?
       # warn "has_fasd plain"
-      exec "fasd -a -e '$EDITOR' #{input}"
+      exec "fasd -a -e $EDITOR #{input}"
     when has_ffind?
       # warn "ffinding"
       files = `ffind #{input}`.chomp.split("\n")
