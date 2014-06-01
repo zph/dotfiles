@@ -7,7 +7,6 @@
 	ui = true
 [alias]
     # git-smart aliases
-    sp = smart-pull
     spu = smart-push
     a = add
     aa = add --all
@@ -154,7 +153,7 @@
 	trustExitCode = true
 [push]
 	; default = matching
-	default = matching
+	default = current
 [web]
 	browser = chrome
 [branch]

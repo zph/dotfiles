@@ -74,6 +74,63 @@ default_command_set = Pry::CommandSet.new do
   end
 end
 
+# Reload a gem wisely
+# Credit: @phrogz
+# https://stackoverflow.com/questions/10305880/how-to-require-for-the-second-time
+module Kernel
+  def reload(lib)
+    loaded = $LOADED_FEATURES.find{|path| path=~/#{Regexp.escape lib}(\.rb)?\z/ }
+    if loaded
+      load loaded
+    else
+      require lib
+    end
+  end
+
+  def require_local(rel_path)
+    require File.expand_path(rel_path)
+  end
+
+  def reload_requires
+    suppress_warnings do
+      Pry.reload_requires
+    end
+  end
+
+  def suppress_warnings(&block)
+    prior_val = $VERBOSE
+    $VERBOSE = nil
+    yield
+    $VERBOSE = prior_val
+  end
+end
+
+class Pry
+  def self.reload_requires
+    libs = history.requires_this_session
+    libs.each do |i|
+      begin
+        reload(i)
+        puts "Reloaded #{lib}"
+      rescue LoadError
+        warn "Failed to reload #{lib}"
+        next
+      end
+    end
+  end
+
+  class History
+    def requires_this_session
+        session_line_count = (0 - Pry.history.session_line_count)
+        session_lines = Pry.history.to_a[session_line_count..-1]
+        require_lines = session_lines.grep(/\W?require /)
+        to_reload = Array(require_lines).map do |lib|
+          lib.split(/['"]/).compact.last.strip
+        end.uniq
+    end
+  end
+end
+
 Pry.config.commands.import default_command_set
 # # === CONVENIENCE METHODS ===
 # # Stolen from https://gist.github.com/807492

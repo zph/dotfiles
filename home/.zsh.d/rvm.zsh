@@ -1,7 +1,7 @@
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
 
 # Fix for Tmux and RVM not playing nicely
-cd .. && cd - # THANKS TMUX! http://stackoverflow.com/a/18659068
+cd .. && cd - && clear # THANKS TMUX! http://stackoverflow.com/a/18659068
 
 function rvm_installation(){
   \curl -L https://get.rvm.io | bash -s stable --ruby

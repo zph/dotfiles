@@ -4,6 +4,8 @@
 # sed -i 8d ~/.ssh/known_hosts
 
 alias c='\cd'
+alias m='monit'
+alias recd='cd .. && cd -'
 alias vlast='vim `!! | tail -1`'
 alias bn='branch-name'
 alias S='sack'

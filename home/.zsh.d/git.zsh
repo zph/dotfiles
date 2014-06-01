@@ -2,7 +2,9 @@
 # Taken from http://www.anujgakhar.com/2012/01/08/a-better-shell-with-oh-my-zsh/
 # and oh-my-zsh
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
-if [[ -x `which hub` ]];then
+if [[ -x `which gh` ]];then
+  alias g=`which gh`;
+elif [[ -x `which hub` ]]; then
   alias g=`which hub`;
 else
   alias g='git'
@@ -13,8 +15,9 @@ alias gcl='git clone'
 alias gst='git status -s'
 #compdef _git gst=git-status
 alias gpr='git pull --rebase'
+alias gpo='git push origin'
 #compdef _git gl=git-pull
-alias gp='git pull --ff-only'
+alias gp='git push'
 #compdef _git gl=git-pull
 alias gup='git fetch && git rebase'
 #compdef _git gup=git-fetch
@@ -49,6 +52,7 @@ alias gcount='git shortlog -sn'
 alias gcp='git cherry-pick'
 #compdef _git gcp=git-cherry-pick
 alias gl='git log --pretty=oneline --abbrev-commit'
+alias glo="git log --pretty=format:'%h %ad | %s%d [%an]' --date=short --abbrev-commit"
 #compdef _git gll=git-log
 alias gll="git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
 #compdef _git gll=git-log

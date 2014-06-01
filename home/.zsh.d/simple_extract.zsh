@@ -151,3 +151,4 @@ _simple_extract()
 }
 compdef _simple_extract simple-extract
 alias se=simple-extract
+alias extract=simple-extract

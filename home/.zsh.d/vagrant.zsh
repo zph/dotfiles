@@ -1,1 +1,1 @@
-export VAGRANT_LOG=INFO
+# export VAGRANT_LOG=INFO # very verbose

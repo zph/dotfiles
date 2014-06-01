@@ -10,7 +10,16 @@ execute pathogen#infect('bundle/{}')
 
 " Maybe
 "
+"=bundle jnwhiteh/vim-golang
+autocmd BufRead,BufNewFile *.go set tabstop=4 shiftwidth=4
+"=bundle godlygeek/tabular
+"=bundle bogado/file-line
+"=bundle scrooloose/nerdtree
+"=bundle scrooloose/syntastic
+"=bundle JazzCore/ctrlp-cmatcher after_install=( cd ctrlp-cmatcher && export CFLAGS=-Qunused-arguments && export CPPFLAGS=-Qunused-arguments && ./install.sh )
+"=bundle mhinz/vim-startify
 "=bundle terryma/vim-multiple-cursors
+""=bundle tpope/timl
 "=bundle kana/vim-textobj-user
 "=bundle nelstrom/vim-textobj-rubyblock
 "=bundle edsono/vim-matchit
@@ -20,6 +29,11 @@ execute pathogen#infect('bundle/{}')
 "=bundle xolox/vim-easytags
 "=bundle xolox/vim-misc
 "=bundle t9md/vim-ruby-xmpfilter
+"=bundle lukerandall/haskellmode-vim
+"=bundle eagletmt/ghcmod-vim
+let g:haddock_browser="/Applications/Google Chrome.app"
+"=bundle Shougo/vimproc.vim after_install=( cd vimproc.vim && make )
+
 """""""""""""""""""""""""""""""""""""""
 "=bundle terryma/vim-expand-region
 vmap v <Plug>(expand_region_expand)
@@ -38,7 +52,7 @@ function! s:Repl()
 endfunction
 vmap <silent> <expr> p <sid>Repl()
 "=bundle skalnik/vim-vroom
-"=bundle christoomey/vim-tmux-navigator
+""=bundle christoomey/vim-tmux-navigator
 """""""""""""""""""""""""""""""""""""
 "
 " Clojure Plugins
@@ -55,7 +69,7 @@ augroup END
 "Keeping
 "=bundle AndrewRadev/switch.vim
 "=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
-"=bundle airblade/vim-gitgutter
+" "=bundle airblade/vim-gitgutter
 "=bundle ap/vim-css-color
 "=bundle bling/vim-airline
 "=bundle elixir-lang/vim-elixir
@@ -140,7 +154,7 @@ set tabstop=2
 set guioptions-=T
 filetype on  " Automatically detect file types.
 
-nnoremap <Leader>g :GundoToggle<CR>
+" nnoremap <Leader>g :GundoToggle<CR>
 
 " XML Linting
 nnoremap <Leader>xm :%!xmllint --format -<CR>
@@ -277,7 +291,7 @@ let g:airline#extensions#hunks#non_zero_only = 1
 " let g:airline_section_y = '%{airline#util#wrap(airline#extensions#branch#get_head(),0)}'
 let g:airline_section_y = ''
 let g:airline_section_a = ''
-let g:airline_section_y = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
+" let g:airline_section_y = '%{airline#util#wrap(airline#extensions#hunks#get_hunks(),0)}'
 let g:airline_theme = 'murmur'
 
 " let g:airline_section_b = '%{system("branch-name | cut -c 1-20 | tr -d "\n")}'
@@ -312,6 +326,48 @@ let g:airline_symbols.whitespace = 'Ξ'
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Test functions from gary bernhardt
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" SWITCH BETWEEN TEST AND PRODUCTION CODE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! OpenTestAlternate()
+  let new_file = AlternateForCurrentFile()
+  exec ':e ' . new_file
+endfunction
+function! AlternateForCurrentFile()
+  let current_file = expand("%")
+  let new_file = current_file
+  let in_spec = match(current_file, '^spec/') != -1
+  let going_to_spec = !in_spec
+  let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1 || match(current_file, '\<helpers\>') != -1
+  if going_to_spec
+    if in_app
+      let new_file = substitute(new_file, '^app/', '', '')
+    end
+    let new_file = substitute(new_file, '\.e\?rb$', '_spec.rb', '')
+    let new_file = 'spec/' . new_file
+  else
+    let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
+    let new_file = substitute(new_file, '^spec/', '', '')
+    if in_app
+      let new_file = 'app/' . new_file
+    end
+  endif
+  return new_file
+endfunction
+nnoremap <leader>. :call OpenTestAlternate()<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" RUNNING TESTS
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"function! MapCR()
+"  nnoremap <cr> :call RunTestFile()<cr>
+"endfunction
+" call MapCR()
+nnoremap <leader>t :call RunTestFile()<cr>
+nnoremap <leader>a :call RunTests('')<cr>
+"nnoremap <leader>c :w\|:!script/features<cr>
+"nnoremap <leader>w :w\|:!script/features --profile wip<cr>
+
 function! RunTestFile(...)
     if a:0
         let command_suffix = a:1
@@ -331,7 +387,7 @@ endfunction
 
 function! RunNearestTest()
     let spec_line_number = line('.')
-    call RunTestFile(":" . spec_line_number . " -b")
+    call RunTestFile(":" . spec_line_number)
 endfunction
 
 function! SetTestFile()
@@ -341,36 +397,33 @@ endfunction
 
 function! RunTests(filename)
     " Write the file and run tests for the given filename
-    :w
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
+    if expand("%") != ""
+      :w
+    end
     if match(a:filename, '\.feature$') != -1
         exec ":!script/features " . a:filename
     else
+        " First choice: project-specific test script
         if filereadable("script/test")
             exec ":!script/test " . a:filename
+        " Fall back to the .test-commands pipe if available, assuming someone
+        " is reading the other side and running the commands
+        elseif filewritable(".test-commands")
+          let cmd = 'rspec --color --format progress --require "~/lib/vim_rspec_formatter" --format VimFormatter --out tmp/quickfix'
+          exec ":!echo " . cmd . " " . a:filename . " > .test-commands"
+
+          " Write an empty string to block until the command completes
+          sleep 100m " milliseconds
+          :!echo > .test-commands
+          redraw!
+        " Fall back to a blocking test run with Bundler
         elseif filereadable("Gemfile")
             exec ":!bundle exec rspec --color " . a:filename
+        " Fall back to a normal blocking test run
         else
             exec ":!rspec --color " . a:filename
         end
     end
-endfunction
-
-" autocmd BufWritePost *.rb :call RunTestFile()
-" Taken from Gary Bernhardt's Dotfiles on github
-function! RenameFile()
-    let old_name = expand('%')
-    let new_name = input('New file name: ', expand('%'), 'file')
-    if new_name != '' && new_name != old_name
-        exec ':saveas ' . new_name
-        exec ':silent !rm ' . old_name
-        redraw!
-    endif
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -462,31 +515,6 @@ endfunction
 :command! PromoteToLet :call PromoteToLet()
 :map <Leader>u :PromoteToLet<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-function! RunTests(filename)
-    " Write the file and run tests for the given filename
-    :w
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    :silent !echo;echo;echo;echo;echo;echo;echo;echo;echo;echo
-    if match(a:filename, '\.feature$') != -1
-        exec ":!script/features " . a:filename
-    else
-        if filereadable("script/test")
-            exec ":!script/test " . a:filename
-        elseif filereadable("Gemfile")
-            exec ":!bundle exec rspec --color " . a:filename
-        else
-            exec ":!rspec --color " . a:filename
-        end
-    end
-endfunction
-
-command! RunTests call RunTests(expand("%"))
-
 " Slime tmux settings
 let g:slime_target = "tmux"
 
@@ -540,6 +568,7 @@ nnoremap Q :q
 " Disable K looking stuff up ie instant manual lookups
 map K <Nop>
 nnoremap K :r!
+
 
 " When loading text files, wrap them and don't split up words.
 au BufNewFile,BufRead *.txt setlocal wrap
@@ -840,7 +869,7 @@ nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 
 " Async Test Running courtesy of Gary Bernhardt
 " must start ~/bin/run_test.sh
-" map <Leader>at :w\| :silent !echo rspec spec > test-commands
+map <Leader>at :w\| :silent !echo bundle exec ruby spec/lib/rubocop/runner_spec.rb > test-commands<cr>
 "
 "
 " nnoremap <leader><leader>r :w\| :!rspec spec<cr>
@@ -963,6 +992,7 @@ nnoremap :hs :split<cr><c-w>j
 nnoremap :ts :tabnew<CR>
 nnoremap :tn :tabnew<CR>
 nnoremap :bd :bd<CR>
+nnoremap :X :x
 
 " hi CursorLine   cterm=NONE ctermbg=lightblue guibg=lightblue
 set nocursorline
@@ -972,9 +1002,9 @@ if executable('html2slim')
     :r system("pbpaste | html2slim")<CR>
   endfunction
   command! HTMLtoSlim call HTMLtoSlim()
-  nnoremap <Leader>gg :GitGutterDisable<CR>
 endif
 
+nnoremap <Leader>gg :GitGutterDisable<CR>
 " The Silver Searcher
 " http://robots.thoughtbot.com/faster-grepping-in-vim/
 if executable('ag')
@@ -1068,8 +1098,11 @@ vnoremap <leader>rs :rubydo $_.gsub! %r{
 
 " Close quickfix pane from any other pane
 nnoremap <leader>cc :cclose
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
 nnoremap <leader>sh :GitGutterStageHunk<CR>
 nnoremap <leader>rh :GitGutterRevertHunk<CR>
+nnoremap <leader>gt :GitGutterToggle<CR>
 
 let g:NumberToggleTrigger="<F8>"
 
@@ -1118,3 +1151,7 @@ nnoremap <leader>v :!bundle exec approvals verify -d vimdiff -a<cr>
 nnoremap <silent> <C-W>z :wincmd z<Bar>cclose<Bar>lclose<CR>
 let g:ycm_server_use_vim_stdout = 1
 let g:ycm_server_log_level = 'debug'
+nnoremap <leader>n :NERDTreeToggle<CR>
+set colorcolumn=81
+nnoremap <leader>fm :silent :!gofmt -w %<cr>
+

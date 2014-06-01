@@ -2,6 +2,8 @@
 # alias be='bundle exec'
 alias ri='ri -f ansi'
 alias gemu='gem uninstall'
+alias r21='rvm use 2.1.1'
+alias bpr='bundle exec pry-remote'
 # alias bi="bundle install --binstubs=./.bundle/.binstubs --path vendor"
 # alias bi="bundle install"
 ##############################
@@ -13,6 +15,19 @@ alias bu="b update"
 alias be="b exec"
 alias binit="bi && b package && echo 'vendor/ruby' >> .gitignore"
 ##############################
+alias rake="run_bundler_cmd rake"
+alias rspec="run_bundler_cmd rspec"
+
+function run_bundler_cmd (){
+  if [ -e ./Gemfile ]; then
+    echo "bundle exec $@";
+    bundle exec $@;
+  else
+    echo "$@";
+    $@;
+  fi
+}
+
 function gemul(){
   if [ $1 ]; then
     gem_name=$1
@@ -22,6 +37,7 @@ function gemul(){
   gem uninstall --executables "$gem_name"
   rake install
 }
+
 function gem_reinstall(){
   gem uninstall $1
   gem install $1
