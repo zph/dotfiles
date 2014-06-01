@@ -1,3 +1,4 @@
 #!/bin/bash
-#TEST LINE
-sed -i '' "$2d" "$1"
+# Credit: http://linuxcommando.blogspot.com/2008/03/using-sed-to-extract-lines-in-text-file.html
+# sed -n 2,4p somefile.txt
+sed -n "$2,$3p" "$1"

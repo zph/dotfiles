@@ -1,32 +1,5 @@
 #!/bin/sh
 
-choose_sack_implementation(){
-  # If so, use prioritized wrapper
-  if [[ `which ag` ]]; then
-    command=`which sag`;
-  elif [[ `which ack` ]]; then
-    command=`which sack`;
-  elif [[ `which ack-grep` ]]; then
-    command=`which sack`
-  fi
-}
+sack=$(which sack)
 
-choose_bare_bin_implementation(){
-  if [[ `which ag` ]]; then
-    command=`which ag`;
-  elif [[ `which ack` ]]; then
-    command=`which ack`;
-  elif [[ `which ack-grep` ]]; then
-    command=`which ack`;
-  else
-    echo "No search tool found... install ag or ack (ack-grep) and also sack"
-  fi
-}
-# Check for sack scripts (ack wrapper)
-if [[ `which sack` ]];then
-  choose_sack_implementation
-else
-  choose_bare_bin_implementation
-fi
-
-$command 'TODO|FIXME|XXX|HACK'
+$sack 'TODO|FIXME|XXX|HACK'

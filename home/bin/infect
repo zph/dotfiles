@@ -30,7 +30,7 @@ limitations under the License.
 require 'thread' unless defined?(Mutex)
 
 # Global variable for the default thread pool size.
-$pmap_default_thread_count ||= 64
+$pmap_default_thread_count ||= 10
 
 module PMap
   class DummyOutput

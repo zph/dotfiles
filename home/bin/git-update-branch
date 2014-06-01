@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git fetch
+git update-ref -m "merge HEAD: Fast forward" refs/heads/"$1" HEAD

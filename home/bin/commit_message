@@ -1,10 +1,21 @@
 #!/usr/bin/env ruby
 
+require 'open-uri'
+
 branch_name = `git rev-parse --abbrev-ref HEAD`.chomp
+# branch_name = 'dev'
 
 DIVIDERS = %r{[-|_|/|\/]}
+DOTFILE_INITIALS = open(File.expand_path('~/.initials')).readlines.map(&:chomp).join('/')
 
-parts = branch_name.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+def match_pattern(bn)
+  parts = bn.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{4,})#{DIVIDERS}(?<description>.*)/)
+  # if parts.nil? # ie we're not able to match
+  #   parts = {initials: DOTFILE_INITIALS, number: '000000', description: ''}
+  # end
+end
+
+parts = match_pattern(branch_name)
 
 begin
   INITIALS = parts[:initials].split(DIVIDERS).join("/").upcase
@@ -15,7 +26,7 @@ rescue
 end
 
 commit_message = <<MSG
-[#{INITIALS}] [#{PIVOTAL_NUMBER}] #{DESCRIPTION}
+[#{INITIALS}][#{PIVOTAL_NUMBER}] #{DESCRIPTION}
 
 Pivotal Story: https://www.pivotaltracker.com/story/show/#{PIVOTAL_NUMBER}
 

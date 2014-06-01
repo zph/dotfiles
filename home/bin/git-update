@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# This will update all of the branches which track remotes in the current
+# repository. This will restore HEAD to the original location after that has
+# completed.
+
+# If an error occurs then the error will be prominently displayed and HEAD will
+# be returned to the original location.
+
+# This supports HEAD being on a branch or in a detached state.
+
+# Just like Your MUM </dean>
+# This tests to see if there are changes in the working tree or index that have
+# not been committed. Since this will be switching branches a lot, it is
+# undesirable to proceed if the current work could be lost.
+# This will return a true status code if the tree is dirty.
+is_dirty () {
+    # First check for staged files, then check for unstaged files, then check
+    # for files that have never been committed.
+    # See: http://stackoverflow.com/a/5151886
+    ! git diff-index --cached --quiet --ignore-submodules HEAD ||
+        ! git diff-files --quiet --ignore-submodules ||
+            [ -n "$(git ls-files --others --exclude-standard)" ]
+}
+
+# This will issue the current location to STDOUT. Capture it and pass it to
+# restore_location once the update is complete. If the current HEAD is not on a
+# branch tip then this will return the sha of the commit, unfortunately that
+# will result in a detached head (but that should be no change from the current
+# state).
+get_location () {
+    # See http://stackoverflow.com/a/12142066
+    # I personally think that the rev-parse method is cleaner:
+    # branch=$(git rev-parse --abbrev-ref HEAD)
+    # When not on a branch it just returns HEAD. Unfortunately it is not
+    # possible to distinguish between a branch named HEAD and a detached head
+    # state, so must resort to:
+    branch=$(git branch | awk ' (! /no branch/) && /\* / { print $2 } ')
+    if [ -n "$branch" ]
+    then
+        echo $branch
+        return
+    fi
+
+    # This gets the sha of the current commit
+    git log --pretty="%H" -n 1
+}
+
+# This takes a SHA or branch name and will move to that location.
+set_location () {
+    if [ "$1" != "$current_location" ]
+    then
+        git checkout "$1"
+        current_location=$1
+    fi
+}
+
+# This provides a list of the branches which track remotes.
+list_branches () {
+    # git version >= 1.7.0 can use
+    # git rev-parse --symbolic-full-name my-branch@{upstream}
+    # which will then display the full name of the remote branch when
+    # successfully completed (check status). However I am not comfortable
+    # relying on such a recent version, as plenty of dists use older versions.
+    # Thus the command just checks the config for the remote section (which
+    # itself just reads .git/config)
+
+    # If you like functional zsh, then these commands are *ideal* for filtering.
+
+    for branch in $(git branch)
+    do
+        git config branch.$branch.remote >/dev/null && echo $branch
+    done
+}
+
+# This takes a branch name. This will check that branch out and then update it.
+# The return status of this is the success of the pull. This will rebase any
+# existing work on this branch after the commits that have been pulled, which
+# will keep the history as clean as possible.
+update_branch () {
+    set_location $1 && git pull --rebase
+}
+
+# Updates all branches, stopping at the first one that fails.
+update_branches () {
+    for branch in $(list_branches)
+    do
+        update_branch "$branch"
+
+        status=$?
+        if [ $status -ne 0 ]
+        then
+            return $status
+        fi
+    done
+}
+
+if is_dirty
+then
+    echo "Your index contains unstaged, uncommitted or new files" >&2
+    exit 1
+fi
+original_location=$(get_location)
+current_location=$original_location
+
+update_branches
+status=$?
+
+set_location "$original_location"
+exit $status
+
+# vim: set ai et sw=4 syntax=sh :

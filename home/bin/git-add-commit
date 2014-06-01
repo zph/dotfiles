@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-git add --all . && git commit -m "$(date | sed 's/ /_/g') WIP commit"
+stamp=$(date "+%Y-%m-%d %H:%M:%S")
+git add --all . && git commit -m "$stamp"
