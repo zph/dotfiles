@@ -8,8 +8,8 @@ require 'fileutils'
 def remove_symlinks_and_relink(file, source, dest)
   FileUtils.rm_rf(File.expand_path("#{dest}#{file}"))
   puts "Removing dead symlinks"
-  FileUtils.ln_s(File.expand_path("#{source}#{file}"), File.expand_path("#{dest}#{file}"), :force => true)
-  puts "Creating symlink for #{dest + file}"
+  FileUtils.ln_s(File.expand_path("#{source}#{file}"), File.expand_path("#{dest}"), :force => true)
+  puts "Creating symlink for #{dest}"
 end
 
 Dir.chdir(File.expand_path("~/dotfiles")) do |dir|
@@ -29,8 +29,10 @@ ensure_homesick_is_installed
 
 system "homesick symlink ~/dotfiles"
 
-%w[sack F].each do |file|
- remove_symlinks_and_relink(file, "~/bin_repos/sack/bin/", "~/bin/")
+if `uname`[/Darwin/]
+  remove_symlinks_and_relink("sack", "~/bin_repos/go-sack/dist/", "~/bin/sack")
+else
+  remove_symlinks_and_relink("sack.linux_amd64", "~/bin_repos/go-sack/dist/", "~/bin/sack")
 end
 
 def bring_in_vim_plugins

@@ -19,3 +19,6 @@
 [submodule "home/bin_repos/sack"]
 	path = home/bin_repos/sack
 	url = git@github.com:zph/sack.git
+[submodule "home/bin_repos/go-sack"]
+	path = home/bin_repos/go-sack
+	url = git@github.com:zph/go-sack.git
