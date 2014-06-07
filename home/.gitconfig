@@ -141,8 +141,8 @@
 [core]
 	autocrlf = input
 	safecrlf = true
-	excludefile = /Users/zander/.gitignore_global
-	excludesfile = /Users/zander/.gitignore_global
+	excludesfile = ~/.gitignore_global
+	excludesfile = /Users/zph/.gitignore_global
 [credential]
 	helper = osxkeychain
 [difftool "sourcetree"]
@@ -153,7 +153,7 @@
 	trustExitCode = true
 [push]
 	; default = matching
-	default = simple
+	default = matching
 [web]
 	browser = chrome
 [branch]
