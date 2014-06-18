@@ -8,7 +8,8 @@ alias bpr='bundle exec pry-remote'
 # alias bi="bundle install"
 ##############################
 # Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
-alias b="bundle"
+alias b="nocorrect bundle"
+alias bundle="nocorrect bundle"
 alias bi="b install --path vendor"
 alias bil="bi --local"
 alias bu="b update"

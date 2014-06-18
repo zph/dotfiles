@@ -52,7 +52,8 @@
     gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
     pom = push origin master
     po = push origin
-    pr = pull --rebase
+    # pr = pull --rebase
+    pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
     pl = pull
     p = pull
     #pu = push
@@ -153,7 +154,7 @@
 	trustExitCode = true
 [push]
 	; default = matching
-	default = matching
+	default = current
 [web]
 	browser = chrome
 [branch]

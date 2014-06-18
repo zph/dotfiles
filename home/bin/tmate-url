@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+tmate show-messages | egrep -o 'Remote session: (.*)' | awk '{print $4}'

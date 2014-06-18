@@ -43,3 +43,4 @@ vendor/*
 # Tag files
 doc/tags
 tags
+.envrc

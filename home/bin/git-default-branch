@@ -20,5 +20,3 @@ response = `curl --silent -u #{AUTH_TOKEN}:x-oauth-basic #{link} `.chomp
 json = JSON.parse(response)
 
 puts json['default_branch']
-#"https://api.github.com/repos/primedia/ag"
-# "/repos/:owner/:repo"

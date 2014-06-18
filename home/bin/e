@@ -22,8 +22,16 @@ class E
     [filename_without_linenumber, "+#{ linenumber }"].join(' ')
   end
 
+  def has_bin?(bin)
+    system "which #{bin} > /dev/null"
+  end
+
   def has_fasd?
-    system "which fasd > /dev/null"
+    has_bin?("fasd")
+  end
+
+  def has_ffind?
+    has_bin?("ffind")
   end
 
   def has_fasd_result?
@@ -31,34 +39,27 @@ class E
     !fasd_result.empty?
   end
 
-  def has_ffind?
-    system "which ffind > /dev/null"
+  def exec_editor(args = "")
+    exec "$EDITOR #{args}"
   end
 
   def execute
     case
     when input.empty?
-      exec "$EDITOR ."
+      exec_editor(".")
     when File.exists?(input), Dir.exists?(input)
-      # warn input
-      # warn "file exists"
-      exec "$EDITOR #{input}"
+      exec_editor(input)
     when has_linenumber?
-      # warn "has linenumber"
-      exec "$EDITOR #{vim_command_for_linenumber}"
+      exec_editor(vim_command_for_linenumber)
     when has_fasd? && options.interactive
-      # warn "fasd interactive"
       fasd_filename = `fasd -sia #{input}`.chomp
-      exec "$EDITOR #{fasd_filename}"
+      exec_editor(fasd_filename)
     when has_fasd? && has_fasd_result?
-      # warn "has_fasd plain"
       exec "fasd -a -e $EDITOR #{input}"
     when has_ffind?
-      # warn "ffinding"
       files = `ffind #{input}`.chomp.split("\n")
-      # pp files
       puts "Editing: #{files.first}"
-      exec "$EDITOR #{files.first}"
+      exec_editor(files.first)
     else
       error_message
     end
@@ -73,8 +74,6 @@ class E
   end
 
   def parse(args)
-    # The options specified on the command line will be collected in *options*.
-    # We set default values here.
     options = OpenStruct.new
     options.interactive = nil
 

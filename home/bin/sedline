@@ -1,4 +1,12 @@
 #!/bin/bash
 # Credit: http://linuxcommando.blogspot.com/2008/03/using-sed-to-extract-lines-in-text-file.html
 # sed -n 2,4p somefile.txt
-sed -n "$2,$3p" "$1"
+readonly START_LINE="$2"
+if [ -z "$3" ] # if $3 isn't set
+then
+  readonly END_LINE="$2"
+else
+  readonly END_LINE="$3"
+fi
+
+sed -n "${START_LINE},${END_LINE}p" "$1"
