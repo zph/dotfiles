@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+exit unless system("which gh > /dev/null")
+
+GH = `which gh`.chomp
+
+exit if ARGV.empty?
+
+remotes = `git remote -v`.chomp.split("\n").map { |l| l.split[1] }
+
+exit unless remotes.grep(/github/i)
+
+full_name = remotes.first.split("github.com:")[1].gsub(/\.git$/i, '')
+
+issue_no = ARGV.first
+
+# If using as standalone
+# url = "https://github.com/#{full_name}/pull/#{issue_no}.patch"
+# patch = `curl --silent -L #{url}`.chomp
+# require'pry';binding.pry
+#
+# If using as part of system
+url = "https://github.com/#{full_name}/pull/#{issue_no}"
+STDOUT.puts url
+
+exec "#{GH} apply #{url} > /dev/null"
