@@ -1,14 +1,20 @@
 #!/usr/bin/env ruby
 
-exit unless system("which gh > /dev/null")
+def usage_and_exit
+  usage = "git issue-patch [ISSUE_OR_PR_NUMBER]"
+  warn usage
+  exit(1)
+end
+
+usage_and_exit unless system("which gh > /dev/null")
 
 GH = `which gh`.chomp
 
-exit if ARGV.empty?
+usage_and_exit if ARGV.empty?
 
 remotes = `git remote -v`.chomp.split("\n").map { |l| l.split[1] }
 
-exit unless remotes.grep(/github/i)
+usage_and_exit unless remotes.grep(/github/i)
 
 full_name = remotes.first.split("github.com:")[1].gsub(/\.git$/i, '')
 
