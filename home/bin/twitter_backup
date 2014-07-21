@@ -1,6 +1,10 @@
 #!/bin/sh
 # Simple Twitter backup script
 #
+# if ![[ -x `which t` ]];then
+#   exit(1)
+# fi
+
 DAY=`date +'%Y-%m-%d'`
 COUNT=3000
 

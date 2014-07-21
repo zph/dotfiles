@@ -2,34 +2,80 @@
 
 require 'open-uri'
 
-branch_name = `git rev-parse --abbrev-ref HEAD`.chomp
-# branch_name = 'dev'
-
 DIVIDERS = %r{[-|_|/|\/]}
-DOTFILE_INITIALS = open(File.expand_path('~/.initials')).readlines.map(&:chomp).join('/')
+
+def run_specs
+  require 'minitest/autorun'
+  require 'minitest/pride'
+  require 'stringio'
+
+  describe "#main" do
+
+    # it 'compiles default message when no valid branch' do
+    #   io = StringIO.new
+    #   main("master", io)
+    #   expected = "[ZH][] "
+    #   io.string.must_equal expected
+    # end
+
+    it 'compiles message when valid' do
+      io = StringIO.new
+      main("zh_9234923_message", io)
+      expected = <<-MSG
+  [ZH][9234923] message
+
+  Pivotal Story: https://www.pivotaltracker.com/story/show/9234923
+
+      MSG
+      io.string.must_equal expected
+    end
+  end
+end
 
 def match_pattern(bn)
-  parts = bn.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{4,})#{DIVIDERS}(?<description>.*)/)
+  bn.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{4,})#{DIVIDERS}(?<description>.*)/)
   # if parts.nil? # ie we're not able to match
   #   parts = {initials: DOTFILE_INITIALS, number: '000000', description: ''}
   # end
 end
 
-parts = match_pattern(branch_name)
-
-begin
-  INITIALS = parts[:initials].split(DIVIDERS).join("/").upcase
-  PIVOTAL_NUMBER = parts[:number]
-  DESCRIPTION = parts[:description].gsub(/#{DIVIDERS}/, ' ')
-rescue
-  exit(0)
+def branch_name_from_git
+  `git rev-parse --abbrev-ref HEAD`.chomp
 end
 
-commit_message = <<MSG
-[#{INITIALS}][#{PIVOTAL_NUMBER}] #{DESCRIPTION}
+def main(branch_name, io = STDOUT)
+  # branch_name = 'dev'
 
-Pivotal Story: https://www.pivotaltracker.com/story/show/#{PIVOTAL_NUMBER}
+  dotfile_initials = open(File.expand_path('~/.initials')).readlines.map(&:chomp).join('/')
+  default_message = "[#{dotfile_initials}][000000] "
 
-MSG
+  parts = match_pattern(branch_name)
 
-STDOUT << commit_message
+  begin
+    initials = parts[:initials].split(DIVIDERS).join("/").upcase
+    pivotal_number = parts[:number]
+    description = parts[:description].gsub(/#{DIVIDERS}/, ' ')
+  rescue
+    io.print default_message
+    exit(0)
+  end
+
+  commit_message = <<-MSG
+[#{initials}][#{pivotal_number}] #{description}
+
+Pivotal Story: https://www.pivotaltracker.com/story/show/#{pivotal_number}
+
+  MSG
+
+  io << commit_message
+end
+
+if ARGV.first == "test"
+  module Kernel
+    def exit(*args)
+    end
+  end
+  run_specs
+else
+  main(branch_name_from_git)
+end

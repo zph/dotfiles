@@ -1,32 +1,141 @@
 #!/usr/bin/env ruby
 
+# TODO: create patches from diffs: ie become non-github specific
+# checkout newer code
+# git format-patch master --stdout > fix_empty_poster.patch
+
+require 'tempfile'
+require 'optparse'
+require 'ostruct'
+
+USAGE = <<-HEREDOC.gsub(/^\s*/, '')
+  Usage: git issue-patch [ISSUE_OR_PR_NUMBER]
+
+  Retrieves raw diff patch for an issue/pr on Github and executes `git am [patch]`
+HEREDOC
+
 def usage_and_exit
-  usage = "git issue-patch [ISSUE_OR_PR_NUMBER]"
-  warn usage
+  warn USAGE
   exit(1)
 end
 
-usage_and_exit unless system("which gh > /dev/null")
+def parse(args)
+  # The options specified on the command line will be collected in *options*.
+  # We set default values here.
+  options = OpenStruct.new
+  options.apply  = false
+  options.commit = true
+  options.debug  = false
+  # options.token  = false
 
-GH = `which gh`.chomp
+  opts = OptionParser.new do |opts|
+    opts.banner = USAGE
 
-usage_and_exit if ARGV.empty?
+    # opts.on("-t", "--token [API_TOKEN]", "Use authenticated github request with token") do |v|
+    #   options.token = v
+    # end
 
-remotes = `git remote -v`.chomp.split("\n").map { |l| l.split[1] }
+    opts.on("-a", "--apply", "Execute git am --signoff using issues patch") do |v|
+      options.apply = true
+    end
 
-usage_and_exit unless remotes.grep(/github/i)
+    opts.on("-n", "--no-commit", "Don't automatically commit") do |v|
+      options.no_commit = true
+    end
 
-full_name = remotes.first.split("github.com:")[1].gsub(/\.git$/i, '')
+    opts.on("-d", "--debug", "Debug mode, no destructive actions.") do |v|
+      options.debug = true
+    end
+  end
 
-issue_no = ARGV.first
+  opts.parse!(args)
+  options
+end
 
-# If using as standalone
-# url = "https://github.com/#{full_name}/pull/#{issue_no}.patch"
-# patch = `curl --silent -L #{url}`.chomp
-# require'pry';binding.pry
-#
-# If using as part of system
-url = "https://github.com/#{full_name}/pull/#{issue_no}"
-STDOUT.puts url
+OPTS = parse(ARGV)
 
-exec "#{GH} apply #{url} > /dev/null"
+def remotes
+  %x{git remote -v}.chomp.split("\n").map { |l| l.split[1] }.grep(/github/i)
+end
+
+def extract_issue(args = ARGV.dup)
+  begin
+    args.first[/\d+/]
+  rescue NoMethodError
+    usage_and_exit
+  end
+end
+
+def full_repo_name(remote)
+  if remote
+    repo_regex = %r{github\.com[:/](?<full_repo_name>.*)\.git}
+    remote.match(repo_regex)[:full_repo_name]
+  else
+    usage_and_exit
+  end
+end
+
+def no_commit_flag(opts = OPTS)
+  opts.no_commit ? "--no-commit" : nil
+end
+def compose_git_am_command(no_commit)
+  %W[git am --signoff #{no_commit}].join(" ")
+end
+
+def execute_patch_apply(url, io)
+  io.puts "Applying patch from #{url}"
+  patch = fetch_patch(url)
+  io.puts patch
+  cmd = compose_git_am_command(no_commit_flag)
+  tmpfile do |file|
+    File.write(file, patch)
+    full_cmd = [cmd, "<", file.path].join(" ")
+    io.puts full_cmd
+    %x(#{full_cmd}) unless OPTS.debug
+  end
+end
+
+def tmpfile
+  begin
+    file = Tempfile.new("git-issue-patch")
+    yield(file)
+  ensure
+    file.close
+    file.unlink   # deletes the temp file
+  end
+end
+
+# def auth_flag(opts = OPTS)
+#   if opts.token
+#     "-H 'Authorization: token #{opts.token}'"
+#   else
+#     ""
+#   end
+# end
+
+def fetch_patch(url)
+  patch_url = [url, ".patch"].join
+  cmd = %W[curl --silent -L #{patch_url}].join(" ")
+  %x(#{cmd}).chomp unless OPTS.debug
+end
+
+def construct_patch_url(full_name, issue_no, opts = OPTS)
+  "https://github.com/#{full_name}/pull/#{issue_no}"
+end
+
+def main(io = STDOUT)
+  issue_no = extract_issue
+  remote = remotes.first
+
+  full_name = full_repo_name(remote)
+
+  url = construct_patch_url(full_name, issue_no)
+
+  if OPTS.apply
+    execute_patch_apply(url, io)
+  else
+    io.puts fetch_patch(url)
+  end
+end
+
+main

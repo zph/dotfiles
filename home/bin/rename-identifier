@@ -60,19 +60,20 @@
 #   it's simply adding word boundaries to both sides of the string.
 
 set -e
+set -o xtrace
 
 if [ $# -lt 3 ]; then
-    echo "usage: $(basename $0) old_identifier new_identifier paths ..." >&2
-    echo "example: rename-identifier User Person {app,lib}/**/*.rb" >&2
-    exit 1
+  echo "usage: $(basename $0) old_identifier new_identifier paths ..." >&2
+  echo "example: rename-identifier User Person {app,lib}/**/*.rb" >&2
+  exit 1
 fi
 
-old=$1
-new=$2
-shift; shift
-files="$*"
+readonly OLD_TERM=$1;shift
+readonly NEW_TERM=$1;shift
+readonly FILES=$*
 
-files=$(ack -l '\b'$old'\b' $files)
-leader_j='nnoremap <leader>j :%S/\<'$old'\>/'$new'/gc<cr>'
+files_with_content=$(ack -li $OLD_TERM $FILES)
+## Warning, requires vim-abolish but will rename lowercase -> lower, caps -> caps, title -> title
+leader_j="nnoremap <leader>j :%S/$OLD_TERM/$NEW_TERM/gc<cr>"
 leader_k='nnoremap <leader>k :update\|:bd<cr>'
-vim -c "$leader_j" -c "$leader_k" $files
+vim -c "$leader_j" -c "$leader_k" $files_with_content

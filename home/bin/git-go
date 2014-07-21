@@ -1,21 +1,50 @@
 #!/bin/bash
 
-set -e
+## Completions
 
-git fetch
-matching_branches=`git b -a | grep $1`
-echo "matching branch(es) found"
-echo $matching_branches
-match_count=`git b -a | grep $1 | wc -l`
+# function _complete_git-go {
+#   reply=($(git branch -r | grep -v -- '->' | cut -d '/' -f 2))
+# }
+# compctl -K _complete_git-go git-go
+# alias gg="git go"
+# compctl -K _complete_git-go gg
 
-if [ $match_count == "1" ]
-then
-    branch=`git b -a | grep $1 | cut -d '/' -f 3 | tr -d ' '`
-    echo "remote branch $branch found"
-    git co $branch
-else
-    branch=`git b | grep $1 | cut -d '/' -f 3 | tr -d ' *'`
-    echo "local branch $branch found"
-    git co $branch
-fi
+set -eou pipefail
 
+readonly REMOTE=${2:-origin}
+
+function get_branches(){
+  echo $(git branch -r | grep -v -- "->" | grep $1)
+}
+
+function branch_names(){
+  get_branches $1 | cut -d '/' -f 2
+}
+
+function checkout_branch(){
+  git checkout -B $1 ${REMOTE}/$1
+}
+
+readonly BRANCH_PATTERN=$1
+
+function main(){
+
+  git fetch &> /dev/null
+
+  readonly MATCHES=$(branch_names $BRANCH_PATTERN | wc -l | egrep -o '\d+')
+
+  case $MATCHES in
+    0 )
+      echo "$BRANCH_PATTERN not found on origin"
+      ;;
+    1 )
+      checkout_branch $(branch_names $BRANCH_PATTERN)
+      ;;
+    * )
+      branch_choice=$(branch_names $BRANCH_PATTERN | selecta)
+      checkout_branch $branch_choice
+      ;;
+  esac
+}
+
+main

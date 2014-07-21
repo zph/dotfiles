@@ -1,0 +1,1 @@
+alias da='direnv allow'

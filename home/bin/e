@@ -46,7 +46,7 @@ class E
   def execute
     case
     when input.empty?
-      exec_editor(".")
+      exec_editor("")
     when File.exists?(input), Dir.exists?(input)
       exec_editor(input)
     when has_linenumber?

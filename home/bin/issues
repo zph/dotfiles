@@ -1,5 +1,7 @@
 #!/bin/sh
 
-sack=$(which sack)
 
-$sack 'TODO|FIXME|XXX|HACK'
+readonly SACK=$(which sack)
+
+# Uses -s flag for go-sack
+$SACK -s 'TODO|FIXME|XXX|HACK'

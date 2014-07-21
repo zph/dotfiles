@@ -2,6 +2,7 @@
 # Taken from http://www.anujgakhar.com/2012/01/08/a-better-shell-with-oh-my-zsh/
 # and oh-my-zsh
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
+
 if [[ -x `which gh` ]];then
   alias g=`which gh`;
 elif [[ -x `which hub` ]]; then
@@ -11,6 +12,14 @@ else
 fi
 compdef g=git
 alias gcl='git clone'
+
+function _complete_git-go {
+  reply=($(git branch -r | grep -v -- '->' | cut -d '/' -f 2))
+}
+compctl -K _complete_git-go git-go
+alias gg="git go"
+compctl -K _complete_git-go gg
+
 #compdef _git gcl=git-clone
 alias gst='git status -s'
 #compdef _git gst=git-status
