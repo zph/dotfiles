@@ -11,10 +11,40 @@
 
 set -eou pipefail
 
+function usage(){
+  cat <<- EOF
+USAGE: git-go BRANCHNAME
+Fetches, searches origin for branchname and then sets tracking and checksout\n
+EOF
+}
+
+OPTIND=1
+while getopts ":hdv" o ; do # set $o to the next passed option
+  case "$o" in
+    v) # set "v" flag
+      VERBOSE="true"
+      ;;
+    d)
+      DEBUG="true"
+      ;;
+    h)
+      printf "$(usage)"
+      exit
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+if [[ $DEBUG == "true" ]];then
+  set -o xtrace
+fi
+
 readonly REMOTE=${2:-origin}
+readonly BRANCH_PATTERN=$1
 
 function get_branches(){
-  echo $(git branch -r | grep -v -- "->" | grep $1)
+  git branch -r | grep -v -- "->" | grep "$1"
 }
 
 function branch_names(){
@@ -25,13 +55,11 @@ function checkout_branch(){
   git checkout -B $1 ${REMOTE}/$1
 }
 
-readonly BRANCH_PATTERN=$1
-
 function main(){
 
-  git fetch &> /dev/null
+  git fetch &> /dev/null &
 
-  readonly MATCHES=$(branch_names $BRANCH_PATTERN | wc -l | egrep -o '\d+')
+  readonly MATCHES=($(branch_names $BRANCH_PATTERN | wc -l | egrep -o '\d+'))
 
   case $MATCHES in
     0 )
@@ -41,7 +69,7 @@ function main(){
       checkout_branch $(branch_names $BRANCH_PATTERN)
       ;;
     * )
-      branch_choice=$(branch_names $BRANCH_PATTERN | selecta)
+      branch_choice=$( branch_names $BRANCH_PATTERN | selecta)
       checkout_branch $branch_choice
       ;;
   esac
