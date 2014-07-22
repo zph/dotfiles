@@ -11,11 +11,19 @@
 
 set -eou pipefail
 
+# Defaults
+DEBUG="false"
+
 function usage(){
   cat <<- EOF
 USAGE: git-go BRANCHNAME
-Fetches, searches origin for branchname and then sets tracking and checksout\n
+Fetches, searches origin for branchname and then sets tracking and checksout
+Requires "selecta" bin to be in \$PATH\n
 EOF
+}
+
+function print_usage(){
+    printf "$(usage)"
 }
 
 OPTIND=1
@@ -28,13 +36,19 @@ while getopts ":hdv" o ; do # set $o to the next passed option
       DEBUG="true"
       ;;
     h)
-      printf "$(usage)"
+      print_usage
       exit
       ;;
   esac
 done
 
 shift $(($OPTIND - 1))
+
+if [[ ! -x `which selecta` ]];then
+  printf "Please install selecta\n"
+  print_usage
+  exit 1
+fi
 
 if [[ $DEBUG == "true" ]];then
   set -o xtrace
@@ -44,6 +58,7 @@ readonly REMOTE=${2:-origin}
 readonly BRANCH_PATTERN=$1
 
 function get_branches(){
+  # Ignore symlink branches
   git branch -r | grep -v -- "->" | grep "$1"
 }
 
@@ -58,6 +73,7 @@ function checkout_branch(){
 function main(){
 
   git fetch &> /dev/null &
+  local pid=$!
 
   readonly MATCHES=($(branch_names $BRANCH_PATTERN | wc -l | egrep -o '\d+'))
 
@@ -73,6 +89,8 @@ function main(){
       checkout_branch $branch_choice
       ;;
   esac
+
+  wait $pid
 }
 
 main
