@@ -35,13 +35,14 @@ end
 def retrieve_download_link(file)
   @client.ls(file)[0].direct_url['url']
 end
+
 full_real_path = Pathname.new(File.expand_path(ARGF.path))
 file = full_real_path.realpath.to_s
 
 public_dropbox_folder = File.join(ENV['HOME'], "Dropbox", "Public")
 
 unless file[/Dropbox/i]
-  FileUtils.copy(file, public_dropbox_folder) 
+  FileUtils.copy(file, public_dropbox_folder)
   file = File.expand_path(File.join(public_dropbox_folder, file.realpath.basename.to_s))
 end
 
@@ -49,9 +50,7 @@ file_relative_to_dropbox_folder = File.expand_path( file.sub(File.join(ENV['HOME
 auth_setup
 
 #- add an option to move it to ~/Dropbox/Public
-Pry.rescue do
 dl_url = retrieve_download_link(file_relative_to_dropbox_folder)
 copy_to_clipboard(dl_url)
 
 puts "Sharing URL (copied to clipboard): #{dl_url}"
-end

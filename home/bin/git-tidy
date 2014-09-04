@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git fetch --prune
+# git remove-merged

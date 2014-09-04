@@ -1,3 +1,4 @@
 #!/bin/bash
 
-git log --tags --simplify-by-decoration --date=short --pretty="format:%h  (%ad) %d"
+git log --tags --simplify-by-decoration --date=short --pretty="format:%h  %ad %d" | \
+  egrep "tag: v(\d+\.\d+\.\d+)"

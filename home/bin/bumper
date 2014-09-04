@@ -1,0 +1,180 @@
+#!/usr/bin/env ruby
+
+require 'open-uri'
+require 'shellwords'
+require 'optparse'
+
+Options = Struct.new(:major, :minor, :patch, :version, :noop, :tag, :undo)
+options = Options.new
+
+options.major, options.minor, options.patch, options.noop, options.undo = *([false] * 5)
+options.tag = false
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: example.rb [options]"
+
+  opts.on("-v", "--version [VERSION]", "Version") do |v|
+    options.version = v
+  end
+
+  opts.on("-m", "--major", "Major") do |v|
+    options.major = true
+  end
+
+  opts.on("-i", "--minor", "Minor") do |v|
+    options.minor = true
+  end
+
+  opts.on("-p", "--patch", "Patch") do |v|
+    options.patch = true
+  end
+
+  opts.on("-n", "--noop", "Noop") do |v|
+    options.noop = true
+  end
+
+  opts.on("-t", "--tag", "Tag") do |v|
+    options.tag = true
+  end
+
+  opts.on("-u", "--undo", "Undo") do |v|
+    options.undo = true
+  end
+
+end.parse!
+
+unless options.major || options.minor || options.version || !ARGV.empty?
+  options.patch = true
+end
+
+@options = options
+
+def opts(opts = @options)
+  @opts = opts
+end
+
+Version = Struct.new(:major, :minor, :patch, :original_version) do
+  def to_s
+    [major, minor, patch].join('.')
+  end
+
+  def inc!(which)
+    change(which, :+)
+  end
+
+  def dec!(which)
+    change(which, :-)
+  end
+
+  def change(which, symbol)
+    current_value = send(which)
+    which_setter = "#{which}=".to_sym
+    new_value = send(which).send(symbol, 1)
+    send(which_setter, new_value)
+  end
+end
+
+
+REGEX = /(\d+\.\d+\.\d+)/
+
+def set_version(v)
+  if opts.version
+    v.major, v.minor, v.patch = opts.version.split('.').map(&:to_i)
+  else
+    [:major, :minor, :patch].each do |meth|
+      if opts.send(meth)
+        v.send(:inc!, meth)
+      end
+    end
+  end
+end
+
+def main
+  v = Version.new
+
+  file = Dir.glob("lib/**/version.rb").first
+
+  exit(1) unless file
+
+  content = open(file).read
+  version_line = content.split("\n").grep(REGEX).first
+
+  version = version_line.match(REGEX)[1]
+  v.original_version = version
+  v.major, v.minor, v.patch = version.split('.').map(&:to_i)
+
+  set_version(v)
+
+  output = content.gsub(/#{v.original_version.shellescape}/, v.to_s)
+
+  yield(file, v, output)
+end
+
+def has_staged_changes?
+  !system("git diff --quiet --cached 2>/dev/null")
+end
+
+def tag_cmd(v)
+  "git tag -a v#{v} -m 'v#{v}'"
+end
+
+def git_add(file)
+  "git add #{file}"
+end
+
+def commit_cmd(v)
+  "git commit -m 'Version Bump v#{v}'"
+end
+
+def run_noop(file, v, output)
+  exit(1) if has_staged_changes?
+  heredoc =<<-EOF
+
+filename : #{file}
+#{output}
+---------------------------
+Original Version : #{v.original_version}
+New Version      : #{v}
+Git Add          : #{git_add(file)}
+Commit           : #{commit_cmd(v)}
+Tag              : #{tag_cmd(v)}
+  EOF
+
+  puts heredoc
+end
+
+def git_undo
+  "git reset --soft HEAD^"
+end
+
+def run_undo(file, v, output)
+  cmds = [git_undo,
+          "git tag --delete v#{v.original_version}"]
+
+  cmds.each do |cmd|
+    %x(#{cmd})
+  end
+end
+
+def run_default(file, v, output)
+  File.write(file, output) unless opts.noop
+  exit(1) if has_staged_changes?
+  if opts.tag
+    [git_add(file), commit_cmd(v), tag_cmd(v)].each do |cmd|
+      %x(#{cmd})
+    end
+  end
+end
+
+main do |file, v, output|
+  args = [file, v, output]
+
+  case
+  when opts.undo
+    run_undo(*args)
+  when opts.noop
+    run_noop(*args)
+  else
+    run_default(*args)
+  end
+end
