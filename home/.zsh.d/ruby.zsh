@@ -4,20 +4,25 @@ alias ri='ri -f ansi'
 alias gemu='gem uninstall'
 alias r21='rvm use 2.1.1'
 alias bpr='bundle exec pry-remote'
-# alias bi="bundle install --binstubs=./.bundle/.binstubs --path vendor"
+alias approve='bundle exec approvals verify -d vimdiff -a'
 # alias bi="bundle install"
 ##############################
 # Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
-alias b="nocorrect bundle"
-alias bundle="nocorrect bundle"
-alias bi="b install --path vendor"
-alias bil="bi --local"
-alias bu="b update"
-alias be="b exec"
+# alias bi="b install --path vendor"
+alias bi="nocorrect bundle install --binstubs=./.bundle/.binstubs --path vendor"
+# alias b="b"
+# alias bundle="bu"
+# alias bil="bi --local"
+alias bu="bundle update"
+alias be="bundle exec"
 alias binit="bi && b package && echo 'vendor/ruby' >> .gitignore"
 ##############################
-alias rake="run_bundler_cmd rake"
-alias rspec="run_bundler_cmd rspec"
+# alias rake="run_bundler_cmd rake"
+# alias rspec="run_bundler_cmd rspec"
+alias rspecc="run_bundler_cmd \rspec $CURRENT_SPEC"
+alias rspc=rspecc
+
+alias ruby="run_bundler_cmd ruby"
 
 function run_bundler_cmd (){
   if [ -e ./Gemfile ]; then
@@ -95,4 +100,3 @@ complete -F _integration rt
 # alias pry_rm="sed -E \"s/[require\'pry\';]*binding\.pry\s*//g\" `git diff --name-only`"
 
 # alias console_rm='sed -i "" "s/console\.log\([^\)]\s*\)//g" `git diff --name-only`'
-

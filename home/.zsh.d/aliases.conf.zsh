@@ -2,97 +2,73 @@
 # reminders
 # Delete a line from specific file
 # sed -i 8d ~/.ssh/known_hosts
-
-alias c='\cd'
-alias m='monit'
-alias recd='cd .. && cd -'
-alias vlast='vim `!! | tail -1`'
-alias bn='branch-name'
-alias S='sack'
-alias pkill='pkill -USR1 -f -I'
-# alias tree='tree -L 2 -fi'
+#
+# Because swapping to fg, bg, etc should be seamless
+# Mac Specific
 # alias cd='echo "DONT USE CD use c" && cd'
-# alias git='echo "DONT USE GIT use g" && git'
-alias rsync='rsync -v --progress --partial'
-alias dstamp='date +%Y-%m-%d'
-alias ack='noglob ack -i --nogroup'
-alias less="less -R"
-alias qlf='qlmanage -p "$@" >& /dev/null'
-alias q='exit'
-alias pgrep='pgrep -f'
-alias zgrep='zgrep -Ein --with-filename --colour=auto'
-# alias mkdir='mkdir -p' # Make mkdir recursive
-alias cdd='cd - '                     # goto last dir cd'ed from
-alias cd-='cd - '
-alias df='df -kH'
-alias xt='extract'
 # alias cv='cdargs'
 # alias cva='cdargs -a "$@"; cd $_'
-alias mntcd='mount -t iso9660 -o loop'
-alias targz="tar cvzf" # then filename.tar.gz dir_to_compress
-alias find_recent="find . -type f -mmin -60"  # Find files below the current directory that have changed within the last 60 minutes.
-
-#cd by .. or ... or ... or mv file ..../.
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ......="cd ../../../../.."
-
-# Because swapping to fg, bg, etc should be seamless
-alias j="jobs"
-alias f='fg'
-# compdef f=fg
-alias b='bg'
-alias cp='cp -iv'
-alias rcp='rsync -v --progress'
-alias rmv='rsync -v --progress --remove-source-files'
-alias mv='mv -iv'
-alias rm='rm -iv'
-alias re="reload"
 # alias d="dirs -v"
-alias cl="clear"
-alias v-='view -'
 # alias dcd="cd ~+"
-if which colordiff > /dev/null 2>&1; then
-  alias diff="colordiff -Nuar"
-else
-  alias diff="diff -Nuar"
-fi
-
-alias grep='grep -Ei --colour=auto'
-alias egrep='egrep --color=auto'
-alias curl='curl -L'
-# alias ls='ls --color=auto --human-readable --group-directories-first --classify'
 # alias g="bundle exec guard $*"
-alias x="exit"
-alias ll="ls -lah"
-
-# Mac Specific
-# alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
-alias gcomp='g++ -g -Wall -o'
-alias h='history'
-alias l='less -30'
-
-# Set sz as a function for sourcing base shell dotfile
-sz(){
-  case $(echo $SHELL) in
-    "/bin/zsh")
-      source ~/.zshrc
-      ;;
-    "/bin/bash")
-      source ~/.bashrc
-      ;;
-    *)
-      echo "Unknown Shell"
-      ;;
-  esac
-}
-
-alias set_time="dpkg-reconfigure tzdata"
+# alias git='echo "DONT USE GIT use g" && git'
 # alias jist='jist -p --copy_js'
-alias jistc='gist -p -c'
-alias jist='gist -c'
-alias :q='exit'
-alias resit='!! 2>&1 | sit'
+# alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+# alias ls='ls --color=auto --human-readable --group-directories-first --classify'
+# alias mkdir='mkdir -p' # Make mkdir recursive
+# alias tree='tree -L 2 -fi'
+
 alias -g ST='2>&1 | sit'
+alias ......="cd ../../../../.."
+alias .....="cd ../../../.."
+alias ....="cd ../../.."
+alias ...="cd ../.."
+alias ..="cd .."
+alias :q='exit'
+alias S='sack'
+alias ack='noglob ack -i --nogroup'
+alias b='bg'
+alias bn='branch-name'
+#cd by .. or ... or ... or mv file ..../.
+alias c='\cd'
+alias cd-='cd - '
+alias cdd='cd - '                     # goto last dir cd'ed from
+alias cl="clear"
+alias cp='cp -iv'
+alias curl='curl -L'
+alias df='df -kH'
+alias dstamp='date +%Y-%m-%d'
+alias egrep='egrep --color=auto'
+alias f='fg'
+alias find_recent="find . -type f -mmin -60"  # Find files below the current directory that have changed within the last 60 minutes.
+alias gcomp='g++ -g -Wall -o'
+alias grep='grep -Ei --colour=auto'
+alias h='history'
+alias j="jobs"
+alias jist='gist -c'
+alias jistc='gist -p -c'
+alias l='less -30'
+alias less="less -R"
+alias ll="ls -lahtr"
+alias m='monit'
+alias mntcd='mount -t iso9660 -o loop'
+alias mv='mv -iv'
+alias pgrep='pgrep -f'
+alias pkill='pkill -f -I'
+alias q='exit'
+alias qlf='qlmanage -p "$@" >& /dev/null'
+alias r='fc'
+alias rcp='rsync -v --progress'
+alias re="reload"
+alias recd='cd .. && cd -'
+alias resit='!! 2>&1 | sit'
+alias rm='rm -iv'
+alias rmv='rsync -v --progress --remove-source-files'
+alias rsync='rsync -v --progress --partial'
+alias set_time="dpkg-reconfigure tzdata"
+alias targz="tar -cvzf" # then filename.tar.gz dir_to_compress
+alias v-='view -'
+alias vlast='vim `!! | tail -1`'
+alias x="exit"
+alias xt='extract'
+alias zgrep='zgrep -Ein --with-filename --colour=auto'

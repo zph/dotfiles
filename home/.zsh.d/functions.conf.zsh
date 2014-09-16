@@ -42,3 +42,27 @@ function copy_empty_dir_tree(){
   # untested but should turn into mkdir -p spec/lib/gemname/crazy-nesting/folders
   find . -type d | xargs mkdir -p "$1{}"
 }
+
+
+if which colordiff > /dev/null 2>&1; then
+  alias diff="colordiff -Nuar"
+else
+  alias diff="diff -Nuar"
+fi
+
+sz(){
+# Set sz as a function for sourcing base shell dotfile
+#
+  case $(echo $SHELL) in
+    "/bin/zsh")
+      source ~/.zshrc
+      ;;
+    "/bin/bash")
+      source ~/.bashrc
+      ;;
+    *)
+      echo "Unknown Shell"
+      ;;
+  esac
+}
+
