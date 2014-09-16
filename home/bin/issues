@@ -1,7 +1,6 @@
-#!/bin/sh
-
+#!/bin/bash
 
 readonly SACK=$(which sack)
 
-# Uses -s flag for go-sack
-$SACK -s 'TODO|FIXME|XXX|HACK'
+# Uses -s flag for go-sack, and passes a '-s' flag to SACK for case-sensitive search
+$SACK -s -f '-s' '\bTODO\b|\bFIXME\b|\bXXX\b|\bHACK\b'
