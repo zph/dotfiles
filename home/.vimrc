@@ -7,8 +7,12 @@
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect('bundle/{}')
 
+" Erlang
+"=bundle jimenezrick/vimerl
+
 " Maybe
 "
+"=bundle troydm/easytree.vim
 "=bundle jnwhiteh/vim-golang
 autocmd BufRead,BufNewFile *.go set tabstop=4 shiftwidth=4 noexpandtab softtabstop=4
 autocmd BufRead,BufNewFile *.go set lcs=tab:\ \ ,nbsp:_,extends:&,precedes:<
@@ -42,12 +46,14 @@ command! -nargs=? -range=% Tab2Space call IndentConvert(<line1>,<line2>,1,<q-arg
 command! -nargs=? -range=% RetabIndent call IndentConvert(<line1>,<line2>,&et,<q-args>)
 """""""""
 "=bundle godlygeek/tabular
+"=bundle ledger/vim-ledger
+"=bundle elazar/visSum.vim
 "=bundle bogado/file-line
 "=bundle scrooloose/nerdtree
-"=bundle scrooloose/syntastic
-let g:syntastic_enable_ruby_checker = 0
+""=bundle scrooloose/syntastic
+""let g:syntastic_enable_ruby_checker = 0
 "=bundle JazzCore/ctrlp-cmatcher after_install=( cd ctrlp-cmatcher && export CFLAGS=-Qunused-arguments && export CPPFLAGS=-Qunused-arguments && ./install.sh )
-"=bundle mhinz/vim-startify
+""=bundle mhinz/vim-startify
 "=bundle terryma/vim-multiple-cursors
 ""=bundle tpope/timl
 "=bundle kana/vim-textobj-user
@@ -56,7 +62,7 @@ let g:syntastic_enable_ruby_checker = 0
 "=bundle tpope/vim-dispatch
 "=bundle tpope/gem-ctags
 "=bundle vim-scripts/AutoTag
-"=bundle xolox/vim-easytags
+""=bundle xolox/vim-easytags
 "=bundle xolox/vim-misc
 "=bundle t9md/vim-ruby-xmpfilter
 "=bundle lukerandall/haskellmode-vim
@@ -86,9 +92,12 @@ vmap <silent> <expr> p <sid>Repl()
 """""""""""""""""""""""""""""""""""""
 "
 " Clojure Plugins
-" "=bundle tpope/vim-classpath
-" "=bundle guns/vim-clojure-static
-" "=bundle tpope/vim-fireplace
+"=bundle guns/vim-clojure-static
+"=bundle tpope/vim-classpath
+"=bundle tpope/vim-dispatch
+"=bundle tpope/vim-fireplace
+"=bundle tpope/vim-leiningen
+"=bundle tpope/vim-projectionist
 " For specclj
 " https://github.com/guns/vim-clojure-static/pull/45/files
 augroup CustomEvents
@@ -98,7 +107,7 @@ augroup END
 
 "Keeping
 "=bundle AndrewRadev/switch.vim
-"=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
+""=bundle Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
 " "=bundle airblade/vim-gitgutter
 "=bundle ap/vim-css-color
 "=bundle bling/vim-airline
@@ -110,7 +119,7 @@ augroup END
 "=bundle jeffkreeftmeijer/vim-numbertoggle
 "=bundle jpalardy/vim-slime
 "=bundle kchmck/vim-coffee-script
-"=bundle kien/ctrlp.vim
+"=bundle ctrlpvim/ctrlp.vim
 "=bundle mattn/ctrlp-mark
 "=bundle mattn/ctrlp-register
 "=bundle mattn/gist-vim
@@ -283,9 +292,6 @@ autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
 
 "improve autocomplete menu color
 highlight Pmenu ctermbg=238 gui=bold
-
-" colorscheme Tomorrow-Night-Bright
-colo detailed
 
 " Hooray for integration with standard Ctrl-V -C -X etc
 vmap <C-c> "+yi
@@ -467,7 +473,7 @@ fun! <SID>StripTrailingWhitespaces()
   call cursor(l, c)
 endfun
 
-autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd FileType c,cpp,java,php,ruby,python,haml autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -913,9 +919,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " Disable easytags warning
 let g:easytags_updatetime_warn = 0
 
-let g:ycm_filetype_specific_completion_to_disable = { 'ruby' : 1 }
+" let g:ycm_filetype_specific_completion_to_disable = { 'ruby' : 1 }
 " for floobits
-let g:ycm_allow_changing_updatetime = 0
+" let g:ycm_allow_changing_updatetime = 0
 
 " Trick for saving vim sessions
 " https://ajayfromiiit.wordpress.com/2009/10/15/vim-sessions/
@@ -952,7 +958,7 @@ set exrc
 set secure
 
 " Commit_massage
-nnoremap <leader>com :normal O<cr>:r!commit_message<cr>:normal kddA<cr>:insert<cr>
+nnoremap <leader>com :normal gg<cr>:r!commit_message<cr>:normal ggdd<cr>
 " Pipe request to waiting window on test-commands.sh loop
 "o:w\|:silent !echo "bundle exec m -l 92 spec/routes/routes_spec.rb" > test-commands
 ":nnoremap <leader>ra :w\|:silent !echo "bundle exec m -l 92 %" > test-commands<CR>
@@ -1111,8 +1117,7 @@ nnoremap J mjJ`j
 nnoremap <leader>] >i{<CR>
 nnoremap <leader>[ <i{<CR>
 
-" set lcs=tab:›\ ,trail:·,eol:¬,nbsp:_,extends:&,precedes:<
-set lcs=tab:.\ ,nbsp:_,extends:&,precedes:<
+set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
 set listchars+=trail:💔
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
@@ -1179,9 +1184,64 @@ au BufEnter,BufWritePost *.coffee syn match error contained "console.log"
 nnoremap <leader>l :silent! \| :redraw!<cr>
 nnoremap <leader>v :!bundle exec approvals verify -d vimdiff -a<cr>
 nnoremap <silent> <C-W>z :wincmd z<Bar>cclose<Bar>lclose<CR>
-let g:ycm_server_use_vim_stdout = 1
-let g:ycm_server_log_level = 'debug'
+" let g:ycm_server_use_vim_stdout = 1
+" let g:ycm_server_log_level = 'debug'
 nnoremap <leader>n :NERDTreeToggle<CR>
 set colorcolumn=81
 nnoremap <leader>fm :silent :!gofmt -w %<cr>
 
+nnoremap :qq :qa!<CR>
+
+" Don't try to highlight lines longer than 800 characters. Prevent horrible
+" slowness
+set synmaxcol=800
+" Better Completion
+set complete=.,w,b,u,t
+set completeopt=longest,menuone,preview
+
+" Cool trick from sjl
+" set undodir=~/.vim/tmp/undo//     " undo files
+" set backupdir=~/.vim/tmp/backup// " backups
+" set directory=~/.vim/tmp/swap//   " swap files
+
+" " Make those folders automatically if they don't already exist.
+" if !isdirectory(expand(&undodir))
+"     call mkdir(expand(&undodir), "p")
+" endif
+" if !isdirectory(expand(&backupdir))
+"     call mkdir(expand(&backupdir), "p")
+" endif
+" if !isdirectory(expand(&directory))
+"     call mkdir(expand(&directory), "p")
+" endif
+
+" Highlight VCS conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+" colorscheme Tomorrow-Night-Bright
+colo detailed
+
+" Create Parent Directories
+"-----------------------------------------------------------------------------
+" Create directories if the parent directory for a
+" file doesn't exist.
+" from: http://stackoverflow.com/a/4294176/108857
+function! s:MkNonExDir(file, buf)
+  if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
+    let dir=fnamemodify(a:file, ':h')
+    if !isdirectory(dir)
+      call mkdir(dir, 'p')
+    endif
+  endif
+endfunction
+
+augroup BWCCreateDir
+  autocmd!
+  autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
+augroup END
+
+" Extra vimrcs with direnv
+if exists("$EXTRA_VIM")
+  for path in split($EXTRA_VIM, ':')
+    exec "source ".path
+  endfor
+endif

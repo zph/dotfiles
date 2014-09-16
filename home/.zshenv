@@ -1,8 +1,8 @@
 # RVM
-_load_RVM_source_file_zsh(){
-  [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
-}
-_load_RVM_source_file_zsh
+# _load_RVM_source_file_zsh(){
+#   [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
+# }
+# _load_RVM_source_file_zsh
 
 # CHRUBY
 # if [[ -e /usr/local/share/chruby ]]; then

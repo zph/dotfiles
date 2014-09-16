@@ -175,54 +175,54 @@ _set_colors(){
 
 
 _confirm() {
-	local answer
-	echo -ne "zsh: sure you want to run '${yellow}$@${nc}' [yN]? "
-	read -q answer
-		echo
-	if [[ "${answer}" =~ ^[Yy]$ ]]; then
-		command "${=1}" "${=@:2}"
-	else
-		return 1
-	fi
+  local answer
+  echo -ne "zsh: sure you want to run '${yellow}$@${nc}' [yN]? "
+  read -q answer
+    echo
+  if [[ "${answer}" =~ ^[Yy]$ ]]; then
+    command "${=1}" "${=@:2}"
+  else
+    return 1
+  fi
 }
 
 _confirm_wrapper() {
-	if [ "$1" = '--root' ]; then
-		local as_root='true'
-		shift
-	fi
+  if [ "$1" = '--root' ]; then
+    local as_root='true'
+    shift
+  fi
 
-	local runcommand="$1"; shift
+  local runcommand="$1"; shift
 
-	if [ "${as_root}" = 'true' ] && [ "${USER}" != 'root' ]; then
-		runcommand="sudo ${runcommand}"
-	fi
-	_confirm "${runcommand}" "$@"
+  if [ "${as_root}" = 'true' ] && [ "${USER}" != 'root' ]; then
+    runcommand="sudo ${runcommand}"
+  fi
+  _confirm "${runcommand}" "$@"
 }
 
 _termtitle() {
-	case "$TERM" in
-		rxvt*|xterm|nxterm|gnome|screen|screen-*)
-			case "$1" in
-				precmd)
+  case "$TERM" in
+    rxvt*|xterm|nxterm|gnome|screen|screen-*)
+      case "$1" in
+        precmd)
           print -Pn "\e]0;%n@%m: %~\a"
-				;;
-				preexec)
-					zsh_cmd_title="$2"
-					# Escape '\' char.
-					zsh_cmd_title="${zsh_cmd_title//\\/\\\\}"
-					# Escape '$' char.
-					zsh_cmd_title="${zsh_cmd_title//\$/\\\\\$}"
-					# Escape '%' char.
-					#zsh_cmd_title="${zsh_cmd_title//%/\%\%}"
-					# As I am unable to deal with all %, especialy
-					# the nasted one, I will just strip this char.
-					zsh_cmd_title="${zsh_cmd_title//\%/<percent>}"
+        ;;
+        preexec)
+          zsh_cmd_title="$2"
+          # Escape '\' char.
+          zsh_cmd_title="${zsh_cmd_title//\\/\\\\}"
+          # Escape '$' char.
+          zsh_cmd_title="${zsh_cmd_title//\$/\\\\\$}"
+          # Escape '%' char.
+          #zsh_cmd_title="${zsh_cmd_title//%/\%\%}"
+          # As I am unable to deal with all %, especialy
+          # the nasted one, I will just strip this char.
+          zsh_cmd_title="${zsh_cmd_title//\%/<percent>}"
           print -Pn "\e]0;${zsh_cmd_title} [%n@%m: %~]\a"
-				;;
-			esac
-		;;
-	esac
+        ;;
+      esac
+    ;;
+  esac
 }
 
 _add_homebin_to_dir(){
@@ -236,7 +236,7 @@ _add_homebin_to_dir(){
 }
 
 _export_editor_and_tmp_dirs(){
-  export EDITOR=`which vim`
+  export EDITOR="/usr/local/bin/vim"
   export TMP="$HOME/tmp"
   export TEMP="$TMP"
   export TMPDIR="$TMP"
@@ -289,28 +289,15 @@ _normalize_keys(){
   # Source: http://superuser.com/questions/328026/can-i-use-vim-editing-mode-on-the-command-line-without-losing-recursive-history
   bindkey -M viins '^R' history-incremental-search-backward
   bindkey -M vicmd '^R' history-incremental-search-backward
-  # More Vi keybinds for searching
-  bindkey '^P' history-search-backward
-  bindkey '^N' history-search-forward 
+  # # More Vi keybinds for searching
+  # bindkey '^P' history-search-backward
+  # bindkey '^N' history-search-forward 
   # Keybind for opening command in full editor
   #
   autoload -z edit-command-line
   zle -N edit-command-line
   bindkey "^X^E" edit-command-line
   #
-  # bind UP and DOWN arrow keys
-  zmodload zsh/terminfo
-  bindkey "$terminfo[kcuu1]" history-substring-search-up
-  bindkey "$terminfo[kcud1]" history-substring-search-down
-
-  # bind P and N for EMACS mode
-  bindkey -M emacs '^P' history-substring-search-up
-  bindkey -M emacs '^N' history-substring-search-down
-
-  # bind k and j for VI mode
-  bindkey -M vicmd 'k' history-substring-search-up
-  bindkey -M vicmd 'j' history-substring-search-down
-
   # only works in newer zsh
   zmodload -a pcre
 
@@ -371,20 +358,40 @@ _local_configs(){
   fi
 }
 
+_remove_from_path(){
+  local item="$1"
+  cleansed_path=$(echo -n $PATH | tr ':' "\n" | grep -v "^${item}$" | grep -v '^$' | tr "\n" ':')
+  export PATH=$cleansed_path
+}
+
+_add_to_path(){
+  local item="$1"
+  export PATH=${item}:$PATH
+}
+
+_prepend_to_path(){
+  local item="$1"
+  _remove_from_path "$item"
+  _add_to_path "$item"
+}
+
 _zshrc_main(){
   ############
   # Execute Functions
   _zshrc_pre_init
   _local_configs
   _set_zsh_settings
-  _add_homebin_to_dir
-  _source_zshd
   _ignore_listed_zshd_commands
   _termtitle
   _export_editor_and_tmp_dirs
   _normalize_keys
   _set_colors
+  _add_homebin_to_dir
+  _source_zshd
   _set_prompt
+  _prepend_to_path "${HOME}/bin"
+  _remove_from_path "~/bin"
+  # _prepend_to_path "./.bundle/.binstubs"
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   # _alternate_prompt
@@ -394,4 +401,10 @@ _zshrc_main(){
 _zshrc_main
 
 # Ctrl-T shows active load of the running PID
+# __add_ruby_binstubs_to_path(){
+#   export PATH=".bundle/.binstubs:${PATH}"
+# }
+
+# __add_ruby_binstubs_to_path
+
 eval "$(direnv hook zsh)"
