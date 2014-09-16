@@ -40,7 +40,26 @@ coverage.vim
 # Bundle location
 vendor/*
 
+# Backup files from editors
+## Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+## Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
 # Tag files
 doc/tags
 tags
 .envrc
+.bundle
+.repl_rake.rb

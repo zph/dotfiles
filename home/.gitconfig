@@ -1,14 +1,16 @@
-# Much of the customization in this Config originated from Gary Bernhardt
+# Much of the customization in this Config originated from Gary Bernhardt and other sources.
 [user]
 	name = Zander Hill
-	email = Zander@civet.ws
+	email = zander@xargs.io
+	signingkey = 6CBA19142E2EBACB
 [diff]
 [color]
 	ui = true
 [alias]
     # git-smart aliases
-    spu = smart-push
+    sp = "!git tidy && git smart-pull"
     a = add
+    ai = "!git add --intent-to-add ."
     aa = add --all
     aap = add --all --patch
     ai = add -i
@@ -16,10 +18,9 @@
     ap = add -p
     b = branch
     bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
-    ci = commit
-    cv = commit -v
-    cim = commit -m
-    cl = clone
+    ci = commit -v -S
+    cim = commit -S -m
+    # cl = clone
     cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
     co = checkout
@@ -47,15 +48,18 @@
     nope = "!sh -c 'git checkout .; git checkout -'"
     pbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
     upbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
-    up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
-    pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
+    # up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
+    #pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
     gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
     pom = push origin master
     po = push origin
     # pr = pull --rebase
     pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
     pl = pull
-    p = pull
+    p = "!git pull --rebase --prune"
+    save = "!git add -A && git commit -m 'SAVEPOINT'"
+    wip = "!git add -u && git commit -m 'WIP'"
+    wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
     #pu = push
     pul = pull --ff-only
     pullff = pull --ff-only
@@ -143,7 +147,6 @@
 	autocrlf = input
 	safecrlf = true
 	excludesfile = ~/.gitignore_global
-	excludesfile = /Users/zph/.gitignore_global
 [credential]
 	helper = osxkeychain
 [difftool "sourcetree"]
