@@ -3,6 +3,7 @@
 require 'open-uri'
 require 'shellwords'
 require 'optparse'
+require 'pathname'
 
 Options = Struct.new(:major, :minor, :patch, :version, :noop, :tag, :undo)
 options = Options.new
@@ -11,7 +12,7 @@ options.major, options.minor, options.patch, options.noop, options.undo = *([fal
 options.tag = false
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: example.rb [options]"
+  opts.banner = "Usage: #{Pathname.new($0).basename} [options]"
 
   opts.on("-v", "--version [VERSION]", "Version") do |v|
     options.version = v
@@ -92,9 +93,17 @@ end
 def main
   v = Version.new
 
-  file = Dir.glob("lib/**/version.rb").first
+  begin
+    relative_file = Dir.glob("lib/**/version.rb").first ||
+                      `grep -Rn 'VERSION =' lib`.chomp.split(':').first # Get our hands dirty & shell out!!
 
-  exit(1) unless file
+    file = File.expand_path(relative_file)
+
+    raise(ArgumentError, "No file exists") unless File.exists?(file)
+  rescue => e
+    warn "Unable to find valid version assignment. Exiting..."
+    exit(1)
+  end
 
   content = open(file).read
   version_line = content.split("\n").grep(REGEX).first
@@ -127,7 +136,10 @@ def commit_cmd(v)
 end
 
 def run_noop(file, v, output)
-  exit(1) if has_staged_changes?
+  if has_staged_changes?
+    warn "Has staged changes. Fix this."
+    exit(1)
+  end
   heredoc =<<-EOF
 
 filename : #{file}
@@ -158,7 +170,11 @@ end
 
 def run_default(file, v, output)
   File.write(file, output) unless opts.noop
-  exit(1) if has_staged_changes?
+  if has_staged_changes?
+    warn "Has staged changes. Fix this."
+    exit(1)
+  end
+
   if opts.tag
     [git_add(file), commit_cmd(v), tag_cmd(v)].each do |cmd|
       %x(#{cmd})
