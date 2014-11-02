@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+readonly URL="$@"
+# curl -o /dev/null --head -sL -w "%{http_code} %{url_effective}\\n" "${URL}"
+curl -o /dev/null --head -sL -w "%{http_code}\\n" "${URL}"

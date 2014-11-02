@@ -67,7 +67,8 @@
     ra = !git r --all
     rh = reset --hard
     rhh = "!git reset --hard && git clean -df"
-    st = status
+    st = status -s
+    stt = "!git status -s | grep -v \"^??\""
     sf = show --pretty="format:" --name-only
     sv = !git show -v
     spp = "!git stash && git pull && git stash pop"

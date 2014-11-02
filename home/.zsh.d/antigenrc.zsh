@@ -44,7 +44,6 @@ fi
 # TODO: add feature
 # antigen bundle git@github.com:jdavis/secret.git
 
-
 antigen apply
 
 # history-substring-search

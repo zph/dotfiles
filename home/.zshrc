@@ -1,5 +1,5 @@
 # .zshrc
-# Assembled, refactored and modified by: ZPH <zander@civet.ws>
+# Assembled, refactored and modified by: ZPH <zander@xargs.io>
 # License on modifications and original code: Bourbonware.
 # Credits: Piotr Karbowski <piotr.karbowski@gmail.com> (Licensed as Beerware)
 # Gary Bernhardt, Wunjo, Others...
@@ -101,6 +101,9 @@ _set_zsh_settings(){
   # zargs, as an alternative to find -exec and xargs.
   autoload -U zargs
 
+  # hooks
+  autoload -U add-zsh-hook
+
   # Turn on command substitution in the prompt (and parameter expansion and arithmetic expansion).
   setopt promptsubst
 
@@ -173,7 +176,6 @@ _set_colors(){
   NC='\e[0m'
 }
 
-
 _confirm() {
   local answer
   echo -ne "zsh: sure you want to run '${yellow}$@${nc}' [yN]? "
@@ -215,7 +217,7 @@ _termtitle() {
           zsh_cmd_title="${zsh_cmd_title//\$/\\\\\$}"
           # Escape '%' char.
           #zsh_cmd_title="${zsh_cmd_title//%/\%\%}"
-          # As I am unable to deal with all %, especialy
+          # As I am unable to deal with all %, especially
           # the nasted one, I will just strip this char.
           zsh_cmd_title="${zsh_cmd_title//\%/<percent>}"
           print -Pn "\e]0;${zsh_cmd_title} [%n@%m: %~]\a"
@@ -309,6 +311,7 @@ _set_prompt(){
   autoload -U promptinit
   promptinit
   prompt zph
+  _right_prompt
 }
 
 _right_prompt(){
@@ -318,39 +321,6 @@ _right_prompt(){
   fi
 }
 
-_setup_colors(){
-
-}
-
-## DEPRECATED PRIVATE FUNCTIONS
-_execute_alert(){
-  if [ -f ~/.alert ]; then cat ~/.alert; fi
-}
-
-# __set_rprompt_with_task_info(){
-#   todo_count(){
-#     # # if $(which todo.sh &> /dev/null)
-#     # if $(which task &> /dev/null)
-#     # then
-#     #   # num=$(echo $(todo.sh ls | grep "^[0-9]" | wc -l))
-#     #   num=$(echo $(task status:pending proj:INBOX count))
-#     #   let todos=num
-#     #   if [ $todos != 0 ]
-#     #   then
-#     #     echo "$todos"
-#     #   else
-#     #     echo ""
-#     #   fi
-#     # else
-#     #   echo ""
-#     # fi
-#   }
-# }
-#
-# will work PS1 will be '$ '
-# PS1=
-# PS1="$PS1"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#I_#P") "$PWD")'
-# PS1='$ '$PS1
 ### Main function
 _local_configs(){
   if [[ -f "${ZSHDDIR}/configs.local" ]]; then
@@ -375,6 +345,11 @@ _prepend_to_path(){
   _add_to_path "$item"
 }
 
+_set_zsh_hooks(){
+  add-zsh-hook chpwd _set_prompt
+  add-zsh-hook precmd _set_prompt
+}
+
 _zshrc_main(){
   ############
   # Execute Functions
@@ -391,20 +366,12 @@ _zshrc_main(){
   _set_prompt
   _prepend_to_path "${HOME}/bin"
   _remove_from_path "~/bin"
-  # _prepend_to_path "./.bundle/.binstubs"
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
-  # _alternate_prompt
-  _right_prompt
+  _set_zsh_hooks
+
 }
 
 _zshrc_main
-
-# Ctrl-T shows active load of the running PID
-# __add_ruby_binstubs_to_path(){
-#   export PATH=".bundle/.binstubs:${PATH}"
-# }
-
-# __add_ruby_binstubs_to_path
 
 eval "$(direnv hook zsh)"

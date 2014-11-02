@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "$RUBY_VERSION"
+# source "$HOME/.zsh.d/chruby.zsh"
+# echo "$(chruby | grep '\*' | awk '{print $2}' | sed 's/.*ruby-//' 2> /dev/null)"

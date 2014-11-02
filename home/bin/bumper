@@ -178,6 +178,7 @@ def run_default(file, v, output)
   if opts.tag
     [git_add(file), commit_cmd(v), tag_cmd(v)].each do |cmd|
       %x(#{cmd})
+      exit(1) if $? != 0
     end
   end
 end

@@ -7,13 +7,81 @@
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect('bundle/{}')
 
+
+""=bundle jaxbot/github-issues.vim
+
+if has('lua')
+"=bundle Shougo/neocomplete.vim
+  let g:neocomplete#force_overwrite_completefunc = 1
+  let g:neocomplete#enable_at_startup = 1
+  let g:acp_enableAtStartup = 0
+  " Use neocomplete.
+  let g:neocomplete#enable_at_startup = 1
+  " Use smartcase.
+  let g:neocomplete#enable_smart_case = 1
+  " Set minimum syntax keyword length.
+  let g:neocomplete#sources#syntax#min_keyword_length = 3
+  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+  " Define dictionary.
+  let g:neocomplete#sources#dictionary#dictionaries = {
+      \ 'default' : '',
+      \ 'vimshell' : $HOME.'/.vimshell_hist',
+      \ 'scheme' : $HOME.'/.gosh_completions'
+          \ }
+
+  " Define keyword.
+  if !exists('g:neocomplete#keyword_patterns')
+      let g:neocomplete#keyword_patterns = {}
+  endif
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+  " Plugin key-mappings.
+  inoremap <expr><C-g>     neocomplete#undo_completion()
+  inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+  " Recommended key-mappings.
+  " <CR>: close popup and save indent.
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return neocomplete#close_popup() . "\<CR>"
+    " For no inserting <CR> key.
+    "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+  endfunction
+  " <TAB>: completion.
+  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+  " <C-h>, <BS>: close popup and delete backword char.
+  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+  inoremap <expr><C-y>  neocomplete#close_popup()
+  inoremap <expr><C-e>  neocomplete#cancel_popup()
+  " Close popup by <Space>.
+  inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
+else
+  " somehow disable neocomplete?
+endif
+
+"" End neocomp
+
 " Erlang
 "=bundle jimenezrick/vimerl
 
+" Scala
+"=bundle derekwyatt/vim-scala
+"
+" Lua
+"=bundle vim-scripts/lua.vim
+" Zencoding/emmet
+"=bundle mattn/emmet-vim
+"
+" Purescript
+"=bundle raichoo/purescript-vim
+"
 " Maybe
 "
 "=bundle troydm/easytree.vim
-"=bundle jnwhiteh/vim-golang
+""=bundle jnwhiteh/vim-golang
+"=bundle fatih/vim-go
 autocmd BufRead,BufNewFile *.go set tabstop=4 shiftwidth=4 noexpandtab softtabstop=4
 autocmd BufRead,BufNewFile *.go set lcs=tab:\ \ ,nbsp:_,extends:&,precedes:<
 " Return indent (all whitespace at start of a line), converted from
@@ -50,8 +118,8 @@ command! -nargs=? -range=% RetabIndent call IndentConvert(<line1>,<line2>,&et,<q
 "=bundle elazar/visSum.vim
 "=bundle bogado/file-line
 "=bundle scrooloose/nerdtree
-""=bundle scrooloose/syntastic
-""let g:syntastic_enable_ruby_checker = 0
+"=bundle scrooloose/syntastic
+"let g:syntastic_enable_ruby_checker = 0
 "=bundle JazzCore/ctrlp-cmatcher after_install=( cd ctrlp-cmatcher && export CFLAGS=-Qunused-arguments && export CPPFLAGS=-Qunused-arguments && ./install.sh )
 ""=bundle mhinz/vim-startify
 "=bundle terryma/vim-multiple-cursors
@@ -66,7 +134,7 @@ command! -nargs=? -range=% RetabIndent call IndentConvert(<line1>,<line2>,&et,<q
 "=bundle xolox/vim-misc
 "=bundle t9md/vim-ruby-xmpfilter
 "=bundle lukerandall/haskellmode-vim
-"=bundle eagletmt/ghcmod-vim
+""=bundle eagletmt/ghcmod-vim
 let g:haddock_browser="/Applications/Google Chrome.app"
 "=bundle Shougo/vimproc.vim after_install=( cd vimproc.vim && make )
 
@@ -115,6 +183,21 @@ augroup END
 "=bundle epeli/slimux
 "=bundle ervandew/supertab
 "=bundle Raimondi/delimitMate
+"=bundle Shougo/neosnippet.vim
+" Tell Neosnippet about the other snippets
+let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
+" Plugin key-mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)"
+\: pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)"
+\: "\<TAB>""
 "=bundle honza/vim-snippets
 "=bundle jeffkreeftmeijer/vim-numbertoggle
 "=bundle jpalardy/vim-slime
@@ -285,10 +368,10 @@ set mouse=a  " Mouse in all modes
 " Ruby autocomplete setup
 " Credit:
 " http://www.cuberick.com/2008/10/ruby-autocomplete-in-vim.html
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
-autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+" autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+" autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+" autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
+" autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
 
 "improve autocomplete menu color
 highlight Pmenu ctermbg=238 gui=bold
@@ -511,7 +594,7 @@ nnoremap <Leader>, :b#<CR>
 imap <c-h> <space>=><space>
 
 " Maps ctrl k to stabby lambda
-imap <c-l> <space>->
+imap <c-l> <space>-><space>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Clear search buffer when hitting return (also from Gary Bernhardt)
@@ -537,7 +620,7 @@ augroup vimrcEx
   autocmd FileType python set sw=4 sts=4 et
 augroup END
 
-" make tab completion for files/buffers work like bash 
+" make tab completion for files/buffers work like bash
 set wildmenu
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -850,9 +933,9 @@ autocmd BufRead *
 map <Leader>ft :set ft=
 
 " ZenCoding Shortcut
-" vmap <Leader>z <C-Y>,
-" nmap <Leader>z <C-Y>,
-" imap <Leader>z <ESC><C-Y>,a
+vmap <Leader>z <C-Y>,
+nmap <Leader>z <C-Y>,
+imap <Leader>z <ESC><C-Y>,a
 
 " Tidy Html and XML
 :command Thtml :%!tidy -q -i --show-errors 0
@@ -958,7 +1041,7 @@ set exrc
 set secure
 
 " Commit_massage
-nnoremap <leader>com :normal gg<cr>:r!commit_message<cr>:normal ggdd<cr>
+nnoremap <leader>com :normal gg<cr>:r!commit_message<cr>:normal ggddA<cr>
 " Pipe request to waiting window on test-commands.sh loop
 "o:w\|:silent !echo "bundle exec m -l 92 spec/routes/routes_spec.rb" > test-commands
 ":nnoremap <leader>ra :w\|:silent !echo "bundle exec m -l 92 %" > test-commands<CR>
@@ -1196,8 +1279,8 @@ nnoremap :qq :qa!<CR>
 " slowness
 set synmaxcol=800
 " Better Completion
-set complete=.,w,b,u,t
-set completeopt=longest,menuone,preview
+" set complete=.,w,b,u,t
+" set completeopt=longest,menuone,preview
 
 " Cool trick from sjl
 " set undodir=~/.vim/tmp/undo//     " undo files

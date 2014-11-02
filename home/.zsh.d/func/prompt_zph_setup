@@ -1,13 +1,13 @@
-# grb prompt theme
+# zph prompt theme
 # copied from wunjo prompt theme and modified
 
 autoload -U zgitinit
 zgitinit
 
-prompt_grb_help () {
+prompt_zph_help () {
   cat <<'EOF'
 
-  prompt grb
+  prompt zph
 
 EOF
 }
@@ -47,8 +47,6 @@ _prompt_char () {
   echo '●' # ○
 }
 
-
-
 function minutes_since_last_commit {
     now=`date +%s`
     last_commit=`git log --pretty=format:'%at' -1 2>/dev/null`
@@ -61,7 +59,7 @@ function minutes_since_last_commit {
     fi
 }
 
-function prompt_grb_scm_time_since_commit() {
+function prompt_zph_scm_time_since_commit() {
   local -A pc
   pc=(${(kv)wunjo_prompt_colors})
 
@@ -84,19 +82,19 @@ function prompt_grb_scm_time_since_commit() {
     fi
 }
 
-function prompt_grb_scm_info() {
+function prompt_zph_scm_info() {
     if zgit_inworktree; then
         echo "($(prompt_wunjo_scm_branch))"
     fi
 }
 
-function prompt_grb_display_if_git(){
+function prompt_zph_display_if_git(){
   if zgit_isgit; then
     echo $1
   fi
 }
 
-prompt_grb_setup() {
+prompt_zph_setup() {
     local verbose
     if [[ $TERM == screen* ]] && [ -n "$STY" ]; then
       verbose=
@@ -179,16 +177,18 @@ prompt_grb_setup() {
     echo $(ruby -v | egrep -io '\d+\.\d+.\d+')
   }
 
-  PROMPT=
-  if [ $verbose ]; then
-    # PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] $pc[time]\$(~/.rvm/bin/rvm-prompt v)$pc[reset]"
-    current_version="$(chruby | grep '\*' | awk '{print $2}' | sed 's/.*ruby-//' 2> /dev/null)"
-    PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] ${current_version}$pc[time]$pc[reset]"
-  fi
-  PROMPT+=" $pc[shortpath]%1~$pc[reset]"
-    # PROMPT+="\$(prompt_grb_display_if_git \()$pc[scm_branch]\$(prompt_wunjo_scm_branch)$pc[reset]\$(prompt_grb_display_if_git \))"
-  #PROMPT+=" $pc[#]$(_prompt_char)$pc[reset]"
-  PROMPT+=" "
+  build_prompt(){
+    PROMPT=
+    if [ $verbose ]; then
+      # PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] $pc[time]\$(~/.rvm/bin/rvm-prompt v)$pc[reset]"
+      PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] \$(echo ${RUBY_VERSION:-"system"})$pc[time]$pc[reset]"
+    fi
+    PROMPT+=" $pc[shortpath]%1~$pc[reset]"
+      # PROMPT+="\$(prompt_zph_display_if_git \()$pc[scm_branch]\$(prompt_wunjo_scm_branch)$pc[reset]\$(prompt_zph_display_if_git \))"
+    #PROMPT+=" $pc[#]$(_prompt_char)$pc[reset]"
+    PROMPT+=" "
+    echo $PROMPT
+  }
 
     # pc[scm_status_dirty]='Red'
     # pc[scm_status_staged]='Green'
@@ -203,6 +203,7 @@ prompt_grb_setup() {
 
   # RPROMPT below MUST have escaping \ before $
   RPROMPT="$pc[scm_status_staged] \$(prior_cmd_return_value)$pc[reset]"
+  PROMPT=$(build_prompt)
 
   export PROMPT RPROMPT
   precmd_functions+='prompt_wunjo_precmd'
@@ -357,6 +358,6 @@ prompt_wunjo_scm_branch() {
   echo $pc[reset]
 }
 
-prompt_grb_setup "$@"
+prompt_zph_setup "$@"
 
 # vim:set ft=zsh:

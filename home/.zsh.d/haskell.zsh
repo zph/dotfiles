@@ -1,2 +1,4 @@
-GHC_APP="${HOME}/Applications/ghc-7.8.2.app/Contents"
+GHC_APP="$HOME/Library/Haskell"
+
+# export PATH="${GHC_APP}/bin:$PATH"
 export PATH="${HOME}/.cabal/bin:${GHC_APP}/bin:${PATH}"

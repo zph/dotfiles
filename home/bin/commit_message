@@ -47,7 +47,9 @@ def main(branch_name, io = STDOUT)
   # branch_name = 'dev'
 
   dotfile_initials = open(File.expand_path('~/.initials')).readlines.map(&:chomp).join('/')
-  default_message = "[#{dotfile_initials}][000000] "
+  story = `git current-story`.chomp
+  story = story.empty? ? "0000000" : story
+  default_message = "[#{dotfile_initials}][#{story}] "
 
   parts = match_pattern(branch_name)
 

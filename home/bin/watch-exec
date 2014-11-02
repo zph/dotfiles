@@ -5,8 +5,8 @@
 # Credit for initial script: http://stackoverflow.com/a/18341108/1930671
 
 set -o nounset
-set -o pipefail
-set -o errexit
+# set -o pipefail
+# set -o errexit
 # set -o xtrace
 
 readonly PROGNAME=$(basename $0)
@@ -33,7 +33,8 @@ run_loop(){
     if ! [[ $ATIME == $PRIOR_ATIME ]];then
 
       echo "CMD: ${CMD_TO_RUN}"
-      $(${CMD_TO_RUN})
+      $($CMD_TO_RUN > /dev/null)
+      echo $?
       PRIOR_ATIME=$ATIME
     fi
     sleep 1
