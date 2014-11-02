@@ -41,9 +41,10 @@ def os_specific_binaries(os)
 end
 
 def link_file(file)
-  filename = file.split("/").last.split(".").first
+  old_filename = file.split("/").last
+  filename = old_filename.split(".").first
   pathname = Pathname.new(file)
-  remove_symlinks_and_relink(filename, pathname.dirname, File.join("~/bin", filename))
+  remove_symlinks_and_relink(old_filename, pathname.dirname, File.join("~/bin", filename))
   `chmod +x #{File.join("~/bin", filename)}`
 end
 

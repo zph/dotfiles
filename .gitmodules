@@ -10,15 +10,6 @@
 [submodule "home/bin_repos/osx-proxy"]
 	path = home/bin_repos/osx-proxy
 	url = git@bitbucket.org:zph/osx-proxy.git
-[submodule "home/bin_repos/holman_dotfiles"]
-	path = home/bin_repos/holman_dotfiles
-	url = git@github.com:holman/dotfiles.git
 [submodule "home/bin_repos/git-extras"]
 	path = home/bin_repos/git-extras
 	url = git@github.com:visionmedia/git-extras.git
-[submodule "home/bin_repos/sack"]
-	path = home/bin_repos/sack
-	url = git@github.com:zph/sack.git
-[submodule "home/bin_repos/go-sack"]
-	path = home/bin_repos/go-sack
-	url = git@github.com:zph/go-sack.git
