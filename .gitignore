@@ -14,6 +14,9 @@ home/.zsh.d/work_aliases.zsh
 home/.zsh.d/sack.zsh
 home/bin/F
 home/bin/sack
+home/bin/direnv
+home/bin/gh
+home/bin/ngrok
 home/bin/sag
 home/bin/sgrep
 home/.emacs.d/image-dired/*
