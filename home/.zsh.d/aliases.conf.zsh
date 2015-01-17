@@ -18,6 +18,7 @@
 # alias mkdir='mkdir -p' # Make mkdir recursive
 # alias tree='tree -L 2 -fi'
 
+alias zxargs='tr "\n" "\0" | xargs -0 -n1 -I{}'
 alias -g ST='2>&1 | sit'
 alias ......="cd ../../../../.."
 alias .....="cd ../../../.."
@@ -67,6 +68,7 @@ alias rmv='rsync -v --progress --remove-source-files'
 alias rsync='rsync -v --progress --partial'
 alias set_time="dpkg-reconfigure tzdata"
 alias targz="tar -cvzf" # then filename.tar.gz dir_to_compress
+alias tm="tmux"
 alias v-='view -'
 alias vlast='vim `!! | tail -1`'
 alias x="exit"

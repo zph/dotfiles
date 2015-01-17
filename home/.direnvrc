@@ -6,3 +6,16 @@ add_extra_vimrc() {
     path_add EXTRA_VIM $extravim
   fi
 }
+
+include_work_env(){
+  source_env $HOME/source/.envrc
+}
+
+include_work_zsh(){
+  source $HOME/source/.work.zsh
+}
+
+export_env_file(){
+  IFS=$'\n'
+  export $(cat "${1:-"$HOME/.env"}" | grep -ve "^#")
+}

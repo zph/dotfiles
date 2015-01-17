@@ -63,3 +63,7 @@ tags
 .envrc
 .bundle
 .repl_rake.rb
+.my.cnf
+.bin
+.powrc
+.rspec.zph

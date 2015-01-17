@@ -40,4 +40,4 @@ chruby() {
   export PATH=${PATHS_TO_PREFIX_BEFORE_CHRUBY}:$modified_path
 }
 
-chruby 2.1
+chruby 2.1.5

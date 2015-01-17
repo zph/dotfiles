@@ -20,6 +20,7 @@
     bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
     ci = commit -v -S
     cim = commit -S -m
+    com = checkout master
     # cl = clone
     cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
@@ -165,3 +166,5 @@
 	autosetuprebase = always
 [rerere]
 	enabled = 1
+[heroku]
+	remote = staging

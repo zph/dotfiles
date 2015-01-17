@@ -1,3 +1,3 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-tmate show-messages | egrep -o 'Remote session: (.*)' | awk '{print $4}'
+tmate show-messages | egrep -o 'Remote session: (.*)' |  awk '{print "ssh " $4}'

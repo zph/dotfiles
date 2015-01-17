@@ -15,7 +15,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias pbc='pbcopy'
   alias pbp='pbpaste'
 
-  alias trash_empty='rm -rf ~/.Trash/*'
+  alias trash_empty='\rm -irf ~/.Trash/*'
 
   alias dsstore_rm='sudo find / -name ".DS_Store" -depth -exec rm {} \;'
 

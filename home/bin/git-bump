@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Credit belongs to Tim Pope, I merely freed git-bump.gem
+# Credit belongs to Tim Pope, I merely freed git-bump.gem (https://github.com/tpope/git-bump)
 # from the bondage of Thor & made it a standalone file.
 # encoding: utf-8
 
@@ -46,7 +46,13 @@ git bump can find it:
       begin
         out = %x{git for-each-ref "refs/tags/v[0-9]*" --sort="*committerdate" --format="%(refname:short) %(*objectname) %(subject)"}
         exit 1 unless $?.success?
-        out.scan(/^(\S+) (\w+) (.*) (\d\S*)\s*$/).map do |args|
+        scan_regex = /^(\S+) (\w+) (.*) (\d\S*)\s*$/
+        lines = out.split("\n").map do |line|
+          components = line.split(/\s+/, 3)
+          numeric_version = components.first.gsub(/^v/i, '')
+          [*components, numeric_version]
+        end
+        releases = lines.map do |args|
           Release.new(*args)
         end
       end

@@ -75,7 +75,7 @@ _set_zsh_settings(){
   # Le features!
   # Set Vi Mode
   bindkey -v
-  bindkey -M viins 'jk' vi-cmd-mode
+  # bindkey -M viins 'jk' vi-cmd-mode # screws up pasting of HmvxMDVazna5iKep7817DB@ny.tmate.io
 
   # ctrl-p ctrl-n history navigation
   bindkey '^P' up-history
