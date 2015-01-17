@@ -336,7 +336,7 @@ _remove_from_path(){
 
 _add_to_path(){
   local item="$1"
-  export PATH=${item}:$PATH
+  export PATH="${item}":$PATH
 }
 
 _prepend_to_path(){
@@ -354,6 +354,8 @@ _zshrc_main(){
   ############
   # Execute Functions
   _zshrc_pre_init
+  _prepend_to_path "${HOME}/bin"
+  _remove_from_path "~/bin"
   _local_configs
   _set_zsh_settings
   _ignore_listed_zshd_commands
@@ -364,8 +366,6 @@ _zshrc_main(){
   _add_homebin_to_dir
   _source_zshd
   _set_prompt
-  _prepend_to_path "${HOME}/bin"
-  _remove_from_path "~/bin"
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   _set_zsh_hooks
