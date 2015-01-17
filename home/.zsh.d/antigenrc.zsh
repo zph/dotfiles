@@ -1,4 +1,4 @@
-source "${HOME}/.zsh.d/antigen/antigen.zsh"
+source "${HOME}/.zsh.d/antigen.zsh"
 
 # set -x
 IFS=$'\n'

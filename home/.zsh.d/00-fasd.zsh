@@ -26,7 +26,6 @@
 
 eval "$(fasd --init auto)"
 
-
 unset zz
 alias a='fasd -laR'        # any
 function a1(){
