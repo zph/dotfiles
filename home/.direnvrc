@@ -17,5 +17,9 @@ include_work_zsh(){
 
 export_env_file(){
   IFS=$'\n'
-  export $(cat "${1:-"$HOME/.env"}" | grep -ve "^#")
+  export $(cat "${1}" | grep -ve "^#" | tr -d "[\"\']$")
+}
+
+export_local_env_file(){
+  export_env_file "${PWD}/$1"
 }
