@@ -18,8 +18,8 @@
     ap = add -p
     b = branch
     bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
-    ci = commit -v -S
-    cim = commit -S -m
+    ci = commit -v
+    cim = commit -m
     com = checkout master
     # cl = clone
     cp = cherry-pick
