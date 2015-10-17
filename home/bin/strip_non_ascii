@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# syntax: GAWK -f STRIP_CONTROL_CODES_AND_EXTENDED_CHARACTERS.AWK
+
+awk '{ s = $0; gsub(/[\x80-\xFF]/,"",s); printf("%s\n",s) }'
