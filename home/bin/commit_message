@@ -2,7 +2,12 @@
 
 require 'open-uri'
 
-DIVIDERS = %r{[-|_|/|\/]}
+DIVIDERS = %r{[-_/\\]}
+
+PROVIDER, TASK_NAME, BASE_URL, WORKSPACE = ENV.values_at('COMMIT_MSG_PROVIDER',
+                                                         'COMMIT_MSG_TASK_NAME',
+                                                         'COMMIT_MSG_URL',
+                                                         'COMMIT_MSG_WORKSPACE')
 
 def run_specs
   require 'minitest/autorun'
@@ -11,21 +16,14 @@ def run_specs
 
   describe "#main" do
 
-    # it 'compiles default message when no valid branch' do
-    #   io = StringIO.new
-    #   main("master", io)
-    #   expected = "[ZH][] "
-    #   io.string.must_equal expected
-    # end
-
     it 'compiles message when valid' do
       io = StringIO.new
-      main("zh_9234923_message", io)
+      id = "24121042524524"
+      main("#{id}/message_with_text_and_stuff", io)
       expected = <<-MSG
-  [ZH][9234923] message
+message with text and stuff
 
-  Pivotal Story: https://www.pivotaltracker.com/story/show/9234923
-
+[#{PROVIDER} ##{id}](#{[BASE_URL, WORKSPACE, id].join("/")})
       MSG
       io.string.must_equal expected
     end
@@ -33,40 +31,35 @@ def run_specs
 end
 
 def match_pattern(bn)
-  bn.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{4,})#{DIVIDERS}(?<description>.*)/)
-  # if parts.nil? # ie we're not able to match
-  #   parts = {initials: DOTFILE_INITIALS, number: '000000', description: ''}
-  # end
+  bn.match(/(?<number>\d{6,})#{DIVIDERS}(?<description>.*)/)
 end
 
 def branch_name_from_git
   `git rev-parse --abbrev-ref HEAD`.chomp
 end
 
-def main(branch_name, io = STDOUT)
-  # branch_name = 'dev'
+def default_message
+  ""
+end
 
-  dotfile_initials = open(File.expand_path('~/.initials')).readlines.map(&:chomp).join('/')
-  story = `git current-story`.chomp
-  story = story.empty? ? "0000000" : story
-  default_message = "[#{dotfile_initials}][#{story}] "
+def main(branch_name, io = STDOUT)
+  story = branch_name
+  story = story.empty? ? "0" * 8 : story
 
   parts = match_pattern(branch_name)
 
   begin
-    initials = parts[:initials].split(DIVIDERS).join("/").upcase
-    pivotal_number = parts[:number]
-    description = parts[:description].gsub(/#{DIVIDERS}/, ' ')
+    id = task_number = String(parts[:number])
+    description = String(parts[:description]).gsub(/#{DIVIDERS}/, ' ')
   rescue
     io.print default_message
     exit(0)
   end
 
   commit_message = <<-MSG
-[#{initials}][#{pivotal_number}] #{description}
+#{description}
 
-Pivotal Story: https://www.pivotaltracker.com/story/show/#{pivotal_number}
-
+[#{PROVIDER} ##{id}](#{[BASE_URL, WORKSPACE, id].join("/")})
   MSG
 
   io << commit_message
