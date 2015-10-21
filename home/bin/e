@@ -40,8 +40,7 @@ class E
   end
 
   def exec_editor(args = "")
-    nice_vim = "/usr/local/bin/vim"
-    vim = File.exists?(nice_vim) ? nice_vim : "/usr/bin/vim"
+    vim = has_bin?("nvim") ? `which nvim`.chomp : `which vim`.chomp
     exec "#{vim} #{args}"
   end
 
