@@ -32,7 +32,7 @@
     dh1 = diff HEAD~1
     di = diff
     div = divergence
-    ds = diff --stat=160,120
+    ds = diff --staged
     dw = diff --color=always --word-diff | less -r
     df  = diff --color-words
     fa = fetch --all
