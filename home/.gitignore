@@ -4,3 +4,4 @@ ec2/bin/*
 .zsh_history
 .config/gtk*
 .config/inkscape*
+bin_local/
