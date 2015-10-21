@@ -20,6 +20,10 @@ export_env_file(){
   export $(cat "${1}" | grep -ve "^#" | tr -d "[\"\']$")
 }
 
+export_dotgpg_file(){
+  source <( dotgpg cat $1 )
+}
+
 export_local_env_file(){
   export_env_file "${PWD}/$1"
 }
