@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Credit: https://raw.githubusercontent.com/jamescategory/extract/master/extract
+#
+# extract
+#
+# Here's a good extracter for compressed files like tar.gz, tar.xz, rar, zip, 7z, etc.
+
+case $# in
+0) echo 'Usage: extract [compressed file]' 1>&2; exit 1
+esac
+
+
+# First we must check that the arguments are actually files.
+if [ ! -f "$@" ]
+then
+    echo "extract: cannot access "$@": No such file."
+    exit
+fi
+
+# check whether programs like unrar, 7z, etc are installed
+function check {
+    hash $1 2>/dev/null || { echo >&2 \
+	"$1 is required to extract this file but $1 is not installed. Abort."; \
+	exit 1; }
+}
+
+#extract files
+case "$@" in
+    *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar | \
+    *.tar.lzma | *.tgz | *.tbz2 | *.taz | *.tar.Z | \
+    *.tlz | *.tar.lz | *.txz | *.tz2  ) check "tar" && tar xvf  "$@" ;;
+
+    *.rar ) check "unrar" && unrar x "$@"  ;;
+
+    *.7z  ) check "7z" && 7z x "$@"  ;;
+
+    *.bz2 ) check "bunzip2" && bunzip2 "$@" ;;
+
+    *.gz  ) check "gunzip" && gunzip  "$@"  ;;
+
+    *.zip ) check "unzip" && unzip "$@"  ;;
+
+    *) echo "extract: unsupported file extension."
+esac
+
+
+
