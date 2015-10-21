@@ -808,8 +808,8 @@ imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
 nmap <Leader>mr :CtrlPMRUFiles<CR>
 imap <Leader>p <ESC>:CtrlPMixed<CR>
 nmap <Leader>p :CtrlPMixed<CR>
-imap <Leader>o <ESC>:FZF<CR>
-nmap <Leader>o :FZF<CR>
+imap <C-o> <ESC>:FZF<CR>
+nmap <C-o> :FZF<CR>
 let g:ctrlp_max_depth = 10
 
 " Custom CtrlP Config

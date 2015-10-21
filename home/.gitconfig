@@ -169,3 +169,5 @@
 	enabled = 1
 [heroku]
 	remote = staging
+[init]
+	templatedir = ~/.git_init_template
