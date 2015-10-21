@@ -14,6 +14,7 @@
     aa = add --all
     aap = add --all --patch
     ai = add -i
+    an = add -N
     amend = commit --amend
     ap = add -p
     b = branch
