@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Requires git and fzf
+# Usage gcb
+
+SELECTED_BRANCH="$(\git branch --list | tr -d '^[* ]*' | fzf)"
+
+git checkout ${SELECTED_BRANCH}
