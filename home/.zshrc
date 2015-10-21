@@ -238,7 +238,12 @@ _add_homebin_to_dir(){
 }
 
 _export_editor_and_tmp_dirs(){
-  export EDITOR="/usr/local/bin/vim"
+  if [ -f $(which nvim) ]; then
+    export EDITOR=$(which nvim)
+  else
+    export EDITOR=$(which vim)
+  fi
+
   export TMP="$HOME/tmp"
   export TEMP="$TMP"
   export TMPDIR="$TMP"
