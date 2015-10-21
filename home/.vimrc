@@ -7,6 +7,10 @@
 source ~/.vim/bundle/vim-pathogen/autoload/pathogen.vim
 execute pathogen#infect('bundle/{}')
 
+" OCaml
+let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+execute "set rtp+=" . g:opamshare . "/merlin/vim"
+
 ""=bundle jaxbot/github-issues.vim
 
 " if has('lua')
