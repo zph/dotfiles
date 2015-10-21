@@ -9,7 +9,8 @@ alias approve='bundle exec approvals verify -d vimdiff -a'
 ##############################
 # Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
 # alias bi="b install --path vendor"
-alias bi="nocorrect bundle install --binstubs=./.bundle/.binstubs --path vendor"
+# alias bi="nocorrect bundle install --binstubs=./.bundle/.binstubs --path vendor"
+alias bi="nocorrect bundle install --binstubs=./.bundle/.binstubs"
 # alias b="b"
 # alias bundle="bu"
 # alias bil="bi --local"
@@ -26,10 +27,10 @@ alias ruby="run_bundler_cmd ruby"
 
 function run_bundler_cmd (){
   if [ -e ./Gemfile ]; then
-    echo "bundle exec $@";
+    # echo "bundle exec $@";
     bundle exec $@;
   else
-    echo "$@";
+    # echo "$@";
     $@;
   fi
 }

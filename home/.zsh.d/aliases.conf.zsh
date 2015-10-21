@@ -26,7 +26,6 @@ alias ....="cd ../../.."
 alias ...="cd ../.."
 alias ..="cd .."
 alias :q='exit'
-alias S='sack'
 alias ack='noglob ack -i --nogroup'
 alias b='bg'
 alias bn='branch-name'
