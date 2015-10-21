@@ -11,6 +11,9 @@ execute pathogen#infect('bundle/{}')
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
+" FZF
+set rtp+=~/.fzf
+
 ""=bundle jaxbot/github-issues.vim
 
 " if has('lua')
@@ -805,6 +808,8 @@ imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
 nmap <Leader>mr :CtrlPMRUFiles<CR>
 imap <Leader>p <ESC>:CtrlPMixed<CR>
 nmap <Leader>p :CtrlPMixed<CR>
+imap <Leader>o <ESC>:FZF<CR>
+nmap <Leader>o :FZF<CR>
 let g:ctrlp_max_depth = 10
 
 " Custom CtrlP Config
