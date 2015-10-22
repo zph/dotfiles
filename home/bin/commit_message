@@ -31,7 +31,7 @@ message with text and stuff
 end
 
 def match_pattern(bn)
-  bn.match(/(?<number>\d{6,})#{DIVIDERS}(?<description>.*)/)
+  bn.match(/(?<number>\d{1,})#{DIVIDERS}(?<description>.*)/)
 end
 
 def branch_name_from_git
@@ -42,25 +42,25 @@ def default_message
   ""
 end
 
+def link_line(id)
+  prefix = "[#{PROVIDER} ##{id}]"
+  suffix = %Q<(#{[BASE_URL, "PE-#{id}"].join('/')})>
+  [prefix, suffix].join
+end
+
 def main(branch_name, io = STDOUT)
-  story = branch_name
-  story = story.empty? ? "0" * 8 : story
-
-  parts = match_pattern(branch_name)
-
   begin
-    id = task_number = String(parts[:number])
+    parts = match_pattern(branch_name)
+    raise(ArgumentError) unless parts[:number] && parts[:description]
+
+    id = String(parts[:number])
     description = String(parts[:description]).gsub(/#{DIVIDERS}/, ' ')
   rescue
-    io.print default_message
+    io << default_message
     exit(0)
   end
 
-  commit_message = <<-MSG
-#{description}
-
-[#{PROVIDER} ##{id}](#{[BASE_URL, WORKSPACE, id].join("/")})
-  MSG
+  commit_message = [description, "\n\n", link_line(id), "\n"].join
 
   io << commit_message
 end
