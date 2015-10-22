@@ -39,7 +39,7 @@ ehthumbs.db
 Thumbs.db
 coverage.vim
 # Bundle location
-vendor/*
+*/vendor/*
 
 # Backup files from editors
 ## Vim
@@ -68,3 +68,4 @@ tags
 .bin
 .powrc
 .rspec.zph
+*.keep
