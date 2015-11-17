@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# ORIGINAL CREDIT: https://raw.githubusercontent.com/git/git/master/contrib/workdir/git-new-workdir
+# Changed arg order to make it have nice defaults
+
+set -x
+
+usage () {
+  echo "usage:" $@
+  exit 127
+}
+
+die () {
+  echo $@
+  exit 128
+}
+
+failed () {
+  die "unable to create new workdir '$NEW_WORKDIR'!"
+}
+
+verify_arguments(){
+  if test $# -lt 1 || test $# -gt 3
+  then
+    usage "$0 <NEW_WORKDIR> [<repository>] [<BRANCH>]"
+  fi
+}
+
+set_constants(){
+  NEW_WORKDIR=$1
+  ORIGINAL_REPO=${2:-.}
+  BRANCH=$3
+}
+
+exit_if_bare(){
+  git_dir="$1"
+  # don't link to a configured bare repository
+  isbare=$(git --git-dir="$git_dir" config --bool --get core.bare)
+  if test ztrue = "z$isbare"
+  then
+    die "\"$git_dir\" has core.bare set to true," \
+      " remove from \"$git_dir/config\" to use $0"
+  fi
+}
+
+exit_if_working_dir(){
+  git_dir=$1
+  # don't link to a workdir
+  if test -h "$git_dir/config"
+  then
+    die "\"$ORIGINAL_REPO\" is a working directory only, please specify" \
+      "a complete repository."
+  fi
+}
+
+main(){
+  verify_arguments $@
+  set_constants $@
+  # want to make sure that what is pointed to has a .git directory ...
+  git_dir=$(cd "$ORIGINAL_REPO" 2>/dev/null &&
+    git rev-parse --git-dir 2>/dev/null) ||
+    die "Not a git repository: \"$ORIGINAL_REPO\""
+
+  case "$git_dir" in
+    .git)
+      git_dir="$ORIGINAL_REPO/.git"
+      ;;
+    .)
+      git_dir=$ORIGINAL_REPO
+      ;;
+  esac
+
+  exit_if_bare $git_dir
+
+  exit_if_working_dir $git_dir
+
+  # make sure the links in the workdir have full paths to the original repo
+  git_dir=$(cd "$git_dir" && pwd) || exit 1
+
+  # don't recreate a workdir over an existing directory, unless it's empty
+  if test -d "$NEW_WORKDIR"
+  then
+    if test $(ls -a1 "$NEW_WORKDIR/." | wc -l) -ne 2
+    then
+      die "destination directory '$NEW_WORKDIR' is not empty."
+    fi
+    cleandir="$NEW_WORKDIR/.git"
+  else
+    cleandir="$NEW_WORKDIR"
+  fi
+
+  mkdir -p "$NEW_WORKDIR/.git" || failed
+  cleandir=$(cd "$cleandir" && pwd) || failed
+
+  cleanup () {
+    rm -rf "$cleandir"
+  }
+  siglist="0 1 2 15"
+  trap cleanup $siglist
+
+  # create the links to the original repo.  explicitly exclude index, HEAD and
+  # logs/HEAD from the list since they are purely related to the current working
+  # directory, and should not be shared.
+  for x in config refs logs/refs objects info hooks packed-refs remotes rr-cache svn
+  do
+    # create a containing directory if needed
+    case $x in
+      */*)
+        mkdir -p "$NEW_WORKDIR/.git/${x%/*}"
+        ;;
+    esac
+
+    ln -s "$git_dir/$x" "$NEW_WORKDIR/.git/$x" || failed
+  done
+
+  # commands below this are run in the context of the new workdir
+  cd "$NEW_WORKDIR" || failed
+
+  # copy the HEAD from the original repository as a default branch
+  cp "$git_dir/HEAD" .git/HEAD || failed
+
+  # the workdir is set up.  if the checkout fails, the user can fix it.
+  trap - $siglist
+
+  # checkout the branch (either the same as HEAD from the original repository,
+  # or the one that was asked for)
+  git checkout -f $BRANCH
+}
+
+main $@
