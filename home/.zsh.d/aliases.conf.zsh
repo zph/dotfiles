@@ -35,7 +35,8 @@ alias cd-='cd - '
 alias cdd='cd - '                     # goto last dir cd'ed from
 alias cl="clear"
 alias cp='cp -iv'
-alias curl='curl -L'
+#alias curl='curl -L'
+alias curlv="curl -o /dev/null -vvv"
 alias df='df -kH'
 alias dstamp='date +%Y-%m-%d'
 alias egrep='egrep --color=auto'
@@ -45,8 +46,8 @@ alias gcomp='g++ -g -Wall -o'
 alias grep='grep -Ei --colour=auto'
 alias h='history'
 alias j="jobs"
-alias jist='gist -c'
 alias jistc='gist -p -c'
+alias jist='gist -p -c'
 alias l='less -30'
 alias less="less -R"
 alias ll="ls -lahtr"

@@ -55,9 +55,13 @@ class Keychain
   end
 end
 
-account, name = ARGV.values_at(0, 1)
+def main
+  account, name = ARGV.values_at(0, 1)
 
-key = Keychain.new(account, name)
-possible_passwords = key.get_internet_password || key.get_generic_password
+  key = Keychain.new(account, name)
+  possible_passwords = key.get_internet_password || key.get_generic_password
 
-puts possible_passwords
+  puts possible_passwords
+end
+
+main

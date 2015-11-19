@@ -69,3 +69,6 @@ tags
 .powrc
 .rspec.zph
 *.keep
+
+# git new-workdir
+.workdirs

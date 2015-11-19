@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 # ORIGINAL CREDIT: https://raw.githubusercontent.com/git/git/master/contrib/workdir/git-new-workdir
 # Changed arg order to make it have nice defaults
+# Add shell function as follows to have it CD into dir after creation:
+#
+# workdir(){
+#     dir=$(git new-workdir | tail -1)
+#     cd $dir
+# }
 
-set -x
+# Add .workdirs or value of WORKDIR_ROOT
+
+WORKDIR_ROOT=".workdirs"
+SIGLIST="0 1 2 15"
 
 usage () {
   echo "usage:" $@
@@ -19,16 +28,21 @@ failed () {
 }
 
 verify_arguments(){
-  if test $# -lt 1 || test $# -gt 3
+#  if test $# -lt 1 || test $# -gt 3
+  if test $# -gt 3
   then
-    usage "$0 <NEW_WORKDIR> [<repository>] [<BRANCH>]"
+    usage "$0 [<NEW_WORKDIR>] [<repository>] [<BRANCH>]"
   fi
 }
 
+date_in_seconds(){
+  echo $(date +%s)
+}
+
 set_constants(){
-  NEW_WORKDIR=$1
+  NEW_WORKDIR=${1:-$WORKDIR_ROOT/$(date_in_seconds)}
   ORIGINAL_REPO=${2:-.}
-  BRANCH=$3
+  BRANCH=${3:-}
 }
 
 exit_if_bare(){
@@ -94,8 +108,8 @@ main(){
   cleanup () {
     rm -rf "$cleandir"
   }
-  siglist="0 1 2 15"
-  trap cleanup $siglist
+
+  trap cleanup $SIGLIST
 
   # create the links to the original repo.  explicitly exclude index, HEAD and
   # logs/HEAD from the list since they are purely related to the current working
@@ -119,11 +133,13 @@ main(){
   cp "$git_dir/HEAD" .git/HEAD || failed
 
   # the workdir is set up.  if the checkout fails, the user can fix it.
-  trap - $siglist
+  trap - $SIGLIST
 
   # checkout the branch (either the same as HEAD from the original repository,
   # or the one that was asked for)
   git checkout -f $BRANCH
+
+  echo $PWD # ie the workdir full path
 }
 
 main $@

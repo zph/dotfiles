@@ -74,7 +74,7 @@ _zshrc_pre_init(){
 _set_zsh_settings(){
   # Le features!
   # Set Vi Mode
-  bindkey -v
+  #bindkey -v # EXPERIMENTAL REMOVAL
   # bindkey -M viins 'jk' vi-cmd-mode # screws up pasting of HmvxMDVazna5iKep7817DB@ny.tmate.io
 
   # ctrl-p ctrl-n history navigation
@@ -290,7 +290,7 @@ _normalize_keys(){
   esac
 
   # Keybinds for history searching
-  bindkey "^R" history-incremental-pattern-search-backward 
+  bindkey "^R" history-incremental-pattern-search-backward
   bindkey "^S" history-incremental-pattern-search-forward
   # Keybinds for vi-mode history searching
   # Source: http://superuser.com/questions/328026/can-i-use-vim-editing-mode-on-the-command-line-without-losing-recursive-history

@@ -27,3 +27,7 @@ export_dotgpg_file(){
 export_local_env_file(){
   export_env_file "${PWD}/$1"
 }
+
+source_local_env_file(){
+  eval "$(cat ${PWD}/$1)"
+}

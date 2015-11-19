@@ -140,6 +140,7 @@
     sync              = !git pull --no-rebase --ff upstream master && git push -u origin +HEAD
     # same as `git sync` but also rebases
     sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
+    branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
 
 [merge]
   tool = vimdiff
@@ -171,3 +172,5 @@
 	remote = staging
 [init]
 	templatedir = ~/.git_init_template
+[log]
+	date = iso8601

@@ -1341,3 +1341,11 @@ endif
 
 " Fireplace.vim
 nnoremap <leader>e :%Eval<CR>
+
+" Typo fixes thanks @joshfrench
+command! -bang -nargs=* -complete=file E e<bang> <args>
+command! -bang -nargs=* -complete=file W w<bang> <args>
+command! -bang -nargs=* -complete=file Wq wq<bang> <args>
+command! -bang -nargs=* -complete=file WQ wq<bang> <args>
+command! -bang Wa wa<bang>
+command! -bang WA wa<bang>

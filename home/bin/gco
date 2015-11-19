@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
 # Requires git and fzf
-# Usage gcb
+# Usage gco -> type fuzzily <ENTER> -> VOILA, on branch
 
-SELECTED_BRANCH="$(\git branch --list | tr -d '^[* ]*' | fzf)"
+# Credit: http://stackoverflow.com/a/5972362/1930671
+SELECTED_BRANCH="$(\git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)' | fzf)"
+# SELECTED_BRANCH="$(\git branch --list | tr -d '^[* ]*' | fzf)"
 
-git checkout ${SELECTED_BRANCH}
+git checkout "${SELECTED_BRANCH}"

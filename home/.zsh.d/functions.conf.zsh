@@ -70,3 +70,7 @@ sz(){
   esac
 }
 
+workdir(){
+  dir=$(git new-workdir | tail -1)
+  cd $dir
+}
