@@ -308,6 +308,8 @@ _normalize_keys(){
   # only works in newer zsh
   zmodload -a pcre
 
+  # Use Emacs Readline style bindings on commandline
+  bindkey -e
 }
 
 _set_prompt(){
