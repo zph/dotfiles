@@ -24,3 +24,4 @@ home/.vim/bundle/*
 home/.zsh.d/configs.local
 home/.vim/session/
 home/.parallel/tmp
+home/*lein/*history*
