@@ -62,6 +62,7 @@ tramp
 doc/tags
 tags
 .envrc
+.direnv/*
 .bundle
 .repl_rake.rb
 .my.cnf
