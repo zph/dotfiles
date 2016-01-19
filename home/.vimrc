@@ -1349,3 +1349,6 @@ command! -bang -nargs=* -complete=file Wq wq<bang> <args>
 command! -bang -nargs=* -complete=file WQ wq<bang> <args>
 command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
+
+
+set diffopt=vertical

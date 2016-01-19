@@ -78,18 +78,18 @@ _set_zsh_settings(){
   # bindkey -M viins 'jk' vi-cmd-mode # screws up pasting of HmvxMDVazna5iKep7817DB@ny.tmate.io
 
   # ctrl-p ctrl-n history navigation
-  bindkey '^P' up-history
-  bindkey '^N' down-history
+  # bindkey '^p' up-history
+  # bindkey '^n' down-history
 
   # backspace and ^h working even after returning from command mode
-  bindkey '^?' backward-delete-char
-  bindkey '^h' backward-delete-char
+  # bindkey '^?' backward-delete-char
+  # bindkey '^h' backward-delete-char
 
   # ctrl-w removed word backwards
-  bindkey '^w' backward-kill-word
+  # bindkey '^w' backward-kill-word
 
-  # ctrl-r starts searching history backward
-  bindkey '^r' history-incremental-search-backward
+  # # ctrl-r starts searching history backward
+  # bindkey '^r' history-incremental-search-backward
 
   #############################
   # extended globbing, awesome!
@@ -303,13 +303,13 @@ _normalize_keys(){
   #
   autoload -z edit-command-line
   zle -N edit-command-line
-  bindkey "^X^E" edit-command-line
   #
   # only works in newer zsh
   zmodload -a pcre
 
   # Use Emacs Readline style bindings on commandline
   bindkey -e
+  bindkey "^x^e" edit-command-line
 }
 
 _set_prompt(){
