@@ -83,8 +83,13 @@ set rtp+=~/.fzf
 " Purescript
 "=bundle raichoo/purescript-vim
 "
+" Javascript
+"=bundle othree/yajs.vim
 " Maybe
 "
+"=bundle tpope/vim-scriptease
+"=bundle vim-airline/vim-airline-themes
+"=bundle tpope/vim-obsession
 "=bundle troydm/easytree.vim
 ""=bundle jnwhiteh/vim-golang
 "=bundle fatih/vim-go
@@ -126,6 +131,18 @@ command! -nargs=? -range=% RetabIndent call IndentConvert(<line1>,<line2>,&et,<q
 "=bundle scrooloose/nerdtree
 "=bundle scrooloose/syntastic
 "let g:syntastic_enable_ruby_checker = 0
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_mode_map = { 'mode': 'active',
+                            \ 'active_filetypes': ['python', 'javascript'],
+                            \ 'passive_filetypes': [] }
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 "=bundle JazzCore/ctrlp-cmatcher after_install=( cd ctrlp-cmatcher && export CFLAGS=-Qunused-arguments && export CPPFLAGS=-Qunused-arguments && ./install.sh )
 ""=bundle mhinz/vim-startify
 "=bundle terryma/vim-multiple-cursors
@@ -173,7 +190,7 @@ vmap <silent> <expr> p <sid>Repl()
 "=bundle tpope/vim-leiningen
 "=bundle tpope/vim-projectionist
 "=bundle vim-scripts/paredit.vim
-"=bundle amdt/vim-niji
+"=bundle raymond-w-ko/vim-niji
 " For specclj
 " https://github.com/guns/vim-clojure-static/pull/45/files
 augroup CustomEvents
@@ -192,6 +209,7 @@ augroup END
 "=bundle ervandew/supertab
 "=bundle Raimondi/delimitMate
 "=bundle Shougo/neosnippet.vim
+"=bundle Shougo/neosnippet-snippets
 " Tell Neosnippet about the other snippets
 let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
 " Plugin key-mappings.
@@ -577,8 +595,8 @@ autocmd FileType c,cpp,java,php,ruby,python,haml autocmd BufWritePre <buffer> :c
 " map <Up> <nop>
 " map <Down> <nop>
 """" EXPERIMENTAL
-map <Left> <C-O>
-map <Right> <C-I>
+map <Left> :lprevious<CR>
+map <Right> :lnext<CR>
 """" Stable
 map <Up> :bnext<cr>
 map <Down> :bprevious<cr>
@@ -607,6 +625,7 @@ imap <c-l> <space>-><space>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Clear search buffer when hitting return (also from Gary Bernhardt)
 :nnoremap <CR> :nohlsearch<cr>
+" Maybe borks things in location list?
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  Start at last location in file
@@ -1265,7 +1284,8 @@ let g:NumberToggleTrigger="<F8>"
 " # gem = Garnet.new("pretty")
 " EOF
 " endfunction
-autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json
+" autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json
+autocmd BufNewFile,BufRead *.es6 set ft=javascript " use this instead of vim-json
 
 " Make those debugger statements painfully obvious
 au BufEnter,BufWritePost *.rb syn match error contained "\<binding.pry\>"
@@ -1352,3 +1372,20 @@ command! -bang WA wa<bang>
 
 
 set diffopt=vertical
+
+" Improve location list/quickfix windows, ie behave like ag.vim
+function! Zopen()
+  :lopen
+  exec "nnoremap <silent> <buffer> q :ccl<CR>"
+  exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+  exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+  exec "nnoremap <silent> <buffer> o <CR>"
+  exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+  exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+  exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+  exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+  exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+  echom "ag.vim keys: q=quit <cr>/t/h/v=enter/tab/split/vsplit go/T/H/gv=preview versions of same"
+endfunction
+
+command! -bang Zopen call Zopen()
