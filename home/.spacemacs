@@ -30,6 +30,7 @@
                                        shell
                                        react
                                        ruby
+                                       rust
                                        ruby-on-rails
                                        elixir
                                        erlang
@@ -144,6 +145,13 @@ layers configuration."
   (setq cider-show-error-buffer 'only-in-repl)
   (spacemacs/toggle-line-numbers-on)
   (linum-relative-toggle)
+  ;; RUST
+  (setq-default rust-enable-racer t)
+  (setq racer-cmd "~/.cargo/bin/racer")
+  (setenv "RUST_SRC_PATH" "~/src/rust/rust/src")
+
+  ;(setq racer-rust-src-path "~/src/rust/rust/src")
+
   (defvar projectile-ag-command
     (concat "\\ag" ; used unaliased version of `ag': \ag
             " -i" ; case insensitive

@@ -335,21 +335,25 @@ _local_configs(){
   fi
 }
 
-_remove_from_path(){
+zph/remove_from_path(){
   local item="$1"
   cleansed_path=$(echo -n $PATH | tr ':' "\n" | grep -v "^${item}$" | grep -v '^$' | tr "\n" ':')
   export PATH=$cleansed_path
 }
 
-_add_to_path(){
+zph/add_to_path(){
   local item="$1"
+  zph/remove_from_path "$item"
   export PATH="${item}":$PATH
 }
 
-_prepend_to_path(){
+zph/prepend_to_path(){
   local item="$1"
-  _remove_from_path "$item"
-  _add_to_path "$item"
+  zph/add_to_path "$item"
+}
+
+zph/remove_blank_path_entries(){
+  export PATH=$(echo $PATH | sed 's/::*/:/g')
 }
 
 _set_zsh_hooks(){
@@ -361,8 +365,8 @@ _zshrc_main(){
   ############
   # Execute Functions
   _zshrc_pre_init
-  _prepend_to_path "${HOME}/bin"
-  _remove_from_path "~/bin"
+  zph/prepend_to_path "${HOME}/bin"
+  zph/remove_from_path "~/bin"
   _local_configs
   _set_zsh_settings
   _ignore_listed_zshd_commands
