@@ -73,3 +73,9 @@ tags
 
 # git new-workdir
 .workdirs
+
+# For Elixir
+.iex.exs
+.iex_history
+.agignore
+node_modules/

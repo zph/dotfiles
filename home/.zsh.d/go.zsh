@@ -8,4 +8,4 @@
 #export GOPATH=$HOME/src/golang
 # export PATH=$PATH:/usr/local/Cellar/go/1.2.1/libexec/bin
 # export PATH=$PATH:$GOROOT/bin
-zph/add_to_path "/usr/local/opt/go/libexecbin"
+zph/add_to_path "/usr/local/opt/go/libexec/bin"

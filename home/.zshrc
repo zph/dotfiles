@@ -309,7 +309,7 @@ _normalize_keys(){
 
   # Use Emacs Readline style bindings on commandline
   bindkey -e
-  bindkey "^x^e" edit-command-line
+  bindkey "^s^e" edit-command-line
 }
 
 _set_prompt(){

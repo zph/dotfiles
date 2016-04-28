@@ -3,7 +3,6 @@
 	name = Zander Hill
 	email = zander@xargs.io
 	signingkey = 6CBA19142E2EBACB
-[diff]
 [color]
 	ui = true
 [alias]

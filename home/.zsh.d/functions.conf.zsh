@@ -74,3 +74,8 @@ workdir(){
   dir=$(git new-workdir | tail -1)
   cd $dir
 }
+
+function root(){
+  local root="$(git rev-parse --show-toplevel)"
+  cd "${root}"
+}

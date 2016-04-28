@@ -1,7 +1,6 @@
 {:user
  {:global-vars {^:dynamic *print-length* 200}
-  :plugins      [[cider/cider-nrepl "0.10.0"]
-                 [refactor-nrepl "2.0.0-SNAPSHOT"]]
+  :plugins      [[cider/cider-nrepl "0.10.0"]]
   :dependencies [[alembic "0.3.2"]
                  [org.clojure/tools.nrepl "0.2.12"]
                  [org.clojure/tools.namespace "0.2.7"]

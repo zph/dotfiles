@@ -1,17 +1,18 @@
-readonly FZF_ZSH_CONFIG="${HOME}/.fzf.zsh"
-[ -f $FZF_ZSH_CONFIG ] && source $FZF_ZSH_CONFIG
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [ -f $FZF_ZSH_CONFIG ] && source $FZF_ZSH_CONFIG
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 # #   - Bypass fuzzy finder if there's only one match (--select-1)
 # #   - Exit if there's no match (--exit-0)
 # Copy the original fzf function to __fzf
 
+export FZF_TMUX="~/.fzf/bin/fzf-tmux"
 export FZF_DEFAULT_COMMAND='ag -l -g ""'
 
 alias f="fzf"
 # declare -f __fzf > /dev/null ||
 #   eval "$(echo "__fzf() {"; declare -f fzf | \grep -v '^{' | tail -n +2)"
 
-# # Use git ls-tree when possible
+# Use git ls-tree when possible
 # fzf() {
 #   if [ -n "$(git rev-parse HEAD 2> /dev/null)" ]; then
 #     FZF_DEFAULT_COMMAND="git ls-tree -r --name-only HEAD" __fzf "$@"

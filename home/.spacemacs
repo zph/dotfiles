@@ -18,6 +18,7 @@
                                        emacs-lisp
                                        erlang-elixir
                                        git
+                                       go
                                        ocaml
                                        python
                                        scala
@@ -34,6 +35,7 @@
                                        ruby-on-rails
                                        elixir
                                        erlang
+                                       syntax-checking
                                        markdown
                                        sql)
    ;; A list of packages and/or extensions that will not be install and loaded.
@@ -143,6 +145,7 @@ layers configuration."
   (setq cider-repl-history-file "~/.lein/repl_history.log")
   (setq cider-repl-pop-to-buffer-on-connect t) ;; opens it in other pane, not current (ノಠ益ಠ)ノ彡┻━┻
   (setq cider-show-error-buffer 'only-in-repl)
+  (setq ruby-enable-enh-ruby-mode t)
   (spacemacs/toggle-line-numbers-on)
   (linum-relative-toggle)
   ;; RUST
@@ -152,6 +155,7 @@ layers configuration."
 
   ;(setq racer-rust-src-path "~/src/rust/rust/src")
 
+  ;;.direnv.bak/python-2.7.9/bin/
   (defvar projectile-ag-command
     (concat "\\ag" ; used unaliased version of `ag': \ag
             " -i" ; case insensitive
@@ -161,25 +165,23 @@ layers configuration."
             " -g ''") ; get file names matching the regex ''
     "Ag command to be used by projectile to generate file cache.")
 
-  )
-
-;; Do not write anything past this comment. This is where Emacs will
-;; auto-generate custom variable definitions.
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ac-ispell-requires 4)
- '(ahs-case-fold-search nil)
- '(ahs-default-range (quote ahs-range-whole-buffer))
- '(ahs-idle-interval 0.25)
- '(ahs-idle-timer 0 t)
- '(ahs-inhibit-face-list nil)
- '(custom-safe-themes
-   (quote
-    ("95db78d85e3c0e735da28af774dfa59308db832f84b8a2287586f5b4f21a7a5b" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
- '(ring-bell-function (quote ignore) t))
+  ;; Do not write anything past this comment. This is where Emacs will
+  ;; auto-generate custom variable definitions.
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(ac-ispell-requires 4)
+   '(ahs-case-fold-search nil)
+   '(ahs-default-range (quote ahs-range-whole-buffer))
+   '(ahs-idle-interval 0.25)
+   '(ahs-idle-timer 0 t)
+   '(ahs-inhibit-face-list nil)
+   '(custom-safe-themes
+     (quote
+      ("95db78d85e3c0e735da28af774dfa59308db832f84b8a2287586f5b4f21a7a5b" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "1b8d67b43ff1723960eb5e0cba512a2c7a2ad544ddb2533a90101fd1852b426e" "bb08c73af94ee74453c90422485b29e5643b73b05e8de029a6909af6a3fb3f58" default)))
+   '(ring-bell-function (quote ignore) t)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

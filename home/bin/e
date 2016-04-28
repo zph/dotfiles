@@ -41,6 +41,7 @@ class E
 
   def exec_editor(args = "")
     vim = has_bin?("nvim") ? `which nvim`.chomp : `which vim`.chomp
+    # vim = `which vim`.chomp
     exec "#{vim} #{args}"
   end
 
