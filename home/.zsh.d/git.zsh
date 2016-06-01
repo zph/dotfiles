@@ -52,7 +52,7 @@ function gcimpu(){
 # alias gco='git checkout'
 #compdef _git gco=git-checkout
 alias gcm='git checkout master'
-alias gb='git branch'
+# alias gb='git branch'
 #compdef _git gb=git-branch
 alias gba='git branch -a'
 #compdef _git gba=git-branch

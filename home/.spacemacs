@@ -153,8 +153,15 @@ layers configuration."
   (setq racer-cmd "~/.cargo/bin/racer")
   (setenv "RUST_SRC_PATH" "~/src/rust/rust/src")
 
-  ;(setq racer-rust-src-path "~/src/rust/rust/src")
 
+  (defun manage-gopath! ()
+    "Set GOPATH to projectile project root directory."
+    (message
+     "GOPATH set to: %s"
+     (setenv "GOPATH"
+             (let ((go-ws (expand-file-name (directory-file-name (projectile-project-root)))))
+               (concat go-ws ":" (expand-file-name "vendor" go-ws))))))
+  (add-hook 'projectile-after-switch-project-hook 'manage-gopath!)
   ;;.direnv.bak/python-2.7.9/bin/
   (defvar projectile-ag-command
     (concat "\\ag" ; used unaliased version of `ag': \ag
