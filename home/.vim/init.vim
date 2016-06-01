@@ -86,6 +86,12 @@ Plug 'editorconfig/editorconfig-vim'
 
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer --tern-completer --gocode-completer --clang-completer' }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'rhysd/vim-crystal'
+Plug 'janko-m/vim-test'
+nmap <silent> <leader>t :TestNearest<CR>
+nmap <silent> <leader>T :TestFile<CR>
+nmap <silent> <leader><leader>t :TestSuite<CR>
+nmap <silent> <leader>l :TestLast<CR>
 
 "Golang
 Plug 'fatih/vim-go'
@@ -495,76 +501,6 @@ function! AlternateForCurrentFile()
 endfunction
 nnoremap <leader>. :call OpenTestAlternate()<cr>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" RUNNING TESTS
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"function! MapCR()
-"  nnoremap <cr> :call RunTestFile()<cr>
-"endfunction
-" call MapCR()
-nnoremap <leader>t :call RunTestFile()<cr>
-nnoremap <leader>a :call RunTests('')<cr>
-"nnoremap <leader>c :w\|:!script/features<cr>
-"nnoremap <leader>w :w\|:!script/features --profile wip<cr>
-
-function! RunTestFile(...)
-    if a:0
-        let command_suffix = a:1
-    else
-        let command_suffix = ""
-    endif
-
-    " Run the tests for the previously-marked file.
-    let in_test_file = match(expand("%"), '\(.feature\|_spec.rb\)$') != -1
-    if in_test_file
-        call SetTestFile()
-    elseif !exists("t:grb_test_file")
-        return
-    end
-    call RunTests(t:grb_test_file . command_suffix)
-endfunction
-
-function! RunNearestTest()
-    let spec_line_number = line('.')
-    call RunTestFile(":" . spec_line_number)
-endfunction
-
-function! SetTestFile()
-    " Set the spec file that tests will be run for.
-    let t:grb_test_file=@%
-endfunction
-
-function! RunTests(filename)
-    " Write the file and run tests for the given filename
-    if expand("%") != ""
-      :w
-    end
-    if match(a:filename, '\.feature$') != -1
-        exec ":!script/features " . a:filename
-    else
-        " First choice: project-specific test script
-        if filereadable("script/test")
-            exec ":!script/test " . a:filename
-        " Fall back to the .test-commands pipe if available, assuming someone
-        " is reading the other side and running the commands
-        elseif filewritable(".test-commands")
-          let cmd = 'rspec --color --format progress --require "~/lib/vim_rspec_formatter" --format VimFormatter --out tmp/quickfix'
-          exec ":!echo " . cmd . " " . a:filename . " > .test-commands"
-
-          " Write an empty string to block until the command completes
-          sleep 100m " milliseconds
-          :!echo > .test-commands
-          redraw!
-        " Fall back to a blocking test run with Bundler
-        elseif filereadable("Gemfile")
-            exec ":!bundle exec rspec --color " . a:filename
-        " Fall back to a normal blocking test run
-        else
-            exec ":!rspec --color " . a:filename
-        end
-    end
-endfunction
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Always strip trailing whitespace
 " Courtesy of MarkSim: https://github.com/marksim/.dotfiles/blob/master/.vimrc#L120-L130
@@ -714,72 +650,25 @@ nnoremap K :r!
 au BufNewFile,BufRead *.txt setlocal wrap
 au BufNewFile,BufRead *.txt setlocal lbr
 
-"function! IncludeRCodeTools()
-  " For rcodetools
-  " plain annotations
-  " map <silent> <F10> !xmpfilter -a<cr>
-  " nmap <silent> <F10> V<F10>
-  " imap <silent> <F10> <ESC><F10>a
+let g:xmpfilter_cmd = "seeing_is_believing"
 
-  " " Test::Unit assertions; use -s to generate RSpec expectations instead
-  " map <silent> <S-F10> !xmpfilter -u<cr>
-  " nmap <silent> <S-F10> V<S-F10>
-  " imap <silent> <S-F10> <ESC><S-F10>a
+" auto insert mark at appropriate spot.
+autocmd FileType ruby nmap <buffer> <F6> <Plug>(seeing_is_believing-run)
+autocmd FileType ruby xmap <buffer> <F6> <Plug>(seeing_is_believing-run)
+autocmd FileType ruby imap <buffer> <F6> <Plug>(seeing_is_believing-run)
 
-  " " Annotate the full buffer
-  " " I actually prefer ggVG to %; it's a sort of poor man's visual bell 
-  " nmap <silent> <F11> mzggVG!xmpfilter -a<cr>'z
-  " imap <silent> <F11> <ESC><F11>
+autocmd FileType ruby nmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
+autocmd FileType ruby xmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
+autocmd FileType ruby imap <buffer> <F7> <Plug>(seeing_is_believing-mark)
 
-  " " assertions
-  " nmap <silent> <S-F11> mzggVG!xmpfilter -u<cr>'z
-  " imap <silent> <S-F11> <ESC><S-F11>a
+autocmd FileType ruby nmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
+autocmd FileType ruby xmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
+autocmd FileType ruby imap <buffer> <F8> <Plug>(seeing_is_believing-clean)
 
-  " " Add # => markers
-  " vmap <silent> <F12> !xmpfilter -m<cr>
-  " nmap <silent> <F12> V<F12>
-  " imap <silent> <F12> <ESC><F12>a
-
-  " " Remove # => markers
-  " vmap <silent> <S-F12> ms:call RemoveRubyEval()<CR>
-  " nmap <silent> <S-F12> V<S-F12>
-  " imap <silent> <S-F12> <ESC><S-F12>a
-
-  " function! RemoveRubyEval() range
-  "   let begv = a:firstline
-  "   let endv = a:lastline
-  "   normal Hmt
-  "   set lz
-  "   execute ":" . begv . "," . endv . 's/\s*# \(=>\|!!\).*$//e'
-  "   normal 'tzt`s
-  "   set nolz
-  "   redraw
-  " endfunction
-" endfunction
-
-" command! IncludeRCodeTools call IncludeRCodeTools()
-" " execute ":IncludeRCodeTools"
-" " autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass execute ":IncludeRCodeTools"
-
-  let g:xmpfilter_cmd = "seeing_is_believing"
-
-  " auto insert mark at appropriate spot.
-  autocmd FileType ruby nmap <buffer> <F6> <Plug>(seeing_is_believing-run)
-  autocmd FileType ruby xmap <buffer> <F6> <Plug>(seeing_is_believing-run)
-  autocmd FileType ruby imap <buffer> <F6> <Plug>(seeing_is_believing-run)
-
-  autocmd FileType ruby nmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
-  autocmd FileType ruby xmap <buffer> <F7> <Plug>(seeing_is_believing-mark)
-  autocmd FileType ruby imap <buffer> <F7> <Plug>(seeing_is_believing-mark)
-
-  autocmd FileType ruby nmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
-  autocmd FileType ruby xmap <buffer> <F8> <Plug>(seeing_is_believing-clean)
-  autocmd FileType ruby imap <buffer> <F8> <Plug>(seeing_is_believing-clean)
-
-  " xmpfilter compatible
-  autocmd FileType ruby nmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
-  autocmd FileType ruby xmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
-  autocmd FileType ruby imap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+" xmpfilter compatible
+autocmd FileType ruby nmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+autocmd FileType ruby xmap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
+autocmd FileType ruby imap <buffer> <F9> <Plug>(seeing_is_believing-run_-x)
 
 
 " For folding
@@ -902,15 +791,6 @@ if executable('pry')
   " ↑ thanks to Houl, ZyX-i, and paradigm of #vim for all dogpiling on this one.
 endif
 
-if executable('rubocop')
-  " RuboCop from Anywhere
-  nmap <Leader>ru :RuboCop<CR>
-  imap <Leader>ru <ESC>:RuboCop<CR>
-
-  nmap <Leader>rua :!rubocop<CR>
-  imap <Leader>rua <ESC>:rubocop<CR>
-endif
-
 " " Ctags Shortcuts
 set tags=$HOME/.vimtags,%:p,$HOME
 
@@ -1009,12 +889,6 @@ endfunction
 " Hardmode
 nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 
-" Async Test Running courtesy of Gary Bernhardt
-" must start ~/bin/run_test.sh
-map <Leader>at :w\| :silent !echo bundle exec ruby spec/lib/rubocop/runner_spec.rb > test-commands<cr>
-"
-"
-" nnoremap <leader><leader>r :w\| :!rspec spec<cr>
 map <leader>q :q
 command Rake :!rake
 
@@ -1024,10 +898,6 @@ let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 " Disable easytags warning
 let g:easytags_updatetime_warn = 0
-
-" let g:ycm_filetype_specific_completion_to_disable = { 'ruby' : 1 }
-" for floobits
-" let g:ycm_allow_changing_updatetime = 0
 
 " Trick for saving vim sessions
 " https://ajayfromiiit.wordpress.com/2009/10/15/vim-sessions/
@@ -1089,14 +959,6 @@ au BufRead,BufNewFile *.gem set filetype=gz
 
 " For old vim-commentary muscle memory
 xmap \\ gcc
-
-function! CoverageAutoSourcing()
-  if filereadable("coverage.vim")
-    autocmd BufWritePost *.rb :silent so coverage.vim
-  endif
-endfunction
-command! CoverageAutoSourcing call CoverageAutoSourcing()
-nnoremap <Leader>cv :CoverageAutoSourcing<CR>
 
 if executable('sack')
   function! Sack()
@@ -1249,38 +1111,6 @@ nnoremap <leader>gt :GitGutterToggle<CR>
 
 let g:NumberToggleTrigger="<F8>"
 
-
-" function! Rs(val)
-" ruby << EOF
-" vim_arg = ::VIM::evaluate('a:val').to_s
-
-" def gs(param)
-"   prior, new = param.split(',', 2)
-"   $_.gsub(/#{prior}/, new)
-" end
-" EOF
-" endfunction
-
-" function! Rs(val)
-" ruby << EOF
-" def gs(a:val)
-"   prior, new = string.split(',', 2)
-"   $_.gsub(/#{prior}/, new)
-" end
-
-" # class Garnet
-" #   def initialize(s)
-" #     @buffer = VIM::Buffer.current
-" #     vimputs(s)
-" #   end
-" #   def vimputs(s)
-" #     @buffer.append(@buffer.count,s)
-" #   end
-" # end
-" # gem = Garnet.new("pretty")
-" EOF
-" endfunction
-" autocmd BufNewFile,BufRead *.json set ft=javascript " use this instead of vim-json
 autocmd BufNewFile,BufRead *.es6 set ft=javascript " use this instead of vim-json
 
 " Make those debugger statements painfully obvious
@@ -1293,8 +1123,6 @@ au BufEnter,BufWritePost *.coffee syn match error contained "console.log"
 nnoremap <leader>l :silent! \| :redraw!<cr>
 nnoremap <leader>v :!bundle exec approvals verify -d vimdiff -a<cr>
 nnoremap <silent> <C-W>z :wincmd z<Bar>cclose<Bar>lclose<CR>
-" let g:ycm_server_use_vim_stdout = 1
-" let g:ycm_server_log_level = 'debug'
 nnoremap <leader>n :NERDTreeToggle<CR>
 set colorcolumn=81
 nnoremap <leader>fm :silent :!gofmt -w %<cr>
@@ -1303,26 +1131,7 @@ nnoremap :qq :qa!<CR>
 
 " Don't try to highlight lines longer than 800 characters. Prevent horrible
 " slowness
-set synmaxcol=800
-" Better Completion
-" set complete=.,w,b,u,t
-" set completeopt=longest,menuone,preview
-
-" Cool trick from sjl
-" set undodir=~/.vim/tmp/undo//     " undo files
-" set backupdir=~/.vim/tmp/backup// " backups
-" set directory=~/.vim/tmp/swap//   " swap files
-
-" " Make those folders automatically if they don't already exist.
-" if !isdirectory(expand(&undodir))
-"     call mkdir(expand(&undodir), "p")
-" endif
-" if !isdirectory(expand(&backupdir))
-"     call mkdir(expand(&backupdir), "p")
-" endif
-" if !isdirectory(expand(&directory))
-"     call mkdir(expand(&directory), "p")
-" endif
+set synmaxcol=200
 
 " Highlight VCS conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
@@ -1348,12 +1157,12 @@ augroup BWCCreateDir
   autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
 augroup END
 
-" Extra vimrcs with direnv
-if exists("$EXTRA_VIM")
-  for path in split($EXTRA_VIM, ':')
-    exec "source ".path
-  endfor
-endif
+" " Extra vimrcs with direnv
+" if exists("$EXTRA_VIM")
+"   for path in split($EXTRA_VIM, ':')
+"     exec "source ".path
+"   endfor
+" endif
 
 " Fireplace.vim
 nnoremap <leader>e :%Eval<CR>
@@ -1365,7 +1174,6 @@ command! -bang -nargs=* -complete=file Wq wq<bang> <args>
 command! -bang -nargs=* -complete=file WQ wq<bang> <args>
 command! -bang Wa wa<bang>
 command! -bang WA wa<bang>
-
 
 set diffopt=vertical
 
