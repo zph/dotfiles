@@ -60,7 +60,8 @@ Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'othree/yajs.vim'
 Plug 'raichoo/purescript-vim'
 Plug 'raymond-w-ko/vim-niji'
-Plug 'rking/ag.vim'
+"Plug 'rking/ag.vim'
+Plug 'mileszs/ack.vim'
 Plug 'rking/vim-detailed'
 Plug 'rking/vim-ruby-refactoring'
 Plug 'scrooloose/nerdtree'
@@ -86,37 +87,20 @@ Plug 'editorconfig/editorconfig-vim'
 
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer --tern-completer --gocode-completer --clang-completer' }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'rhysd/vim-crystal'
 Plug 'janko-m/vim-test'
 nmap <silent> <leader>t :TestNearest<CR>
 nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader><leader>t :TestSuite<CR>
 nmap <silent> <leader>l :TestLast<CR>
+Plug 'Shougo/unite.vim'
 
 "Golang
 Plug 'fatih/vim-go'
 call plug#end()
 
-
-" Plugs of Unknown utility
-
-"Plug 'Shougo/vimproc.vim after_install=( cd vimproc.vim && make )'
-"Plug JazzCore/ctrlp-cmatcher after_install=( cd ctrlp-cmatcher && export CFLAGS=-Qunused-arguments && export CPPFLAGS=-Qunused-arguments && ./install.sh )
-""Plug jaxbot/github-issues.vim
-""Plug Shougo/neocomplete.vim
-""Plug jnwhiteh/vim-golang
-""Plug mhinz/vim-startify
-""Plug tpope/timl
-""Plug xolox/vim-easytags
-""Plug eagletmt/ghcmod-vim
-""Plug christoomey/vim-tmux-navigator
-""Plug Valloric/YouCompleteMe after_install=( cd YouCompleteMe && git submodule update --init --recursive && ./install.sh )
-"" Plug airblade/vim-gitgutter
-
-
 " OCaml
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
+"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+"execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
 " FZF
 set rtp+=~/.fzf
@@ -258,7 +242,7 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)"
 \: "\<TAB>""
 
-let g:ag_mapping_message=0
+"let g:ag_mapping_message=0
 
 set nocompatible      " We're running Vim, not Vi!
 syntax on             " Enable syntax highlighting
@@ -565,7 +549,7 @@ augroup vimrcEx
   autocmd FileType text setlocal textwidth=78
   autocmd FileType text set wrap linebreak nolist et
   " autocmd For markdown style
-  " autocmd FileType md,markdown set wrap nolist et
+  autocmd FileType md,markdown set wrap nolist et
 
   " Jump to last cursor position
   autocmd BufReadPost *
@@ -710,6 +694,20 @@ imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
 nmap <Leader>mr :CtrlPMRUFiles<CR>
 imap <Leader>p <ESC>:CtrlPMixed<CR>
 nmap <Leader>p :CtrlPMixed<CR>
+
+" imap <Leader>b <ESC>:CtrlPBuffer<CR>
+" nmap <Leader>b :CtrlPBuffer<CR>
+" imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
+" nmap <Leader>mr :CtrlPMRUFiles<CR>
+" imap <C-p> <ESC>:Unite file_rec/async<CR>
+" nmap <C-p> :Unite file_rec/async<CR>
+" nnoremap <silent> ,g :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
+if executable('pt')
+  let g:unite_source_grep_command = 'pt'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor'
+  let g:unite_source_grep_recursive_opt = ''
+  let g:unite_source_grep_encoding = 'utf-8'
+endif
 imap <C-o> <ESC>:FZF<CR>
 nmap <C-o> :FZF<CR>
 let g:ctrlp_max_depth = 10
@@ -1015,6 +1013,8 @@ if executable('ag')
   " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
 
+  " Use ag for ack if present
+  let g:ackprg = 'ag --vimgrep'
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = {
     \ 'fallback': 'ag %s -l --nocolor -g ""'
@@ -1023,8 +1023,12 @@ if executable('ag')
   "ag is fast enough that CtrlP doesn't need to cache
   let g:ctrlp_use_caching = 0
 
-  nnoremap <Leader>a :Ag!<SPACE>
-  nnoremap <Leader>aa :Ag! <cword><CR>
+  " Map over Ack commands to Ag commands, so I don't need to retrain muscles
+  " for command in ['Ack', 'AckAdd', 'AckFromSearch', 'LAck', 'LAckAdd', 'AckFile', 'AckHelp', 'LAckHelp', 'AckWindow', 'LAckWindow']
+  "   exe 'command ' . substitute(command, 'Ack', 'Ag', "") . ' ' . command
+  " endfor
+  nnoremap <Leader>a :Ack!<SPACE>
+  nnoremap <Leader>aa :Ack! <cword><CR>
 endif
 
 " Needed for editing crontab
@@ -1112,6 +1116,7 @@ nnoremap <leader>gt :GitGutterToggle<CR>
 let g:NumberToggleTrigger="<F8>"
 
 autocmd BufNewFile,BufRead *.es6 set ft=javascript " use this instead of vim-json
+autocmd BufNewFile,BufRead *.jsx set ft=javascript " use this instead of vim-json
 
 " Make those debugger statements painfully obvious
 au BufEnter,BufWritePost *.rb syn match error contained "\<binding.pry\>"
@@ -1177,19 +1182,19 @@ command! -bang WA wa<bang>
 
 set diffopt=vertical
 
-" Improve location list/quickfix windows, ie behave like ag.vim
-function! Zopen()
-  :lopen
-  exec "nnoremap <silent> <buffer> q :ccl<CR>"
-  exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-  exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-  exec "nnoremap <silent> <buffer> o <CR>"
-  exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-  exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-  exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-  exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-  exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
-  echom "ag.vim keys: q=quit <cr>/t/h/v=enter/tab/split/vsplit go/T/H/gv=preview versions of same"
-endfunction
+" " Improve location list/quickfix windows, ie behave like ag.vim
+" function! AGopen()
+"   :lopen
+"   exec "nnoremap <silent> <buffer> q :ccl<CR>"
+"   exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
+"   exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
+"   exec "nnoremap <silent> <buffer> o <CR>"
+"   exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
+"   exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
+"   exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
+"   exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
+"   exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
+"   echom "ag.vim keys: q=quit <cr>/t/h/v=enter/tab/split/vsplit go/T/H/gv=preview versions of same"
+" endfunction
 
-command! -bang Zopen call Zopen()
+" command! -bang AGopen call AGopen()
