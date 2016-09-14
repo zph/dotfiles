@@ -8,3 +8,4 @@ bin_local/
 .git_init_template/*
 bin/heroku/*
 bin/heroku
+bin/to-daily-status*
