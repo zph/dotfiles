@@ -6,3 +6,5 @@ ec2/bin/*
 .config/inkscape*
 bin_local/
 .git_init_template/*
+bin/heroku/*
+bin/heroku
