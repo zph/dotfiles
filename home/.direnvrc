@@ -41,7 +41,11 @@ source_local_env_file(){
 # http://getgb.io/
 #
 layout_gb() {
-  export GOPATH="$PWD/vendor:$PWD:$GOPATH"
+  export GOPATH="$PWD/vendor:$PWD"
   PATH_add "$PWD/vendor/bin"
+  PATH_add bin
+}
+layout_gopwd(){
+  export GOPATH="$PWD"
   PATH_add bin
 }
