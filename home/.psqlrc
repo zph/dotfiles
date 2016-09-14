@@ -3,4 +3,4 @@
 \set HISTSIZE 1000000
 \set PROMPT1 '(%n@%M:%/) psql> '
 \timing
-
+\x auto

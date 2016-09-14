@@ -19,7 +19,7 @@
                                        erlang-elixir
                                        git
                                        go
-                                       ocaml
+                                       ;ocaml
                                        python
                                        scala
                                        themes-megapack
@@ -27,6 +27,7 @@
                                        zph-org
                                        ;direnv
                                        ;; NEW/EXPERIMENTAL
+                                       html
                                        javascript
                                        shell
                                        react
@@ -37,14 +38,21 @@
                                        erlang
                                        syntax-checking
                                        markdown
-                                       sql)
+                                       sql
+                                       yaml
+                                       ;; Experimental
+                                       evil-snipe
+                                       unimpaired
+                                       github
+                                       shell-scripts
+                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'
-   dotspacemacs-delete-orphan-packages t)
-  )
+   dotspacemacs-delete-orphan-packages t
+   dotspacemacs-additional-packages '(polymode)))
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -126,10 +134,17 @@ before layers configuration."
    ;; specified with an installed package.
    ;; Not used for now.
    dotspacemacs-default-package-repository nil
+   dotspacemacs-configuration-layers '((auto-completion :variables
+                                                        auto-completion-enable-snippets-in-popup t))
+   dotspacemacs-configuration-layers '((auto-completion :variables
+                                                        auto-completion-enable-help-tooltip t))
    )
   ;; User initialization goes here
   (push "/usr/local/bin" exec-path)
-  ;(push "/usr/local/bin/sbt" exec-path)
+  ;(setq org-agenda-files (list "~/Dropbox/org_mode"))
+  (require 'poly-markdown)
+  (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))
+  ;; Redefine this to make it more accurate on my filesystem
   )
 
 (defun dotspacemacs/config ()
@@ -153,15 +168,18 @@ layers configuration."
   (setq racer-cmd "~/.cargo/bin/racer")
   (setenv "RUST_SRC_PATH" "~/src/rust/rust/src")
 
+  (defun go-set-project-with-guard ()
+    (let* ((g (go-guess-gopath))
+           (d (concat (getenv "HOME") "/src/golang"))
+           (r (concat (getenv "HOME") "/src:"))
+           (has-match (string-match r g)))
 
-  (defun manage-gopath! ()
-    "Set GOPATH to projectile project root directory."
-    (message
-     "GOPATH set to: %s"
-     (setenv "GOPATH"
-             (let ((go-ws (expand-file-name (directory-file-name (projectile-project-root)))))
-               (concat go-ws ":" (expand-file-name "vendor" go-ws))))))
-  (add-hook 'projectile-after-switch-project-hook 'manage-gopath!)
+      (if (not (eq 0 has-match))
+          (setenv "GOPATH" d)
+          (setenv "GOPATH" g))))
+
+  (eval-after-load 'go-mode
+    '(add-hook 'go-mode-hook 'go-set-project-with-guard))
   ;;.direnv.bak/python-2.7.9/bin/
   (defvar projectile-ag-command
     (concat "\\ag" ; used unaliased version of `ag': \ag
