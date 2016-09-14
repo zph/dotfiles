@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+if [[ ! -x $(which fswatch) ]];then
+  echo "Must install fswatch"
+  exit 1
+fi
+
+# fswatch -or ~/.zsh.d | xargs -n1 -I{} -- echo "pork"
+
+main(){
+  DIR_OR_FILE=$1
+  shift
+  CMD="$@"
+  fswatch -or ${DIR_OR_FILE} | xargs -n1 -I{} -- ${CMD}
+}
+
+main "$@"
