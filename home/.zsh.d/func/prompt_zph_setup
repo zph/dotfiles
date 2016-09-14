@@ -167,31 +167,33 @@ prompt_zph_setup() {
   typeset -Ag wunjo_prompt_colors
   wunjo_prompt_colors=(${(kv)pc})
 
-  local p_date p_line p_rc
+  local p_date p_line p_rc p_tstamp
 
   p_date="$pc[date]%D{%Y-%m-%d} $pc[time]%D{%T}$pc[reset]"
+  p_tstamp="$pc[time]%D{%H:%M:%S}$pc[reset]"
 
   p_line="$pc[line]%y$pc[reset]"
 
-  get_ruby(){
-    echo $(ruby -v | egrep -io '\d+\.\d+.\d+')
+  prompt_zph_show_lang_version(){
+    local dir=$(git rev-parse --show-toplevel 2> /dev/null)
+    if [[ "$?" = "0" ]];then
+      if [[ -f $dir/Gemfile ]];then
+        printf " ${RUBY_VERSION:-'system'}"
+      fi
+      if [[ -f $dir/.python-version ]];then
+        printf " $(cat $dir/.python-version)"
+      fi
+    fi
   }
 
   build_prompt(){
     PROMPT=
     if [ $verbose ]; then
-      # PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] $pc[time]\$(~/.rvm/bin/rvm-prompt v)$pc[reset]"
-      PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] \$(echo ${RUBY_VERSION:-"system"})$pc[time]$pc[reset]"
+      PROMPT+="$pc[host]${LOCAL_HOSTNAME:=mbp}$pc[reset] ${p_tstamp}\$(prompt_zph_show_lang_version)$pc[time]$pc[reset]"
     fi
-    PROMPT+=" $pc[shortpath]%1~$pc[reset]"
-      # PROMPT+="\$(prompt_zph_display_if_git \()$pc[scm_branch]\$(prompt_wunjo_scm_branch)$pc[reset]\$(prompt_zph_display_if_git \))"
-    #PROMPT+=" $pc[#]$(_prompt_char)$pc[reset]"
-    PROMPT+=" "
+    PROMPT+=" $pc[shortpath]%1~$pc[reset] "
     echo $PROMPT
   }
-
-    # pc[scm_status_dirty]='Red'
-    # pc[scm_status_staged]='Green'
 
   prior_cmd_return_value(){
     prior_val=$status

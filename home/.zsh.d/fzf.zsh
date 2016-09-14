@@ -8,7 +8,7 @@
 export FZF_TMUX="~/.fzf/bin/fzf-tmux"
 export FZF_DEFAULT_COMMAND='ag -l -g ""'
 
-alias f="fzf"
+alias fz="fzf"
 # declare -f __fzf > /dev/null ||
 #   eval "$(echo "__fzf() {"; declare -f fzf | \grep -v '^{' | tail -n +2)"
 

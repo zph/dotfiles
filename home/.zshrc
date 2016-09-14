@@ -67,7 +67,7 @@ _zshrc_pre_init(){
   HISTSIZE='1000000000'
   SAVEHIST="${HISTSIZE}"
   # for zsh-completions and prompt
-  fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func)
+  fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func ${ZSHDDIR}/completions)
   export TERM=xterm-256color
 }
 
@@ -140,11 +140,16 @@ _set_zsh_settings(){
   zle -N self-insert url-quote-magic
 }
 
-_source_zshd(){
+_source_by_glob(){
+  local d=$1
   # Finally, source all the files in zsh.d (ALPHA order)
-  for zshd in $(find ${ZSHDDIR}/*.zsh | sort ); do
+  for zshd in $(find ${d}/*.zsh | sort ); do
     source "${zshd}"
   done
+}
+
+_source_zshd(){
+  _source_by_glob "${ZSHDDIR}"
 }
 
 _ignore_listed_zshd_commands(){
@@ -299,11 +304,11 @@ _normalize_keys(){
   # # More Vi keybinds for searching
   # bindkey '^P' history-search-backward
   # bindkey '^N' history-search-forward 
+
   # Keybind for opening command in full editor
-  #
   autoload -z edit-command-line
   zle -N edit-command-line
-  #
+
   # only works in newer zsh
   zmodload -a pcre
 
