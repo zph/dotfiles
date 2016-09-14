@@ -61,7 +61,7 @@ tramp
 # Tag files
 doc/tags
 tags
-.envrc
+**/*.envrc
 .direnv/*
 .bundle
 .repl_rake.rb
@@ -79,3 +79,4 @@ tags
 .iex_history
 .agignore
 node_modules/
+~/.config/*

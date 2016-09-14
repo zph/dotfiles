@@ -1,4 +1,11 @@
 # Much of the customization in this Config originated from Gary Bernhardt and other sources.
+[include]
+  # Include is used to load private configurations
+  path = "~/.config/git/config.local"
+  # Content
+  # [github]
+  #   token = <TOKEN>
+  #   oauth-token = <TOKEN>
 [user]
 	name = Zander Hill
 	email = zander@xargs.io
@@ -145,7 +152,6 @@
   tool = vimdiff
 [github]
 	user = zph
-	token = "# require <top-level module>"
 [core]
 	autocrlf = input
 	safecrlf = true
@@ -159,7 +165,6 @@
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [push]
-	; default = matching
 	default = current
 [web]
 	browser = chrome
