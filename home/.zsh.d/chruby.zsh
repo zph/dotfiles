@@ -39,3 +39,5 @@ chruby() {
   local modified_path=$(echo $PATH | sed 's/:.\/.bundle\/.binstubs//')
   export PATH=${PATHS_TO_PREFIX_BEFORE_CHRUBY}:$modified_path
 }
+
+chruby 2.3.1
