@@ -60,7 +60,6 @@ Plug 'nelstrom/vim-textobj-rubyblock'
 Plug 'othree/yajs.vim'
 Plug 'raichoo/purescript-vim'
 Plug 'raymond-w-ko/vim-niji'
-"Plug 'rking/ag.vim'
 Plug 'mileszs/ack.vim'
 Plug 'rking/vim-detailed'
 Plug 'rking/vim-ruby-refactoring'
@@ -72,7 +71,6 @@ Plug 'slim-template/vim-slim'
 Plug 't9md/vim-ruby-xmpfilter'
 Plug 'terryma/vim-expand-region'
 Plug 'terryma/vim-multiple-cursors'
-Plug 'troydm/easytree.vim'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'vim-ruby/vim-ruby'
 Plug 'vim-scripts/AutoTag'
@@ -363,7 +361,7 @@ set list
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
 " set lcs=tab:\|_,
 " Courtesy of @alindeman
-set listchars+=trail:💔
+"set listchars+=trail:💔
 
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
@@ -1092,7 +1090,7 @@ nnoremap <leader>] >i{<CR>
 nnoremap <leader>[ <i{<CR>
 
 set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
-set listchars+=trail:💔
+set listchars+=trail:.
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
 
