@@ -1,3 +1,10 @@
+require('modules/main')
+require('modules/toggle')
+require('modules/focus')
+require('modules/moovr')
+require('modules/sizer')
+require('modules/layout')
+
 local app = hs.application
 
 -- Auto reload config file on save.
@@ -46,20 +53,16 @@ function toggleWindowMaximized()
 end
 -- Toggle an application between being the frontmost app, and being hidden
 function toggleApplication(_app)
-    local app = hs.appfinder.appFromName(_app)
-    if not app then
-      app.launchOrFocus(name)
-    end
-    local mainwin = app:mainWindow()
-    if mainwin then
-        if mainwin == hs.window.focusedWindow() then
-            mainwin:application():hide()
-        else
-            mainwin:application():activate(true)
-            mainwin:application():unhide()
-            mainwin:focus()
-        end
-    end
+  local app = hs.appfinder.appFromName(_app)
+  if not app then
+    hs.application.launchOrFocus(_app)
+    return
+  end
+  if hs.application.isFrontmost(app) then
+    hs.application.hide(app)
+  else
+    app.launchOrFocus(_app)
+  end
 end
 -- Hotkeys to move windows between screens, retaining their position/size relative to the screen
 -- hs.urlevent.bind('hyperfnleft', function() hs.window.focusedWindow():moveOneScreenWest() end)
@@ -107,6 +110,7 @@ local apps = {
   {key = "G", app = "DataGrip"},
   {key = "P", app = "1Password 6"},
   {key = "C", app = "Google Chrome"},
+  {key = "X", app = "TaskPaper"},
   {key = "V", app = "MacVim"},
 }
 

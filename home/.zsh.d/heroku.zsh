@@ -1,1 +1,1 @@
-alias heroku="$HOME/bin/heroku"
+#alias heroku="$HOME/bin/heroku"

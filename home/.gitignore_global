@@ -80,3 +80,7 @@ tags
 .agignore
 node_modules/
 ~/.config/*
+
+# For Python pre-commit
+.pre-commit-config.yaml
+.vscode/

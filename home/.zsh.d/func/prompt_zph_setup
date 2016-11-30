@@ -181,7 +181,7 @@ prompt_zph_setup() {
         printf " ${RUBY_VERSION:-'system'}"
       fi
       if [[ -f $dir/.python-version ]];then
-        printf " $(cat $dir/.python-version)"
+        printf " $(cat $dir/.python-version | tr $'\n' ' ' | sed 's/ $//g')"
       fi
     fi
   }
