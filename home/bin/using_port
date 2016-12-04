@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+lsof -i :$1 -S
