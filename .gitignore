@@ -26,3 +26,4 @@ home/.vim/session/
 home/.parallel/tmp
 home/*lein/*history*
 home/.vim/plugged/*
+home/bin/pre-commit
