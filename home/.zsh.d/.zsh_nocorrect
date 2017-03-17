@@ -3,6 +3,5 @@ mv
 wget
 ri
 e
-rspec
 vcsh
 bundle

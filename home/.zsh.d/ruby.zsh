@@ -1,11 +1,5 @@
-# alias bi='bundle install'
-# alias be='bundle exec'
-alias ri='ri -f ansi'
-alias gemu='gem uninstall'
-alias r21='rvm use 2.1.1'
 alias bpr='bundle exec pry-remote'
 alias approve='bundle exec approvals verify -d vimdiff -a'
-# alias bi="bundle install"
 ##############################
 # Courtesy of http://ryan.mcgeary.org/2011/02/09/vendor-everything-still-applies/
 # alias bi="b install --path vendor"

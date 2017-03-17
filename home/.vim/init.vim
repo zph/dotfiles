@@ -361,7 +361,7 @@ set list
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
 " set lcs=tab:\|_,
 " Courtesy of @alindeman
-"set listchars+=trail:💔
+set listchars+=trail:~
 
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
@@ -1090,7 +1090,7 @@ nnoremap <leader>] >i{<CR>
 nnoremap <leader>[ <i{<CR>
 
 set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
-set listchars+=trail:.
+"set listchars+=trail:💔
 set fcs=fold:-
 nnoremap <silent> <leader>c :set nolist!<CR>
 

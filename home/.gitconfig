@@ -147,6 +147,8 @@
     # same as `git sync` but also rebases
     sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
     branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
+    ribbon = tag --force _ribbon origin/master
+    catchup = log --patch --reverse --topo-order _ribbon..origin/master
 
 [merge]
   tool = vimdiff

@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
-git fetch
-git update-ref -m "merge HEAD: Fast forward" refs/heads/"$1" HEAD
+# git fetch
+# git update-ref -m "merge HEAD: Fast forward" refs/heads/"$1" HEAD
+git checkout master
+git smart-pull
+git checkout -
+git rebase master
