@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# disk-gpt-to-device <gpt>
+
+parse_part ( ) {
+  x=`awk '/[0-9][0-9]*\. Name\: / { print $3 }' <<EOF
+$line
+EOF`
+  if [ "$x" != "" ] ; then
+    part=$x
+  fi
+}
+
+process_lines ( ) {
+  while read line ; do
+    parse_part
+    awk -v part="$part" '/rawuuid\: '"$1"'/ { print part }' <<EOF
+$line
+EOF
+  done
+}
+
+if [ $# -ne 1 -o "$1" = -h -o "$1" = --help ] ; then
+  echo "usage: disk-gpt-to-device <gpt>" >&2
+  echo "<gpt> = e.g. 94d6ff37-24ca-11e4-bade-d050991a767f (no /dev/gpt/ prefix)" >&2
+  exit 1
+fi
+
+# camcontrol identify may only work for ahci
+lines=`gpart list`
+
+process_lines "$1" <<EOF
+"$lines"
+EOF
