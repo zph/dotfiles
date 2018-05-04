@@ -15,6 +15,10 @@ include_work_zsh(){
   source $HOME/source/.work.zsh
 }
 
+include_zsh(){
+  source "${1}"
+}
+
 export_env_file(){
   IFS=$'\n'
   export $(cat "${1}" | grep -ve "^#" | tr -d "[\"\']$")
@@ -48,4 +52,28 @@ layout_gb() {
 layout_gopwd(){
   export GOPATH="$PWD"
   PATH_add bin
+}
+
+# use a certain pyenv version
+use_python() {
+    if [ -n "$(which pyenv)" ]; then
+        local pyversion=$1
+        pyenv local ${pyversion}
+    fi
+}
+
+layout_virtualenv() {
+    local pyversion=$1
+    local pvenv=$2
+    if [ -n "$(which pyenv-virtualenv)" ]; then
+        pyenv virtualenv --force --quiet ${pyversion} ${pvenv}-${pyversion}
+    fi
+    pyenv local --unset
+}
+
+layout_activate() {
+    if [ -n "$(which pyenv)" ]; then
+      pyenv_root=$(pyenv root)
+      source $pyenv_root/versions/$1/bin/activate
+    fi
 }

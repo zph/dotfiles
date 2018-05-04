@@ -7,85 +7,88 @@
   #   token = <TOKEN>
   #   oauth-token = <TOKEN>
 [user]
-	name = Zander Hill
-	email = zander@xargs.io
-	signingkey = 6CBA19142E2EBACB
+  name = Zander Hill
+  email = zander@xargs.io
+  signingkey = 6CBA19142E2EBACB
+[commit]
+#  gpgSign = true
 [color]
-	ui = true
+  ui = true
 [alias]
     # git-smart aliases
-    sp = "!git tidy && git smart-pull"
-    a = add
-    ai = "!git add --intent-to-add ."
-    aa = add --all
-    aap = add --all --patch
-    ai = add -i
-    an = add -N
-    amend = commit --amend
-    ap = add -p
-    b = branch
-    bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
-    ci = commit -v
-    cim = commit -m
-    com = checkout master
+  sp = "!git tidy && git smart-pull"
+  a = add
+  ai = "!git add --intent-to-add ."
+  aa = add --all
+  aap = add --all --patch
+  ai = add -i
+  an = add -N
+  amend = commit --amend
+  ap = add -p
+  b = "!git for-each-ref --sort=committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)'"
+  bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
+  ci = commit -v
+  cim = commit -m
+  com = "!git checkout ${GIT_MASTER:-master}"
     # cl = clone
-    cp = cherry-pick
+  cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
-    co = checkout
-    dc = diff --cached
-    dh = diff HEAD~1
-    d = diff
-    dh1 = diff HEAD~1
-    di = diff
-    div = divergence
-    ds = diff --staged
-    dw = diff --color=always --word-diff | less -r
-    df  = diff --color-words
-    fa = fetch --all
-    ff = merge --ff-only
-    gn = goodness
-    gnc = goodness --cached
-    h = !git head
-    head = !git l -1
-    hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
-    hp = "!source ~/.githelpers && show_git_head"
-    implode = "!git reset --hard && git clean -df"
-    l = "!source ~/.githelpers && pretty_git_log"
-    la = !git l --all
-    noff = merge --no-ff
-    nope = "!sh -c 'git checkout .; git checkout -'"
-    pbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
-    upbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+  co = checkout
+  dc = diff --cached
+  dh = diff HEAD~1
+  d = diff
+  dh1 = diff HEAD~1
+  di = diff
+  div = divergence
+  ds = diff --staged
+  dw = diff --color=always --word-diff | less -r
+  df  = diff --color-words
+  fa = fetch --all
+  ff = merge --ff-only
+  gn = goodness
+  gnc = goodness --cached
+  h = !git head
+  head = !git l -1
+  hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+  hp = "!source ~/.githelpers && show_git_head"
+  implode = "!git reset --hard && git clean -df"
+  l = "!source ~/.githelpers && pretty_git_log"
+  la = !git l --all
+  noff = merge --no-ff
+  nope = "!sh -c 'git checkout .; git checkout -'"
+  pbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+  bpo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
+  ub = "!git update-branch"
     # up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
     #pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
-    gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
-    pom = push origin master
-    po = push origin
+  gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
+  pom = push origin master
+  po = push origin
     # pr = pull --rebase
-    pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
-    pl = pull
-    p = "!git pull --rebase --prune"
-    save = "!git add -A && git commit -m 'SAVEPOINT'"
-    wip = "!git add -u && git commit -m 'WIP'"
-    wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
+  pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+  pl = pull
+  p = "!git pull --rebase --prune"
+  save = "!git add -A && git commit -m 'SAVEPOINT'"
+  wip = "!git add -u && git commit -m 'WIP'"
+  wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
     #pu = push
-    pul = pull --ff-only
-    pullff = pull --ff-only
-    r = !git l -30
-    ra = !git r --all
-    rh = reset --hard
-    rhh = "!git reset --hard && git clean -df"
-    st = status -s
-    stt = "!git status -s | grep -v \"^??\""
-    sf = show --pretty="format:" --name-only
-    sv = !git show -v
-    spp = "!git stash && git pull && git stash pop"
-    srp = "!git stash && git rebase dev && git stash pop"
-    conflicts = !git ls-files -u | cut -f 2 | sort -u
-    c = !git ls-files -u | cut -f 2 | sort -u
-    modified = !git ls-files -m
-    unapply = !git stash show -p | git apply -R
-    remove-deleted = !git ls-files --deleted | xargs git rm
+  pul = pull --ff-only
+  pullff = pull --ff-only
+  r = !git l -30
+  ra = !git r --all
+  rh = reset --hard
+  rhh = "!git reset --hard && git clean -df"
+  st = status -s
+  stt = "!git status -s | grep -v \"^??\""
+  sf = show --pretty="format:" --name-only
+  sv = !git show -v -v
+  spp = "!git stash && git pull && git stash pop"
+  srp = "!git stash && git rebase dev && git stash pop"
+  conflicts = !git ls-files -u | cut -f 2 | sort -u
+  c = !git ls-files -u | cut -f 2 | sort -u
+  modified = !git ls-files -m
+  unapply = !git stash show -p | git apply -R
+  remove-deleted = !git ls-files --deleted | xargs git rm
     # Divergence (commits we added and commits remote added)
     # div = divergence
 
@@ -101,82 +104,86 @@
     #   l = all commits, only current branch
     #   la = all commits, all reachable refs
     # ll = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
-    h = !git head
-    head = !git l -1
-    hp = "!. ~/.githelpers && show_git_head"
-    l = "!. ~/.githelpers && pretty_git_log"
-    la = !git l --all
-    ll = !git r --all
-    lo = !git log --oneline
-    r = !git l -30
-    ra = !git r --all
-    unstage = reset HEAD
+  h = !git head
+  head = !git l -1
+  hp = "!. ~/.githelpers && show_git_head"
+  l = "!. ~/.githelpers && pretty_git_log"
+  la = !git l --all
+  ll = !git r --all
+  lo = !git log --oneline
+  r = !git l -30
+  ra = !git r --all
+  unstage = reset HEAD
     # Mark a file as "assume unchanged", which means that Git will treat it
     # as though there are no changes to it even if there are. Useful for
     # temporary changes to tracked files
-    assume = update-index --assume-unchanged
+  assume = update-index --assume-unchanged
     # Reverse the above
-    unassume = update-index --no-assume-unchanged
+  unassume = update-index --no-assume-unchanged
     # Show the files that are currently assume-unchanged
-    assumed = "!git ls-files -v | grep ^h | cut -c 3-"
+  assumed = "!git ls-files -v | grep ^h | cut -c 3-"
 
 
-    bs = !git bisect
+  bs = !git bisect
     # Wil Moore III
     # http://git.io/gopyOg
     # open files with conflict markers in your configured editor
-    edit-conflicted   = !$EDITOR $(git grep --name-only --full-name '<<<<<<< HEAD' | awk '{print $NF}')
+  edit-conflicted   = !$EDITOR $(git grep --name-only --full-name '<<<<<<< HEAD' | awk '{print $NF}')
     # locate commit where a particular file was introduced
-    added-file        = log --diff-filter=A --
+  added-file        = log --diff-filter=A --
     # list aliases
-    aliases           = !git config --get-regexp '^alias.' | awk -F '[. ]' '{ print $2 }'
+  aliases           = !git config --get-regexp '^alias.' | awk -F '[. ]' '{ print $2 }'
     # list git bins (lots of gems in there)
-    bin               = !find $(git --exec-path) -type f | xargs basename | $(git config --get core.pager)
+  bin               = !find $(git --exec-path) -type f | xargs basename | $(git config --get core.pager)
     # list commits not yet pushed to remote
-    local             = log --branches --not --remotes
+  local             = log --branches --not --remotes
     # show commits where my github user name is the author
-    log-github-user   = !git log --author="$(git config --get github.user)"
+  log-github-user   = !git log --author="$(git config --get github.user)"
     # markdown-friendly list of topic/branch related logs (great for Github pull requests)
-    markdown          = !BN=$(git name-rev --name-only HEAD) && git log --no-merges --grep=$BN --pretty=oneline | awk -F"$BN: " '{print \"-\", $NF}' | uniq
+  markdown          = !BN=$(git name-rev --name-only HEAD) && git log --no-merges --grep=$BN --pretty=oneline | awk -F"$BN: " '{print \"-\", $NF}' | uniq
     # show branches that have been merged into current (HEAD) branch
-    merged            = !git fetch --all --prune && git branch --all --merged HEAD
+  merged            = !git fetch --all --prune && git branch --all --merged HEAD
     # show branches that have not been merged into current (HEAD) branch
-    not-merged        = !git fetch --all --prune && git branch --all --no-merged HEAD
+  not-merged        = !git fetch --all --prune && git branch --all --no-merged HEAD
     # fetch and rebase from upstream/master then push current branch to origin
-    sync              = !git pull --no-rebase --ff upstream master && git push -u origin +HEAD
+  sync              = !git pull --no-rebase --ff upstream master && git push -u origin +HEAD
     # same as `git sync` but also rebases
-    sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
-    branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
-    ribbon = tag --force _ribbon origin/master
-    catchup = log --patch --reverse --topo-order _ribbon..origin/master
+  sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
+  branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
+  ribbon = tag --force _ribbon origin/master
+  catchup = log --patch --reverse --topo-order _ribbon..origin/master
 
 [merge]
   tool = vimdiff
 [github]
-	user = zph
+  user = zph
 [core]
-	autocrlf = input
-	safecrlf = true
-	excludesfile = ~/.gitignore_global
+  autocrlf = input
+  safecrlf = true
+  excludesfile = ~/.gitignore_global
 [credential]
-	helper = osxkeychain
+  helper = osxkeychain
 [difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+  path = 
 [mergetool "sourcetree"]
-	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+  trustExitCode = true
 [push]
-	default = current
+  default = current
 [web]
-	browser = chrome
+  browser = chrome
 [branch]
-	autosetuprebase = always
+  autosetuprebase = always
 [rerere]
-	enabled = 1
+  enabled = 1
 [heroku]
-	remote = staging
+  remote = staging
 [init]
-	templatedir = ~/.git_init_template
+  templatedir = ~/.git_init_template
 [log]
-	date = iso8601
+  date = iso8601
+[ghi]
+	token = !security find-internet-password -a zph -s github.com -l 'ghi token' -w
+[diff "ansible-vault"]
+	textconv = ansible-vault view

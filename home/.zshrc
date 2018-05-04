@@ -68,7 +68,10 @@ _zshrc_pre_init(){
   SAVEHIST="${HISTSIZE}"
   # for zsh-completions and prompt
   fpath=(/usr/local/share/zsh-completions $fpath ${ZSHDDIR}/func ${ZSHDDIR}/completions)
-  export TERM=xterm-256color
+  # Disable term setting because it overrides when in TMUX
+  if [ -z $TMUX ];then
+    export TERM=xterm-256color
+  fi
 }
 
 _set_zsh_settings(){
@@ -243,7 +246,7 @@ _add_homebin_to_dir(){
 }
 
 _export_editor_and_tmp_dirs(){
-  if [ -f $(which nvim) ]; then
+  if [[ -f $(which nvim) ]]; then
     export EDITOR=$(which nvim)
   else
     export EDITOR=$(which vim)

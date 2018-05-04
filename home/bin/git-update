@@ -20,7 +20,7 @@ is_dirty () {
     # See: http://stackoverflow.com/a/5151886
     ! git diff-index --cached --quiet --ignore-submodules HEAD ||
         ! git diff-files --quiet --ignore-submodules ||
-            [ -n "$(git ls-files --others --exclude-standard)" ]
+        [ -n "$(git ls-files --others --exclude-standard)" ]
 }
 
 # This will issue the current location to STDOUT. Capture it and pass it to

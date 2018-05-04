@@ -62,7 +62,7 @@ tramp
 doc/tags
 tags
 **/*.envrc
-.direnv/*
+*.direnv
 .bundle
 .repl_rake.rb
 .my.cnf
@@ -80,6 +80,8 @@ tags
 .agignore
 node_modules/
 ~/.config/*
+*secret.exs
+.tool-versions
 
 # For Python pre-commit
 .pre-commit-config.yaml

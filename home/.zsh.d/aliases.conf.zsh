@@ -18,7 +18,10 @@
 # alias mkdir='mkdir -p' # Make mkdir recursive
 # alias tree='tree -L 2 -fi'
 
+alias shfmt="shfmt -i 2 -ci"
 alias zxargs='tr "\n" "\0" | xargs -0 -n1 -I{}'
+alias p1='parallel -j1'
+alias par='parallel'
 alias -g ST='2>&1 | sit'
 alias ......="cd ../../../../.."
 alias .....="cd ../../../.."
@@ -30,7 +33,6 @@ alias ack='noglob ack -i --nogroup'
 alias b='bg'
 alias bn='branch-name'
 #cd by .. or ... or ... or mv file ..../.
-alias c='\cd'
 alias cd-='cd - '
 alias cdd='cd - '                     # goto last dir cd'ed from
 alias cl="clear"

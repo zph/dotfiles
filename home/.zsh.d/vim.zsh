@@ -8,3 +8,5 @@ function vim_plugin_update() {
      done
 }
 
+alias vim="nvim"
+#alias v=vim

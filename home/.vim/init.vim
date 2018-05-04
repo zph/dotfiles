@@ -1,14 +1,13 @@
 call plug#begin()
-Plug 'tpope/gem-ctags'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-classpath'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fireplace'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-git'
 Plug 'tpope/vim-haml'
 Plug 'tpope/vim-leiningen'
@@ -20,7 +19,12 @@ Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-scriptease'
-Plug 'tpope/vim-sensible'
+Plug 'prettier/vim-prettier', { 'do': 'npm install -g' }
+let g:prettier#autoformat = 0
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
+if !has('nvim')
+  Plug 'tpope/vim-sensible'
+endif
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-vinegar'
@@ -35,7 +39,7 @@ Plug 'bling/vim-airline'
 Plug 'bogado/file-line'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'derekwyatt/vim-scala'
-Plug 'edsono/vim-matchit'
+Plug 'tmhedberg/matchit'
 Plug 'elazar/visSum.vim'
 Plug 'elixir-lang/vim-elixir'
 Plug 'epeli/slimux'
@@ -64,7 +68,6 @@ Plug 'mileszs/ack.vim'
 Plug 'rking/vim-detailed'
 Plug 'rking/vim-ruby-refactoring'
 Plug 'scrooloose/nerdtree'
-Plug 'scrooloose/syntastic'
 Plug 'sjl/gundo.vim'
 Plug 'skalnik/vim-vroom'
 Plug 'slim-template/vim-slim'
@@ -79,11 +82,31 @@ Plug 'vim-scripts/lua.vim'
 Plug 'vim-scripts/paredit.vim'
 Plug 'wting/rust.vim'
 Plug 'xolox/vim-misc'
+Plug 'Chiel92/vim-autoformat'
+noremap <F3> :Autoformat<CR>
+let g:formatterpath = [$HOME.'/bin']
+let g:formatdef_bash_strict_mode = '"bash_strict_mode"'
+let g:formatters_sh = ['bash_strict_mode']
+autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
+
 
 " Experimental
+Plug 'w0rp/ale'
+let g:ale_linters = {
+\   'ruby': ['ruby'],
+\}
 Plug 'editorconfig/editorconfig-vim'
+Plug 'chase/vim-ansible-yaml'
+Plug 'ludovicchabant/vim-gutentags'
+let g:gutentags_ctags_tagfile = ".tags"
+let g:gutentags_cache_dir = "~/tmp"
+if executable('ptags')
+  "let g:gutentags_ctags_executable = 'ptags'
+  let g:gutentags_file_list_command = 'rg --files'
+endif
+Plug 'slashmili/alchemist.vim'
+Plug 'nazo/pt.vim'
 
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --racer-completer --tern-completer --gocode-completer --clang-completer' }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'janko-m/vim-test'
 nmap <silent> <leader>t :TestNearest<CR>
@@ -91,17 +114,36 @@ nmap <silent> <leader>T :TestFile<CR>
 nmap <silent> <leader><leader>t :TestSuite<CR>
 nmap <silent> <leader>l :TestLast<CR>
 Plug 'Shougo/unite.vim'
+Plug 'cakebaker/scss-syntax.vim'
+Plug 'hail2u/vim-css3-syntax'
+
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+  " Don't bother about checking whether Escape is being used as a means to enter
+  " " a Meta-key combination, just register Escape immediately
+  set noesckeys
+endif
 
 "Golang
 Plug 'fatih/vim-go'
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
+
 call plug#end()
 
+if has('nvim')
+  let g:python_host_prog = '/Users/zph/.pyenv/versions/neovim2/bin/python'
+  let g:python3_host_prog = '/Users/zph/.pyenv/versions/neovim3/bin/python'
+endif
+let g:deoplete#enable_at_startup = 1
 " OCaml
 "let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 "execute "set rtp+=" . g:opamshare . "/merlin/vim"
-
-" FZF
-set rtp+=~/.fzf
 
 " if has('lua')
 " "=bundle Shougo/neocomplete.vim
@@ -361,14 +403,14 @@ set list
 " set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
 " set lcs=tab:\|_,
 " Courtesy of @alindeman
-set listchars+=trail:~
+set listchars+=trail:*
 
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
 set laststatus=2  " Always show status line.
 
 " Set font
-set guifont=Source\ Code\ Pro:h13
+set guifont=Fira\ Code:Retina
 " gvim specific
 set mousehide  " Hide mouse after chars typed
 set mouse=a  " Mouse in all modes
@@ -555,7 +597,7 @@ augroup vimrcEx
     \   exe "normal g`\"" |
     \ endif
 
-  autocmd FileType ruby,haml,eruby,yaml,html,javascript,sass set ai sw=2 sts=2 et
+  autocmd FileType ruby,haml,eruby,yaml,html,javascript,json,sass set ai sw=2 sts=2 et
   autocmd FileType python set sw=4 sts=4 et
 augroup END
 
@@ -613,8 +655,6 @@ set directory=~/tmp/vim " Don't clutter my dirs up with swp and tmp files
 " Set persistent undo for vim using tempdir
 set undodir=~/tmp/vim
 set undofile
-" Get rid of the delay when hitting esc!
-set noesckeys
 
 " command! Qall qall
 " Disable Ex mode
@@ -686,8 +726,18 @@ command! FoldingOn call FoldingOn()
 
 " Use leader-b for Easy Buffer Access
 "TODO : write function to open MRU instead of 'files' if pwd is ~/
-imap <Leader>b <ESC>:CtrlPBuffer<CR>
-nmap <Leader>b :CtrlPBuffer<CR>
+imap <Leader>b <ESC>:Buffers<CR>
+nmap <Leader>b :Buffers<CR>
+imap <Leader>h <ESC>:History<CR>
+nmap <Leader>h :History<CR>
+imap <Leader>l <ESC>:BLines<CR>
+nmap <Leader>l :BLines<CR>
+imap <Leader>L <ESC>:Lines<CR>
+nmap <Leader>L :Lines<CR>
+imap <Leader>t <ESC>:BTags<CR>
+nmap <Leader>t :BTags<CR>
+imap <Leader>T <ESC>:Tags<CR>
+nmap <Leader>T :Tags<CR>
 imap <Leader>mr <ESC>:CtrlPMRUFiles<CR>
 nmap <Leader>mr :CtrlPMRUFiles<CR>
 imap <Leader>p <ESC>:CtrlPMixed<CR>
@@ -706,8 +756,9 @@ if executable('pt')
   let g:unite_source_grep_recursive_opt = ''
   let g:unite_source_grep_encoding = 'utf-8'
 endif
-imap <C-o> <ESC>:FZF<CR>
-nmap <C-o> :FZF<CR>
+imap <C-o> <ESC>:GFiles<CR>
+nmap <C-o> :GFiles<CR>
+nmap <Leader>F :Files<CR>
 let g:ctrlp_max_depth = 10
 
 " Custom CtrlP Config
@@ -1007,6 +1058,7 @@ endif
 nnoremap <Leader>gg :GitGutterDisable<CR>
 " The Silver Searcher
 " http://robots.thoughtbot.com/faster-grepping-in-vim/
+
 if executable('ag')
   " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
@@ -1025,18 +1077,25 @@ if executable('ag')
   " for command in ['Ack', 'AckAdd', 'AckFromSearch', 'LAck', 'LAckAdd', 'AckFile', 'AckHelp', 'LAckHelp', 'AckWindow', 'LAckWindow']
   "   exe 'command ' . substitute(command, 'Ack', 'Ag', "") . ' ' . command
   " endfor
-  nnoremap <Leader>a :Ack!<SPACE>
-  nnoremap <Leader>aa :Ack! <cword><CR>
+  " nnoremap <Leader>a :Ack!<SPACE>
+  " nnoremap <Leader>aa :Ack! <cword><CR>
+  nmap <Leader>a :Ag<SPACE>
+  nmap <Leader>aa :Ag<SPACE><cword><SPACE><CR>
+endif
+
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep'
+endif
+
+if executable('pt')
+  nmap <Leader>p :Pt<SPACE>
+  nmap <Leader>pp :Pt<SPACE><cword><CR>
 endif
 
 " Needed for editing crontab
 autocmd FileType crontab set nobackup nowritebackup
 
 nnoremap <Leader>ss :Switch<CR>
-
-" Don't bother about checking whether Escape is being used as a means to enter
-" " a Meta-key combination, just register Escape immediately
-set noesckeys
 "
 " " Don't bother drawing the screen while executing macros or other automated
 " or
@@ -1196,3 +1255,31 @@ set diffopt=vertical
 " endfunction
 
 " command! -bang AGopen call AGopen()
+set listchars+=trail:*
+
+"set verbosefile=~/.vimdebugging.log
+"set verbose=15
+"
+
+"""""""""""""""""""""""""""""""
+"""""" Ansible Vault """"""""""
+au BufNewFile,BufRead *.vault*,*.vault* call s:DetectAnsibleVault()
+
+fun! s:DetectAnsibleVault()
+    let n=1
+    while n<10 && n < line("$")
+        if getline(n) =~ 'ANSIBLE_VAULT'
+            set filetype=ansible-vault
+        endif
+        let n = n + 1
+    endwhile
+endfun
+
+augroup ansible-vault
+  " We don't want a various options which write unencrypted data to disk
+  autocmd FileType ansible-vault set noswapfile noundofile nobackup
+  autocmd FileType ansible-vault silent !ansible-vault decrypt %
+  autocmd FileType ansible-vault autocmd BufWritePre,FileWritePre * silent !ansible-vault encrypt %
+augroup END
+
+nnoremap <Leader>f :PrettierAsync<CR>

@@ -32,6 +32,12 @@ if [[ "$OSTYPE" == darwin* ]]; then
   alias get='curl --continue-at - --location --progress-bar --remote-name --remote-time'
   alias slimit='pbpaste| html2slim | pbcopy'
   export PATH=$HOME/Library/Python/2.7/bin:$PATH
+
+  # Use homebrew's version of curl in order to not be susceptible to old curl vulnerabilities
+  export PATH="/usr/local/opt/curl/bin:$PATH"
+  alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+  alias chrome-canary="/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary"
+  alias chromium="/Applications/Chromium.app/Contents/MacOS/Chromium"
 else
   alias o='xdg-open'
   alias get='wget --continue --progress=bar --timestamping'

@@ -8,6 +8,7 @@ plugins=(
   zsh-users/zsh-history-substring-search
   mosh
   urltools
+  ael-code/zsh-plugin-fasd-fzf
   # rake-fast
 )
 

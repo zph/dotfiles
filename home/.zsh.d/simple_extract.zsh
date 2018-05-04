@@ -1,31 +1,32 @@
 # Usage: simple-extract <file>
 # Using option -d deletes the original archive file.
-#f5# Smart archive extractor
+# Smart archive extractor
 simple-extract() {
     emulate -L zsh
     setopt extended_glob noclobber
     local DELETE_ORIGINAL DECOMP_CMD USES_STDIN USES_STDOUT GZTARGET WGET_CMD
     local RC=0
     zparseopts -D -E "d=DELETE_ORIGINAL"
+    # OSX Hack
     for ARCHIVE in "${@}"; do
         case $ARCHIVE in
             *(tar.bz2|tbz2|tbz))
-                DECOMP_CMD="tar -xvjf -"
+                DECOMP_CMD="\tar -xvjf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
             *(tar.gz|tgz))
-                DECOMP_CMD="tar -xvzf -"
+                DECOMP_CMD="\tar -xvzf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
             *(tar.xz|txz|tar.lzma))
-                DECOMP_CMD="tar -xvJf -"
+                DECOMP_CMD="\tar -xvJf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
             *tar)
-                DECOMP_CMD="tar -xvf -"
+                DECOMP_CMD="\tar -xvf -"
                 USES_STDIN=true
                 USES_STDOUT=false
                 ;;
@@ -151,4 +152,3 @@ _simple_extract()
 }
 compdef _simple_extract simple-extract
 alias se=simple-extract
-alias extract=simple-extract
