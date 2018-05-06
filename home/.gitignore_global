@@ -86,3 +86,20 @@ node_modules/
 # For Python pre-commit
 .pre-commit-config.yaml
 .vscode/
+
+.binstubs/
+env.*
+tags
+tags.lock
+tags.temp
+
+# Python
+*.pyc
+
+# Ansible
+*.retry
+
+*.min.js
+tags
+.tags
+.tags.*
