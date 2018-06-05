@@ -69,7 +69,7 @@
   pl = pull
   p = "!git pull --rebase --prune"
   save = "!git add -A && git commit -m 'SAVEPOINT'"
-  wip = "!git add -u && git commit -m 'WIP'"
+  wip = "!git add -u && git commit -n -m 'WIP'"
   wipe = "!git add -A && git commit -qm 'WIPE SAVEPOINT' && git reset HEAD~1 --hard"
     #pu = push
   pul = pull --ff-only
@@ -81,6 +81,7 @@
   st = status -s
   stt = "!git status -s | grep -v \"^??\""
   sf = show --pretty="format:" --name-only
+  stash = !git stash --include-untracked
   sv = !git show -v -v
   spp = "!git stash && git pull && git stash pop"
   srp = "!git stash && git rebase dev && git stash pop"
