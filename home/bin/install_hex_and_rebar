@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -x
+set -eou pipefail
+
+mix local.hex --force
+mix local.rebar --force
