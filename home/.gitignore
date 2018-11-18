@@ -9,3 +9,4 @@ bin_local/
 bin/heroku/*
 bin/heroku
 bin/to-daily-status*
+bin_repos/imageflow
