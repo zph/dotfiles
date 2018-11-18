@@ -65,7 +65,6 @@ end
 
 def main
   system "git clone #{REPO} #{DOTFILES}"
-  clone_submodules
   system "git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick"
 
   system "#{HOMESICK} link #{DOTFILES}"
