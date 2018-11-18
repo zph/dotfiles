@@ -4,6 +4,8 @@ require 'fileutils'
 require 'pathname'
 
 UNAME = `uname -a`
+DOTFILES = "~/dotfiles"
+REPO = "git@github.com:zph/zph.git"
 
 def is_osx?
   !! UNAME[/Darwin/]
@@ -21,7 +23,7 @@ def remove_symlinks_and_relink(file, source, dest)
 end
 
 def clone_submodules
-  Dir.chdir(File.expand_path("~/dotfiles")) do |dir|
+  Dir.chdir(File.expand_path(DOTFILES)) do |dir|
     system "git submodule init"
     system "git submodule update"
   end
@@ -61,10 +63,11 @@ def install_os_specific_binaries
 end
 
 def main
+  system "git clone #{REPO} #{DOTFILES}"
   clone_submodules
   ensure_homesick_is_installed
 
-  system "homesick symlink ~/dotfiles"
+  system "homesick symlink #{DOTFILES}"
 
   install_os_specific_binaries
 end
