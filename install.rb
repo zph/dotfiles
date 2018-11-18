@@ -71,8 +71,8 @@ def main
 
   install_os_specific_binaries
   # Link arbitrary
-  system "bash linker.sh"
-  system "cd #{DOTFILES}/.config/brewfile && brew bundle"
+  system "bash #{DOTFILES}/linker.sh"
+  system "cd #{DOTFILES}/home/.config/brewfile && brew bundle"
 end
 
 main
