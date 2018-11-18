@@ -9,4 +9,3 @@ function vim_plugin_update() {
 }
 
 alias vim="nvim"
-#alias v=vim

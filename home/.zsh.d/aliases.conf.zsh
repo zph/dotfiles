@@ -18,6 +18,8 @@
 # alias mkdir='mkdir -p' # Make mkdir recursive
 # alias tree='tree -L 2 -fi'
 
+# Credit: https://twitter.com/brandon_rhodes/status/1050570678032850944
+alias "$"=""
 alias shfmt="shfmt -i 2 -ci"
 alias zxargs='tr "\n" "\0" | xargs -0 -n1 -I{}'
 alias p1='parallel -j1'
