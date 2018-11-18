@@ -1,203 +1,305 @@
-install ansible
-install apple-gcc42
-install argyll-cms
-install asdf
-install aspcud
-install aspell
-install wallix/awless/awless
-install awscli
-install bat
-install bats
-install bfg
-install bison
-install boot-clj
-install byacc
-install camlp4
-install cask
-install chamber
-install cheat
-install chromedriver
-install chruby
-install circleci
-install clib
-install cloc
-install clojurescript
-install cmake
-install colordiff
-install cowsay
-install crystal
-install ctags
-install delve
-install dep
-install diff-so-fancy
-install direnv
-install dos2unix
-install drip
-install duplicity
-install elasticsearch
-install railwaycat/emacsmacport/emacs-mac
-install entr
-install exercism
-install exiftool
-install expect
-install ffmpeg
-install fish
-install flow
-install flyway
-install forego
-install fpp
-install freeimage
-install fswatch
-install fzf
-install gcc@4.9
-install gdb
-install gengetopt
-install ghostscript
-install gimme
-install git
-install git-annex
-install git-crypt
-install git-extras
-install git-flow
-install git-tracker
-install glide
-install gnu-sed
-install gnu-time
-install gnuplot
-install go-swagger/go-swagger/go-swagger
-install graphviz
-install grep
-install hadolint
-install heroku/brew/heroku
-install hh
-install htop
-install httpie
-install hub
-install hugo
-install icdiff
-install imagemagick
-install jq
-install json-glib
-install jsonpp
-install kubernetes-cli
-install ledger
-install leiningen
-install lesstif
-install libev
-install libiconv
-install libpcap
-install libpst
-install libvo-aacenc
-install libxslt
-install lnav
-install luarocks
-install lynx
-install macvim
-install makedepend
-install mas
-install maven
-install memcached
-install mercurial
-install mitmproxy
-install mongodb@3.4
-install monit
-install mosh
-install mr
-install multitail
-install mupdf-tools
-install mycli
-install mysql
-install nasm
-install ncftp
-install neovim
-install netcat
-install nginx
-install ngrep
-install nmap
-install ntopng
-install opam
-install openssh
-install optipng
-install ossp-uuid
-install packer
-install pandoc
-install parallel
-install pass
-install passenger
-install pgcli
-install pgloader
-install pngcrush
-install pngquant
-install pth
-install pv
-install pwgen
-install pyenv-virtualenv
-install pygobject
-install q
-install r
-install ranger
-install thoughtbot/formulae/rcm
-install reattach-to-user-namespace
-install ripgrep
-install rlwrap
-install rsync
-install ruby-build
-install ruby-install
-install runit
-install rust
-install sbt
-install scala
-install shared-mime-info
-install shellcheck
-install shfmt
-install sloccount
-install smlnj
-install snappy
-install socat
-install sphinx-doc
-install theory/sqitch/sqitch
-install sqitch_dependencies
-install theory/sqitch/sqitch_pg
-install ssh-copy-id
-install sshfs
-install sslmate
-install swagger-codegen
-install swftools
-install syncthing
-install syncthing-inotify
-install task
-install tcpdump
-install teleport
-install terminal-notifier
-install terraform
-install tesseract
-install texinfo
-install the_platinum_searcher
-install the_silver_searcher
-install tig
-install tldr
-install tmate
-install tmux
-install travis
-install unison
-install v8@3.15
-install vcsh
-install vim
-install vips
-install watch
-install watchman
-install wdiff
-install wget
-install whois
-install wireguard-tools
-install wireshark
-install wrk
-install wxmac
-install xpdf
-install yarn
-install youtube-dl
-install zeromq
-install zmap
-install znapzend
-install zsh
-install zstd
+tap "beeftornado/rmtree"
+tap "go-delve/delve"
+tap "go-swagger/go-swagger"
+tap "heroku/brew"
+tap "homebrew/boneyard"
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+tap "homebrew/dupes"
+tap "homebrew/science"
+tap "homebrew/services"
+tap "homebrew/versions"
+tap "homebrew/x11"
+tap "neovim/neovim"
+tap "railwaycat/emacsmacport"
+tap "rcmdnk/file"
+tap "theory/sqitch"
+tap "thoughtbot/formulae"
+tap "wallix/awless"
+brew "libyaml"
+brew "gdbm"
+brew "openssl"
+brew "readline"
+brew "sqlite", link: true
+brew "python"
+brew "ansible"
+brew "apple-gcc42"
+brew "jpeg"
+brew "argyll-cms"
+brew "autoconf"
+brew "automake"
+brew "coreutils"
+brew "libtool"
+brew "unixodbc"
+brew "asdf"
+brew "clingo", link: false
+brew "aspcud"
+brew "aspell"
+brew "awscli"
+brew "bash"
+brew "bat"
+brew "bats"
+brew "bdw-gc"
+brew "bfg"
+brew "bison"
+brew "boost"
+brew "boost-python"
+brew "boot-clj"
+brew "byacc"
+brew "libpng"
+brew "gettext", link: true
+brew "libffi"
+brew "ocaml"
+brew "camlp4"
+brew "emacs", restart_service: true
+brew "cask"
+brew "chamber"
+brew "cheat"
+brew "chromedriver"
+brew "chruby"
+brew "circleci"
+brew "clib"
+brew "cloc"
+brew "clojurescript"
+brew "cloog"
+brew "curl", link: true
+brew "cmake"
+brew "colordiff"
+brew "cowsay"
+brew "cpanminus"
+brew "libevent"
+brew "crystal"
+brew "cscope"
+brew "ctags"
+brew "go"
+brew "diff-so-fancy"
+brew "direnv"
+brew "dos2unix"
+brew "drip"
+brew "popt"
+brew "librsync"
+brew "duplicity"
+brew "elasticsearch", link: false
+brew "entr"
+brew "exercism"
+brew "exiftool"
+brew "expect"
+brew "lame"
+brew "x264"
+brew "xvid"
+brew "ffmpeg"
+brew "fish"
+brew "flow"
+brew "flyway"
+brew "forego"
+brew "fpp"
+brew "freeimage"
+brew "fswatch"
+brew "fzf"
+brew "gcc@4.9"
+brew "gdb"
+brew "gengetopt"
+brew "geoip"
+brew "ghostscript", link: false
+brew "gimme"
+brew "git"
+brew "gsasl"
+brew "libmagic"
+brew "git-annex"
+brew "git-crypt"
+brew "git-extras"
+brew "git-flow"
+brew "git-tracker"
+brew "glide"
+brew "gmp@4"
+brew "gnu-getopt"
+brew "gnu-sed"
+brew "gnu-time"
+brew "libgpg-error"
+brew "libassuan"
+brew "libksba"
+brew "pinentry"
+brew "gnupg"
+brew "gnuplot"
+brew "pkg-config"
+brew "python@2"
+brew "graphviz"
+brew "grep", args: ["with-default-names"]
+brew "hadolint"
+brew "hh"
+brew "htop"
+brew "httpie"
+brew "hub"
+brew "hugo"
+brew "icdiff"
+brew "imagemagick"
+brew "isl@0.11"
+brew "jemalloc"
+brew "jq"
+brew "json-c"
+brew "json-glib"
+brew "jsonpp"
+brew "ledger"
+brew "leiningen"
+brew "lesstif"
+brew "libdnet"
+brew "libev"
+brew "libiconv"
+brew "libidn"
+brew "libmpc@0.8"
+brew "libpcap"
+brew "libpst"
+brew "libssh2"
+brew "libuv"
+brew "libvo-aacenc"
+brew "libvterm"
+brew "libxml2"
+brew "libxslt"
+brew "lnav"
+brew "luajit"
+brew "lynx"
+brew "macvim"
+brew "makedepend"
+brew "mas"
+brew "maven"
+brew "md5sha1sum"
+brew "memcached", link: false
+brew "mitmproxy"
+brew "mongodb@3.4", restart_service: true, link: true
+brew "monit"
+brew "mosh"
+brew "mr"
+brew "msgpack"
+brew "multitail"
+brew "mupdf-tools"
+brew "mycli"
+brew "mysql", link: false
+brew "nasm"
+brew "ncftp"
+brew "neovim", args: ["HEAD"]
+brew "netcat"
+brew "nginx"
+brew "ngrep"
+brew "nmap", link: false
+brew "redis", link: false
+brew "rrdtool"
+brew "ntopng"
+brew "opam"
+brew "openssh"
+brew "optipng"
+brew "ossp-uuid"
+brew "packer"
+brew "pandoc"
+brew "parallel"
+brew "tree"
+brew "pass"
+brew "passenger"
+brew "postgresql", restart_service: true
+brew "pgcli"
+brew "pgloader"
+brew "pngcrush"
+brew "pngquant"
+brew "pth"
+brew "pv"
+brew "pwgen"
+brew "pyenv"
+brew "pyenv-virtualenv"
+brew "pygobject"
+brew "q"
+brew "r"
+brew "ranger"
+brew "reattach-to-user-namespace"
+brew "ripgrep"
+brew "rlwrap"
+brew "rsync"
+brew "ruby", link: true
+brew "ruby-build"
+brew "ruby-install", args: ["HEAD"]
+brew "runit"
+brew "rust"
+brew "sbt", link: false
+brew "scala", link: false
+brew "shellcheck"
+brew "shfmt"
+brew "sloccount"
+brew "smlnj"
+brew "snappy"
+brew "socat"
+brew "sqitch_dependencies"
+brew "ssh-copy-id"
+brew "sshfs"
+brew "sslmate"
+brew "swagger-codegen"
+brew "swftools"
+brew "syncthing", restart_service: true
+brew "syncthing-inotify", restart_service: true
+brew "task"
+brew "tcpdump"
+brew "teleport"
+brew "terminal-notifier"
+brew "terraform"
+brew "tesseract"
+brew "the_platinum_searcher"
+brew "the_silver_searcher"
+brew "tig"
+brew "tldr"
+brew "tmate"
+brew "tmux"
+brew "travis"
+brew "unison"
+brew "v8@3.15"
+brew "vcsh"
+brew "vim", args: ["with-lua"]
+brew "vips"
+brew "watch"
+brew "watchman"
+brew "wdiff"
+brew "wget"
+brew "whois"
+brew "wireguard-tools"
+brew "wireshark", args: ["with-qt"], link: false
+brew "wrk"
+brew "wxmac"
+brew "xpdf", link: false
+brew "yarn"
+brew "youtube-dl"
+brew "zeromq"
+brew "zmap"
+brew "znapzend"
+brew "zsh"
+brew "zstd"
+brew "go-swagger/go-swagger/go-swagger"
+brew "heroku/brew/heroku"
+brew "railwaycat/emacsmacport/emacs-mac", link: false
+brew "theory/sqitch/sqitch"
+brew "theory/sqitch/sqitch_pg"
+brew "thoughtbot/formulae/rcm"
+brew "wallix/awless/awless"
+mas "Airmail 3", id: 918858936
+mas "Battery Health 2", id: 1120214373
+mas "Caffeine", id: 411246225
+mas "CheatSheet", id: 529456740
+mas "Dash", id: 458034879
+mas "Dropzone", id: 464733615
+mas "Evernote", id: 406056744
+mas "Gifwit", id: 871200983
+mas "GrandPerspective", id: 1111570163
+mas "Keynote", id: 409183694
+mas "Kindle", id: 405399194
+mas "Marked", id: 448925439
+mas "Microsoft OneNote", id: 784801555
+mas "Microsoft Remote Desktop", id: 1295203466
+mas "MindNode", id: 1289197285
+mas "Monosnap", id: 540348655
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
+mas "Parallels Desktop Lite", id: 1085114709
+mas "Pixelmator", id: 407963104
+mas "Shush", id: 496437906
+mas "Slack", id: 803453959
+mas "Spark", id: 1176895641
+mas "The Clock", id: 488764545
+mas "Trello", id: 1278508951
+mas "TweetDeck", id: 485812721
+mas "YubiKey Personalization Tool", id: 638161122

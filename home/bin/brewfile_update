@@ -2,4 +2,5 @@
 
 BREWFILE="$HOME/.config/brewfile/Brewfile"
 
-brew leaves | sed 's/^/install /' > $BREWFILE
+# Note: requires using mas for mac apps
+brew bundle dump

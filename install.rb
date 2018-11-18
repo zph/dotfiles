@@ -4,8 +4,9 @@ require 'fileutils'
 require 'pathname'
 
 UNAME = `uname -a`
-DOTFILES = "~/dotfiles"
+DOTFILES = "$HOME/.homesick/repos/dotfiles"
 REPO = "git@github.com:zph/zph.git"
+HOMESICK="$HOME/.homesick/repos/homeshick/bin/homeshick"
 
 def is_osx?
   !! UNAME[/Darwin/]
@@ -65,11 +66,14 @@ end
 def main
   system "git clone #{REPO} #{DOTFILES}"
   clone_submodules
-  ensure_homesick_is_installed
+  system "git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick"
 
-  system "homesick symlink #{DOTFILES}"
+  system "#{HOMESICK} link #{DOTFILES}"
 
   install_os_specific_binaries
+  # Link arbitrary
+  system "bash linker.sh"
+  system "cd #{DOTFILES}/.config/brewfile && brew bundle"
 end
 
 main
