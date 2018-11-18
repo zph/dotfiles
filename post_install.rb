@@ -60,25 +60,6 @@ def install_os_specific_binaries
   end
 end
 
-def bring_in_vim_plugins
-  `infect`
-end
-
-def you_complete_me_setup
-  you_complete_me_dir = Dir["home/.vim/bundle/youcompleteme"].first
-  return unless you_complete_me_dir
-
-  Dir.chdir(File.expand_path you_complete_me_dir) do |dir|
-
-    `git submodule update --init --recursive`
-    unless File.exists?('python/ycm_core.so')
-      system "./install.sh"
-    else
-      puts "YouCompleteMe already installed"
-    end
-  end
-end
-
 def main
   clone_submodules
   ensure_homesick_is_installed
@@ -86,9 +67,6 @@ def main
   system "homesick symlink ~/dotfiles"
 
   install_os_specific_binaries
-
-  bring_in_vim_plugins
-  you_complete_me_setup
 end
 
 main
