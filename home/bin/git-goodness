@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -Ceou pipefail
+IFS=$'\n\t'
 
 git diff $* | gn
-

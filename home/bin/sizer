@@ -1,46 +1,35 @@
 #!/usr/bin/env bash
 # Requires imagemagick to perform conversions
-# Usage: $0 image-filename retina-width-in-pixels
-# Output:
-# image@2x.png at width
-# image@1x.png at 1/2 of retina
-# image@0,75x.png at .75
-# image@0,50x.png at .50
-# image@0,25x.png at .25
-# TODO:
-# - add check for imagemagic or exit
+# Usage: $0 image-filename retina-width-in-pixels [new_extension]
+# Bulk transformations: find $PWD -type f -print0 | parallel -0 -- sizer {} 1400
+# Optionally also outputs webp images for modern browsers. Requires installation of 
+# https://storage.googleapis.com/downloads.webmproject.org/releases/webp/index.html
+# Instructions: https://medium.com/@andysolomon/converting-your-images-to-webp-with-imagemagick-a9c56cf6b579
 
 set -CEeuo pipefail
 IFS=$'\n\t'
 shopt -s extdebug
 
 filename_base(){
-  local filename="$1"
-  echo "$filename" | awk -F '.' '{print $1}'
+  local filename
+  filename=$(basename "$1")
+  filename="${filename%.*}"
+	echo "$filename"
 }
 
 filename_ext(){
-  local filename="$1"
-  echo "$filename" | awk -F '.' '{print $2}'
-}
-
-create_filename(){
-  printf "%s@%sx.%s" "$1" "$2" "$3"
+  local filename
+  filename=$(basename "$1")
+  extension="${filename##*.}"
+	echo "$extension"
 }
 
 process_image(){
-  local img="$1"
+  local input="$1"
   local width="$2"
-  local multiplier="$(echo "$3" | tr '.' ',')"
   local ext="$4"
+  local output="$5"
 
-  local input="$img"
-  set +u
-  local base
-  base="$(filename_base "$img")"
-  set -u
-  #local output="easy-to-create-artwork@2x.png"
-  local output="$(create_filename "$base" "$multiplier" "$ext")"
   convert -resize "$width" "$input" "$output"
   echo convert -resize "$width" "$input" "$output"
 }
@@ -48,22 +37,129 @@ process_image(){
 quarter="0.25"
 half="0.50"
 three_quarters="0.75"
-regular="1.00"
-retina="2.00"
+regular="1"
+retina="2"
 
 SIZES=($quarter $half $three_quarters $regular $retina)
 
-main(){
-  local img="$1"
-  local width="$2"
-  local ext="$(filename_ext "$img")"
-  local new_file_ext="${3:-$ext}"
-  local regular_width="$(echo "$width" | awk '{print $1 / 2}')"
+get_width(){
+  local img
+  img="$1"
+  identify -format "%[w]" "$img"
+}
 
-  for size in "${SIZES[@]}";do
-    local resized_width="$(echo "$size $regular_width" | awk '{print $1 * 1.0 * $2}')"
-    process_image "$img" "$resized_width" "$size" "$new_file_ext"
+ensure_width(){
+  local img
+  local width
+  local current
+
+  img="$1"
+  width="$2"
+  current="$(get_width "$img")"
+
+  if [[ $width -gt $current ]];then
+    printf "Requested width is greater than current img width. Please try again.\n"
+    printf "Existing width: %s" "$current"
+    printf "Requested width: %s" "$width"
+    exit 1
+  fi
+}
+
+ensure_binaries(){
+  local binaries=(convert identify)
+  for bin in "${binaries[@]}";do
+    if [[ ! -x $(which "$bin") ]];then
+      printf "Missing image processing binary: %s\n" "$bin"
+      printf "Install imagemagick\n"
+      exit 1
+    fi
   done
 }
 
-main $*
+ensure_naming_convention(){
+  if [[ $SIZER_UNSAFE == "0" ]]; then
+    if ! echo "$img" | grep -v "@";then
+      printf "Received a filename that already looks resized.\n"
+      printf "Please submit a filename that lacks an at symbol @.\n"
+      printf "Or set SIZER_UNSAFE=1.\n"
+      exit 1
+    fi
+  fi
+}
+
+VALID_EXTENSIONS=(jpg jpeg png)
+validate_file_extension(){
+  local ext
+	ext="$1"
+
+	for valid in "${VALID_EXTENSIONS[@]}"; do
+		if [[ $valid == "$ext" ]]; then
+			return
+		fi
+	done
+
+	printf "Could not validate file extension against %s\n" "${VALID_EXTENSIONS[@]}"
+	exit 1
+}
+
+main(){
+  local img
+  local width
+  local ext
+  local regular_width
+  local new_file_ext
+
+  img="$1"
+  width="$2"
+  ext="$(filename_ext "$img")"
+  new_file_ext="${3:-$ext}"
+  regular_width="$(echo "$width" | awk '{print $1 / 2}')"
+  base="$(filename_base "$img")"
+
+  SIZER_UNSAFE=${SIZER_UNSAFE:-"0"}
+  SIZER_WEBP="0"
+
+  if which cwebp > /dev/null ;then
+    SIZER_WEBP="1"
+  fi
+
+  ensure_binaries
+  ensure_width "$img" "$width"
+  ensure_naming_convention "$img"
+
+  SIZER_MAX=${SIZER_MAX:-"0"}
+
+  local w
+  if [[ ! -z "$SIZER_WEBP" ]];then
+    if [[ "$SIZER_MAX" == "1" ]];then
+      # Use webp at full resolution because it's a lightweight format
+      # Use max pixel size when converting into webp
+      w="$(get_width "$img")"
+    else
+      w="$regular_width"
+    fi
+
+    retina_width="$(echo "2 $regular_width" | awk '{print $1 * 1.0 * $2}')"
+    process_image "$img" "$w" "1" "webp" "${base}.webp"
+    process_image "$img" "$retina_width" "2" "webp" "${base}@2x.webp"
+  fi
+
+  for multiplier in "${SIZES[@]}";do
+    local resized_width
+    resized_width="$(echo "$multiplier $regular_width" | awk '{print $1 * 1.0 * $2}')"
+
+    validate_file_extension "$ext"
+
+    if [[ "$multiplier" == "1" ]] || [[ "$multiplier" == "2" ]];then
+      local filename="$base@${multiplier}x.${new_file_ext}"
+      process_image "$img" "$resized_width" "$multiplier" "$new_file_ext" "$filename"
+    fi
+
+    process_image "$img" "$resized_width" "$multiplier" "webp" "${base}@${resized_width}px.webp"
+
+    local filename="${base}@${resized_width}px.${new_file_ext}"
+    process_image "$img" "$resized_width" "$multiplier" "$new_file_ext" "$filename"
+  done
+}
+
+main "$@"
