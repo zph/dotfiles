@@ -2,20 +2,4 @@
 
 BREWFILE="$HOME/.config/brewfile/Brewfile"
 
-# Note: requires using mas for mac apps
-TEMPDIR="$(mktemp -d)"
-cleanup(){
-  rm -rf "$TEMPDIR"
-}
-trap cleanup EXIT
-
-main(){
-  (
-    cd "$TEMPDIR" || exit 1
-    brew bundle dump
-    cp Brewfile "$BREWFILE"
-  )
-  cleanup
-}
-
-main
+brew bundle dump --force --file="$BREWFILE"
