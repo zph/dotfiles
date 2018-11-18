@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -x
+set -eou pipefail
+
+#PATH_SHA="$(echo $ | sha1sum | awk '{print $1}')"
+#
+#TMP_FILE="$HOME/tmp/$PATH_SHA"
+#
+#if [[ ! -f "${TMP_FILE}" ]];then
+#  touch "${TMP_FILE}"
+#fi
+#
+rg --files | ctags -f "$TMP_FILE" -R --links=no -L -
