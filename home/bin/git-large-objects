@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Credit: https://github.com/renuo/vcs-scripts#list_large_filessh
+join -o "1.1 1.2 2.3" <(git rev-list --objects --all | sort) <(git verify-pack -v objects/pack/*.idx | sort -k3 -n | tail -500 | sort) | sort -k3 -n
