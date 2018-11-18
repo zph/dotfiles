@@ -26,7 +26,7 @@ main() {
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
   fi
 
-  $HOMESICK link "${DOTFILES}"
+  $HOMESICK link "dotfiles"
 
   TO_LINK=(Library/KeyBindings/DefaultKeyBinding.dict \
            .config/brewfile \
@@ -39,8 +39,6 @@ main() {
       ln -s "$DOTFILES/$link" "$HOME/$link"
     done
   )
-
-  bash "${DOTFILES}/linker.sh"
 
   case $OS in
     osx)
