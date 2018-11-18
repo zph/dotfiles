@@ -1,6 +1,0 @@
-[submodule "home/bin_repos/gary_bernhardt_dotfiles"]
-	path = home/bin_repos/gary_bernhardt_dotfiles
-	url = https://github.com/garybernhardt/dotfiles.git
-[submodule "home/bin_repos/osx-proxy"]
-	path = home/bin_repos/osx-proxy
-	url = git@bitbucket.org:zph/osx-proxy.git
