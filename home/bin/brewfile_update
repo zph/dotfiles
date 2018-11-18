@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+BREWFILE="$HOME/.config/brewfile/Brewfile"
+
+brew leaves | sed 's/^/install /' > $BREWFILE
