@@ -128,6 +128,7 @@ brew "graphviz"
 brew "grep", args: ["with-default-names"]
 brew "hadolint"
 brew "hh"
+brew "homeshick", link: false
 brew "htop"
 brew "httpie"
 brew "hub"
