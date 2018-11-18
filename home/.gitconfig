@@ -87,6 +87,7 @@
   srp = "!git stash && git rebase dev && git stash pop"
   conflicts = !git ls-files -u | cut -f 2 | sort -u
   c = !git ls-files -u | cut -f 2 | sort -u
+  ub = update-branch
   modified = !git ls-files -m
   unapply = !git stash show -p | git apply -R
   remove-deleted = !git ls-files --deleted | xargs git rm
@@ -162,6 +163,7 @@
   autocrlf = input
   safecrlf = true
   excludesfile = ~/.gitignore_global
+  pager = diff-so-fancy | less --tabs=4 -RFX
 [credential]
   helper = osxkeychain
 [difftool "sourcetree"]
@@ -185,6 +187,23 @@
 [log]
   date = iso8601
 [ghi]
-	token = !security find-internet-password -a zph -s github.com -l 'ghi token' -w
+  token = !security find-internet-password -a zph -s github.com -l 'ghi token' -w
 [diff "ansible-vault"]
-	textconv = ansible-vault view
+  textconv = ansible-vault view
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = red bold 52
+  newNormal = green bold
+  newHighlight = green bold 22
+[color "diff"]
+  meta = yellow
+  frag = magenta bold
+  commit = yellow bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[filter "lfs"]
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f

@@ -20,7 +20,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-scriptease'
 Plug 'prettier/vim-prettier', { 'do': 'npm install -g' }
-let g:prettier#autoformat = 0
+"let g:prettier#autoformat = 0
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
 if !has('nvim')
   Plug 'tpope/vim-sensible'
@@ -116,6 +116,8 @@ nmap <silent> <leader>l :TestLast<CR>
 Plug 'Shougo/unite.vim'
 Plug 'cakebaker/scss-syntax.vim'
 Plug 'hail2u/vim-css3-syntax'
+Plug 'leafgarland/typescript-vim'
+Plug 'hashivim/vim-terraform'
 
 
 if has('nvim')
@@ -134,7 +136,16 @@ Plug 'fatih/vim-go'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 
+Plug 'LnL7/vim-nix'
+
 call plug#end()
+
+" if has('nvim')
+"   " Terminal mode
+"   tnoremap <Esc> <C-\><C-n>
+"   tnoremap <M-[> <Esc>
+"   tnoremap <C-v><Esc> <Esc>
+" endif
 
 if has('nvim')
   let g:python_host_prog = '/Users/zph/.pyenv/versions/neovim2/bin/python'
@@ -315,7 +326,7 @@ set visualbell
 set cursorline
 set ttyfast
 set backspace=indent,eol,start
-set winwidth=80
+set winwidth=100
 set nowrap  " Line wrapping off
 " Preserve large pastes
 set pastetoggle=<F2>
@@ -882,7 +893,7 @@ autocmd BufRead *
 " Filetype shortcut
 map <Leader>ft :set ft=
 
-" ZenCoding Shortcut
+" ZenCoding/Emmet Shortcut
 vmap <Leader>z <C-Y>,
 nmap <Leader>z <C-Y>,
 imap <Leader>z <ESC><C-Y>,a
@@ -1193,7 +1204,7 @@ nnoremap :qq :qa!<CR>
 
 " Don't try to highlight lines longer than 800 characters. Prevent horrible
 " slowness
-set synmaxcol=200
+set synmaxcol=400
 
 " Highlight VCS conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'

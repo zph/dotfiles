@@ -9,7 +9,7 @@ Pry.commands.alias_command 'hr', 'hist -r'
 Pry.config.editor = proc { |file, line| "vim +#{line} #{file}"}
 # == Pry-Nav - Using pry as a debugger ==
 Pry.commands.alias_command 'c', 'continue' rescue nil
-Pry.commands.alias_command 's', 'step' rescue nil
+#Pry.commands.alias_command 's', 'step' rescue nil
 Pry.commands.alias_command 'n', 'next' rescue nil
 
 # === CUSTOM PROMPT ===
