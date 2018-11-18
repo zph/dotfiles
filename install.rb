@@ -69,10 +69,13 @@ def main
 
   system "#{HOMESICK} link #{DOTFILES}"
 
-  install_os_specific_binaries
-  # Link arbitrary
   system "bash #{DOTFILES}/linker.sh"
-  system "cd #{DOTFILES}/home/.config/brewfile && brew bundle"
+  case
+  when is_osx?
+    system "cd #{DOTFILES}/home/.config/brewfile && brew bundle"
+  else
+    puts "OS unsupported for easy install please read Brewfile for which tools are helpful"
+  end
 end
 
 main

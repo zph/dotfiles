@@ -21,7 +21,6 @@ brew "sqlite", link: true
 brew "python"
 brew "ansible"
 brew "antigen"
-brew "apple-gcc42"
 brew "jpeg"
 brew "argyll-cms"
 brew "autoconf"
