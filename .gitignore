@@ -27,3 +27,4 @@ home/.parallel/tmp
 home/*lein/*history*
 home/.vim/plugged/*
 home/bin/pre-commit
+home/bin/vault-env
