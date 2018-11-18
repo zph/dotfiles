@@ -104,3 +104,6 @@ tags.temp
 tags
 .tags
 .tags.*
+
+# Syncthing tag
+.stfolder
