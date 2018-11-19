@@ -18,6 +18,32 @@ case "$UNAME" in
     OS="freebsd";;
 esac
 
+install_gifwit(){
+  # No longer on app store and dev was non-responsive when I emailed :(.
+  # Happy to replace this with official mechanism.
+  APPS=(http://data.xargs.io/gifwit.tgz)
+  for app in "${APPS[@]}";do
+    tmpdir="$(mktemp -d)"
+    remove_temp() {
+      rm -rf "$tmpdir"
+    }
+    trap remove_temp EXIT
+
+    (
+      cd $"tmpdir "|| exit 1
+      wget "$app"
+      rm -rf ./*.tgz
+      mv ./* ~/Applications/
+    )
+
+  done
+}
+
+install_osx_packages(){
+  brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
+  install_gifwit
+}
+
 main() {
   if [[ ! -d "${DOTFILES}" ]];then
     git clone "${REPO}" "${DOTFILES}"
@@ -46,7 +72,7 @@ main() {
 
   case $OS in
     osx)
-      brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
+      install_osx_packages
       ;;
     *)
       echo "Unsupported OS for easy install, please review $DOTFILES/home/.config/brewfile/Brewfile"

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+HEROKU_ENVIRONMENT="$1"
+
+APP="$(git remote -v | grep heroku | grep "^$HEROKU_ENVIRONMENT" | \
+       awk '{print $2}' | awk -F / '{print $NF}' | sed 's/\.git$//g' | uniq)"
+
+HEROKU_COMMAND="$2"
+shift 2
+REMAINDER="$*"
+
+case "$HEROKU_COMMAND" in
+  access|accounts|addons|auth|authorizations|autocomplete|buildpacks|certs|ci|clients|config|container|domains|drains|features|git|keys|labs|local|logs|maintenance|manifest|members|notifications|orgs|pg|pipelines|plugins|ps|psql|redis|regions|releases|reviewapps|run|sessions|spaces|status|teams|update|webhooks)
+    # We need to expand "$REMAINDER"
+    # shellcheck disable=SC2086
+    heroku "$HEROKU_COMMAND" -a "$APP" $REMAINDER
+    ;;
+  *)
+    echo "Please supply a valid heroku subcommand: ${HEROKU_COMMAND} is unrecognized"
+    exit 1
+    ;;
+esac
