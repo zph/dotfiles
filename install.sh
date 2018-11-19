@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -eou pipefail
 set -x
 
 UNAME="$(uname -a)"
@@ -32,6 +33,9 @@ main() {
            .config/brewfile \
            .config/karabiner \
            )
+
+  # For neovim location
+  ln -s ~/.vim ~/.config/nvim
 
   (
     cd "$DOTFILES/home" || exit 1
