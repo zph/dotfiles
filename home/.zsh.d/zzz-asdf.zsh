@@ -7,8 +7,13 @@ elif [[ -d /usr/local/opt/asdf ]];then
   ASDF_DIR="/usr/local/opt/asdf"
 fi
 
-source $ASDF_DIR/asdf.sh
-source $ASDF_DIR/completions/asdf.bash
+if [[ -f  $ASDF_DIR/asdf.sh ]]; then
+  source $ASDF_DIR/asdf.sh
+fi
+
+if [[ -f  $ASDF_DIR/completions/asdf.bash ]]; then
+  source $ASDF_DIR/completions/asdf.bash
+fi
 
 zph/prepend_to_path "$ASDF_DIR/bin"
 zph/prepend_to_path "$ASDF_DIR/shims"

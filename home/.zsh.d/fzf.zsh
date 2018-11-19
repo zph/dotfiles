@@ -7,13 +7,13 @@
 
 export FZF_DEFAULT_COMMAND='rg ""'
 
-f(){
-  if [ -z $TMUX ];then
-    fzf "$@"
-  else
-    fzf-tmux "$@"
-  fi
-}
+# f () {
+#   if [ -z $TMUX ];then
+#     fzf "$@"
+#   else
+#     fzf-tmux "$@"
+#   fi
+# }
 # declare -f __fzf > /dev/null ||
 #   eval "$(echo "__fzf() {"; declare -f fzf | \grep -v '^{' | tail -n +2)"
 

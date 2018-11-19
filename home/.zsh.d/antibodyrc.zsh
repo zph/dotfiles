@@ -1,7 +1,7 @@
-if [[ -f /usr/local/share/antigen/antigen.zsh ]];then
-  source /usr/local/share/antigen/antigen.zsh
+if [[ -x antibody ]];then
+  source <(antibody init)
 
-  # set -x
+  #  set -x
   IFS=$'\n'
 
   plugins=(
@@ -10,42 +10,41 @@ if [[ -f /usr/local/share/antigen/antigen.zsh ]];then
     mosh
     urltools
     ael-code/zsh-plugin-fasd-fzf
-    # rake-fast
   )
 
   for cmd in $plugins; do
-    antigen bundle "$cmd"
+    antibody bundle "$cmd"
   done
 
-  antigen bundle zsh-users/zsh-completions src
+  # antibody bundle zsh-users/zsh-completions src
 
   # For SSH, starting ssh-agent is annoying
-  antigen bundle ssh-agent
+  antibody bundle ssh-agent
 
   # Node Plugins
-  # antigen bundle node
-  # antigen bundle npm
+  # antibody bundle node
+  # antibody bundle npm
 
   # OS specific plugins
   if [[ $CURRENT_OS == 'OS X' ]]; then
-      antigen bundle brew
-      antigen bundle brew-cask
-      antigen bundle gem
-      antigen bundle osx
+      antibody bundle brew
+      antibody bundle brew-cask
+      antibody bundle gem
+      antibody bundle osx
   elif [[ $CURRENT_OS == 'Linux' ]]; then
       # None so far...
       if [[ $DISTRO == 'CentOS' ]]; then
-          antigen bundle centos
+          antibody bundle centos
       fi
   elif [[ $CURRENT_OS == 'Cygwin' ]]; then
-      antigen bundle cygwin
+      antibody bundle cygwin
   fi
 
   # Secret info
   # TODO: add feature
-  # antigen bundle git@github.com:jdavis/secret.git
+  # antibody bundle git@github.com:jdavis/secret.git
 
-  antigen apply
+  antibody apply
 
   # # history-substring-search
   # zmodload zsh/terminfo

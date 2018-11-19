@@ -1,3 +1,5 @@
+LOCAL_RUBY_VERSION="2.5.3"
+
 source /usr/local/share/chruby/chruby.sh
 source /usr/local/share/chruby/auto.sh
 
@@ -16,7 +18,7 @@ install_chruby(){
 cat <<EOF > /etc/profile.d/chruby.sh
 if [ -n "$BASH_VERSION" ] || [ -n "$ZSH_VERSION" ]; then
   source /usr/local/share/chruby/chruby.sh
-  chruby 2.1
+  chruby "$LOCAL_RUBY_VERSION"
 fi
 EOF
 
@@ -40,4 +42,4 @@ chruby() {
   export PATH=${PATHS_TO_PREFIX_BEFORE_CHRUBY}:$modified_path
 }
 
-chruby 2.3.1
+chruby "$LOCAL_RUBY_VERSION"
