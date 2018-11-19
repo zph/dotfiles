@@ -42,4 +42,8 @@ chruby() {
   export PATH=${PATHS_TO_PREFIX_BEFORE_CHRUBY}:$modified_path
 }
 
-chruby "$LOCAL_RUBY_VERSION"
+if chruby "$LOCAL_RUBY_VERSION" 2>&1 | grep unknown;then
+  echo "Please install correct ruby version with"
+  echo "ruby-install ruby-${LOCAL_RUBY_VERSION}"
+fi
+
