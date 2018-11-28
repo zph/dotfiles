@@ -374,6 +374,7 @@ _zshrc_main(){
   # Execute Functions
   _zshrc_pre_init
   zph/prepend_to_path "${HOME}/bin"
+  zph/prepend_to_path "${HOME}/bin_local"
   zph/remove_from_path "~/bin"
   _local_configs
   _set_zsh_settings
