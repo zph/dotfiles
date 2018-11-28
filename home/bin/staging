@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-heroku-binstub-by-environment "staging" "$*"
+heroku-binstub-by-environment "staging" $*
