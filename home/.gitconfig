@@ -183,7 +183,7 @@
 [heroku]
   remote = staging
 [init]
-  templatedir = ~/.git_init_template
+# templatedir = ~/.git_init_template
 [log]
   date = iso8601
 [ghi]

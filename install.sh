@@ -8,6 +8,7 @@ REPOS="$HOME/.homesick/repos"
 DOTFILES="$REPOS/dotfiles"
 HOMESICK="$REPOS/homeshick/bin/homeshick"
 REPO="git@github.com:zph/zph.git"
+OPT_FOLDER="$DOTFILES/home/opt"
 
 case "$UNAME" in
   Darwin)
@@ -36,6 +37,14 @@ install_gifwit(){
       mv ./* ~/Applications/
     )
 
+  done
+}
+
+setup_opt_using_stow(){
+  for full_path in $(find "${OPT_FOLDER}" -type d -maxdepth 1 | grep -v "/opt$");do
+    local folder
+    folder="$(basename "$full_path")"
+    stow --verbose=3 -d "$OPT_FOLDER" --target "$HOME" "$folder"
   done
 }
 
@@ -69,6 +78,8 @@ main() {
       ln -s "$DOTFILES/$link" "$HOME/$link"
     done
   )
+
+  setup_opt_using_stow
 
   case $OS in
     osx)
