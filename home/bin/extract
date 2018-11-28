@@ -5,43 +5,61 @@
 #
 # Here's a good extracter for compressed files like tar.gz, tar.xz, rar, zip, 7z, etc.
 
-case $# in
-0) echo 'Usage: extract [compressed file]' 1>&2; exit 1
-esac
-
-
-# First we must check that the arguments are actually files.
-if [ ! -f "$@" ]
-then
-    echo "extract: cannot access "$@": No such file."
-    exit
-fi
+set -x
+set -eou pipefail
 
 # check whether programs like unrar, 7z, etc are installed
-function check {
-    hash $1 2>/dev/null || { echo >&2 \
-	"$1 is required to extract this file but $1 is not installed. Abort."; \
-	exit 1; }
+function is_installed {
+  local program="$1"
+  if ! command -v "$program"; then
+    (>&2 echo "$1 is required to extract this file but $1 is not installed. Abort.")
+    exit 1
+  fi
 }
 
-#extract files
-case "$@" in
+check_filetype_from_stdin(){
+  file - < /dev/stdin | awk -F ": " '{print $2}' | awk '{print $1}'
+}
+
+extract_using_stdin(){
+  local filetype="$(check_filetype_from_stdin)"
+  case "$filetype"  in
+    gzip)
+      is_installed "tar" && tar xvf "-"
+      ;;
+    bzip2) is_installed "bunzip2" && bunzip2 "-" ;;
+    # *.gz  ) is_installed "gunzip"  && gunzip  "${FILENAME}"  ;;
+    bzip2)
+      is_installed "tar" && tar xvf "-"
+
+  esac
+}
+
+extract_using_filename(){
+  FILENAME="$1"
+
+  #extract files
+  case "${FILENAME}" in
     *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar | \
-    *.tar.lzma | *.tgz | *.tbz2 | *.taz | *.tar.Z | \
-    *.tlz | *.tar.lz | *.txz | *.tz2  ) check "tar" && tar xvf  "$@" ;;
-
-    *.rar ) check "unrar" && unrar x "$@"  ;;
-
-    *.7z  ) check "7z" && 7z x "$@"  ;;
-
-    *.bz2 ) check "bunzip2" && bunzip2 "$@" ;;
-
-    *.gz  ) check "gunzip" && gunzip  "$@"  ;;
-
-    *.zip ) check "unzip" && unzip "$@"  ;;
-
+      *.tar.lzma | *.tgz | *.tbz2 | *.taz | *.tar.Z | \
+      *.tlz | *.tar.lz | *.txz | *.tz2 | \
+      - )
+      is_installed "tar" && tar xvf "${FILENAME}"
+      ;;
+    *.rar ) is_installed "unrar"   && unrar x "${FILENAME}"  ;;
+    *.7z  ) is_installed "7z"      && 7z x "${FILENAME}"  ;;
+    *.bz2 ) is_installed "bunzip2" && bunzip2 "${FILENAME}" ;;
+    *.gz  ) is_installed "gunzip"  && gunzip  "${FILENAME}"  ;;
+    *.zip ) is_installed "unzip"   && unzip "${FILENAME}"  ;;
     *) echo "extract: unsupported file extension."
-esac
+  esac
+}
 
+main(){
+  case $# in
+    0) extract_using_stdin;;
+    1) extract_using_filename "$1";;
+  esac
+}
 
-
+main "$@"
