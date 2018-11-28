@@ -50,8 +50,8 @@ alias gcomp='g++ -g -Wall -o'
 alias grep='grep -Ei --colour=auto'
 alias h='history'
 alias j="jobs"
-alias jistc='gist -p -c'
 alias jist='gist -p -c'
+alias jistr='gist -p -c -R'
 alias l='less -30'
 alias less="less -R"
 alias ll="ls -lahtr"

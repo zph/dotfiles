@@ -5,7 +5,7 @@
 # #   - Exit if there's no match (--exit-0)
 # Copy the original fzf function to __fzf
 
-export FZF_DEFAULT_COMMAND='rg ""'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 
 # f () {
 #   if [ -z $TMUX ];then
