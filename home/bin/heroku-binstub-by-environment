@@ -12,7 +12,7 @@ shift 2
 REMAINDER="$*"
 
 case "$HEROKU_COMMAND" in
-  access|accounts|addons|auth|authorizations|autocomplete|buildpacks|certs|ci|clients|config|container|domains|drains|features|git|keys|labs|local|logs|maintenance|manifest|members|notifications|orgs|pg|pipelines|plugins|ps|psql|redis|regions|releases|reviewapps|run|sessions|spaces|status|teams|update|webhooks)
+  access|accounts|addons|auth|authorizations|autocomplete|buildpacks|certs|ci|clients|config|container|domains|drains|features|git|keys|labs|local|logs|maintenance|manifest|members|notifications|orgs|pg|pipelines|plugins|ps|psql|redis|regions|releases|restart|reviewapps|run|sessions|spaces|status|teams|update|webhooks)
     # We need to expand "$REMAINDER"
     # shellcheck disable=SC2086
     heroku "$HEROKU_COMMAND" -a "$APP" $REMAINDER
