@@ -50,27 +50,9 @@ alias r='rails'
 # alias R='noglob rake'
 compdef R=rake
 
-# Homesick symlinking on OSX
-alias homesick_refresh='homesick symlink ~/Dropbox/dotfiles'
-homesick_add(){
-# Not sure how to do it yet, or if advisable to automate
-}
 # http://samsaffron.com/archive/2013/05/03/eliminating-my-trivial-inconveniences
 export RUBY_GC_MALLOC_LIMIT=1000000000
 export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1.25
-# if [[ $RUBY_VERSION == "ruby-2.1.0" ]]; then
-#   export RUBY_GC_HEAP_INIT_SLOTS=800000
-#   export RUBY_GC_HEAP_FREE_MIN=600000
-# else
-#   export RUBY_HEAP_MIN_SLOTS=800000
-#   export RUBY_FREE_MIN=600000
-# fi
-# export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so
-
-# # This is because active_support has errors on our versions of rails
-# export RUBYOPT=W0
-# export BUFFER_DEBUG=true
-
 # https://gist.github.com/carols10cents/6445611
 # I found I was typing these commands wayyy too much:
 alias rt="bundle exec rake test TEST="
@@ -88,10 +70,3 @@ _integration(){
   COMPREPLY=( $(compgen -W "$(find spec/**/*.rb)" -- $cur) )
 }
 complete -F _integration rt
-
-# Credit: @rauchy
-# https://twitter.com/rauchy/status/408616673026260993
- # Go Away Pry - removes any binding.pry you may have scattered lately
-# alias pry_rm="sed -E \"s/[require\'pry\';]*binding\.pry\s*//g\" `git diff --name-only`"
-
-# alias console_rm='sed -i "" "s/console\.log\([^\)]\s*\)//g" `git diff --name-only`'

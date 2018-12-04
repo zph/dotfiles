@@ -157,9 +157,86 @@ _source_by_glob(){
   done
 }
 
-_source_zshd(){
-  _source_by_glob "${ZSHDDIR}"
+_source_zshd_modules(){
+  for config in "${ZSHRC_MODULES[@]}";do
+    local full_path="${ZSHDDIR}/${config}.zsh"
+    if [[ -f "$full_path" ]];then
+      source "$full_path"
+    else
+      (2> echo "Missing config for $full_path")
+    fi
+  done
 }
+
+
+ZSHRC_MODULES=( 00-fasd \
+                99-direnv \
+                ag \
+                aliases.conf \
+                antibodyrc \
+                authorization \
+                auto_rehash \
+                autojump \
+                bindkeys \
+                brew.conf \
+                chruby \
+                cloudconvert \
+                corrections \
+                curl \
+                ddg \
+                direnv \
+                docker \
+                elixir \
+                emacs \
+                experimental \
+                fancy_ctrl_z \
+                fasd-fzf \
+                functions.conf \
+                fuzzy-match \
+                fzf-marker.plugin \
+                fzf \
+                gcloud \
+                git-extras \
+                git \
+                go \
+                googlecli \
+                gpg \
+                heroku \
+                homebrew \
+                homeshick \
+                hub \
+                image-optimization \
+                kubernetes \
+                last-command \
+                lazyload \
+                less \
+                linux \
+                marker \
+                marks \
+                mongo \
+                nix \
+                nmap \
+                node \
+                osx \
+                pager \
+                powerline \
+                prompt \
+                pyenv \
+                python \
+                ruby \
+                rvm \
+                sack \
+                simple_extract \
+                ssh \
+                view \
+                vim \
+                youtube-dl \
+                zfs \
+                zsh-autocorrect \
+                zsh-lovers \
+                zsh_dirstack \
+                zzz-asdf \
+)
 
 _ignore_listed_zshd_commands(){
   # Function to add nocorrect for certain commands, one per line in .zsh_nocorrect
@@ -397,7 +474,7 @@ _zshrc_main(){
   _normalize_keys
   _set_colors
   _add_homebin_to_dir
-  _source_zshd
+  _source_zshd_modules
   _set_prompt
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'

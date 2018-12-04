@@ -1,27 +1,20 @@
-# Issue, does not move ASDF to front of $PATH
-# so /usr/local/bin/erl will be used despite the asdf shim
+lazyload_init_asdf(){
 
-asdf(){
-  if [[ -z $ASDF_INIT_COMPLETE ]]
-  then
-    if [[ -d $HOME/.asdf ]];then
-      ASDF_DIR="$HOME/.asdf"
-    elif [[ -d /usr/local/opt/asdf ]];then
-      ASDF_DIR="/usr/local/opt/asdf"
+  local CONFIGS=(/usr/local/opt/asdf $HOME/.asdf)
+  for c in "${CONFIGS[@]}";do
+    if [[ -d "$c" ]];then
+      ASDF_DIR="$c"
     fi
+  done
 
-    if [[ -f  $ASDF_DIR/asdf.sh ]]; then
-      source $ASDF_DIR/asdf.sh
+  local FILEPATHS=("$ASDF_DIR/asdf.sh" "$ASDF_DIR/completions/asdf.bash")
+
+  for f in "${FILEPATHS[@]}";do
+    if [[ -f "$f"  ]]; then
+      source "$f"
     fi
+  done
 
-    if [[ -f  $ASDF_DIR/completions/asdf.bash ]]; then
-      source $ASDF_DIR/completions/asdf.bash
-    fi
-
-    zph/prepend_to_path "$ASDF_DIR/bin"
-    zph/prepend_to_path "$ASDF_DIR/shims"
-    export ASDF_INIT_COMPLETE=1
-  fi
-
-  asfd $*
+  zph/prepend_to_path "$ASDF_DIR/bin"
+  zph/prepend_to_path "$ASDF_DIR/shims"
 }

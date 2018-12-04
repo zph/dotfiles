@@ -1,4 +1,4 @@
-function mkdircd () { 
+function mkdircd () {
   mkdir -p "$@" && eval cd "\"\$$#\"";
 }
 # move up in dir structure by typing up + #_of_levels
