@@ -1,11 +1,20 @@
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+function(){
+  local binary="$1"
+}
+
+fzf(){
+  unfunction "$0"
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+  $0 "$@"
+}
+
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+
 # [ -f $FZF_ZSH_CONFIG ] && source $FZF_ZSH_CONFIG
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 # #   - Bypass fuzzy finder if there's only one match (--select-1)
 # #   - Exit if there's no match (--exit-0)
 # Copy the original fzf function to __fzf
-
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
 
 # f () {
 #   if [ -z $TMUX ];then

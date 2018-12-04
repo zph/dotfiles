@@ -29,14 +29,6 @@ _zshrc_pre_init(){
 
     if [[ -d "${HOME}/.zsh.d" ]]; then
       ZSHDDIR="${HOME}/.zsh.d"
-    elif [[ -d "${HOME}/dotfiles/home/.zsh.d" ]]; then
-      # ln -s "${HOME}/dotfiles/home/.zsh.d" "${HOME}/.zsh.d"
-      __dotfile_warning
-      ZSHDDIR="${HOME}/dotfiles/home/.zsh.d"
-    elif [[ -d "${HOME}/Dropbox/dotfiles/home/.zsh.d" ]]; then
-      # ln -s "${HOME}/dotfiles/home/.zsh.d" "${HOME}/.zsh.d"
-      __dotfile_warning
-      ZSHDDIR="${HOME}/Dropbox/dotfiles/home/.zsh.d"
     else
       __dotfile_warning
     fi
@@ -48,11 +40,21 @@ _zshrc_pre_init(){
   # umask 077
 
   # Completion.
+  # Credit: https://gist.github.com/ctechols/ca1035271ad134841284#gistcomment-2767420
+  # Shaved ~0.2s off zsh start times
   autoload -Uz compinit
-  compinit
+  setopt EXTENDEDGLOB
+  for dump in $HOME/.zcompdump(#qN.m1); do
+    compinit
+    if [[ -s "$dump" && (! -s "$dump.zwc" || "$dump" -nt "$dump.zwc") ]]; then
+      zcompile "$dump"
+    fi
+  done
+  unsetopt EXTENDEDGLOB
+  compinit -C
   setopt completealiases
   zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-  zstyle ':completion:*' completer _expand _complete _ignored _approximate
+  zstyle ':completion:*' completer _expand_alias _complete _ignored _approximate
   zstyle -e ':completion:*:approximate:*' \
         max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3))numeric)'
   zstyle ':completion:*' menu select=2
@@ -147,7 +149,11 @@ _source_by_glob(){
   local d=$1
   # Finally, source all the files in zsh.d (ALPHA order)
   for zshd in $(find ${d}/*.zsh | sort ); do
+    # /usr/local/bin/zsh -i -c exit | sort -n
+    # local start_time="$(gdate +%s%N)"
     source "${zshd}"
+    # local end_time="$(gdate +%s%N)"
+    # echo "$((end_time - start_time)): ${zshd}"
   done
 }
 
@@ -369,6 +375,13 @@ _set_zsh_hooks(){
   add-zsh-hook precmd _set_prompt
 }
 
+# Credit: https://github.com/postmodern/chruby/wiki/Implementing-an-'after-use'-hook
+zph/save_function() {
+  local ORIG_FUNC="$(declare -f $1)"
+  local NEWNAME_FUNC="$2${ORIG_FUNC#$1}"
+  eval "$NEWNAME_FUNC"
+}
+
 _zshrc_main(){
   ############
   # Execute Functions
@@ -389,9 +402,8 @@ _zshrc_main(){
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   _set_zsh_hooks
-
 }
 
 _zshrc_main
 
-eval "$(direnv hook zsh)"
+lazyload_initialize "${(ok)functions}"

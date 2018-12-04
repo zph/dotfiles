@@ -3,13 +3,14 @@
 # and oh-my-zsh
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
 
-if [[ -x `which gh` ]];then
-  alias g=`which gh`;
-elif [[ -x `which hub` ]]; then
-  alias g=`which hub`;
+__hub_path="$(which hub)"
+if [[ -x "$__hub_path" ]]; then
+  alias g="$__hub_path";
 else
   alias g='git'
 fi
+unset __hub_path
+
 compdef g=git
 alias gcl='git clone'
 

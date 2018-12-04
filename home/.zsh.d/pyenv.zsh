@@ -1,4 +1,4 @@
-if which pyenv > /dev/null; then
+lazyload_init_pyenv(){
   eval "$(pyenv init -)";
   export PYENV_ROOT="$HOME/.pyenv"
-fi
+}

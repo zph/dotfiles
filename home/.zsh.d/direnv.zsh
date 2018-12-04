@@ -7,6 +7,7 @@
 ## Setup
 ##
 
+# Too useful and want it to not be lazyloaded
 eval "$(direnv hook zsh)"
 
 ##

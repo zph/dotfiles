@@ -1,6 +1,7 @@
-# Go-sack configs
-eval "$(sack init)"
-# function Z { S $* | cut -c1-300 }
+S(){
+  sack search "$@"
+}
 
-# OCaml version
-# eval "$(sack --init)"
+F(){
+  sack edit "$@"
+}
