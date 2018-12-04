@@ -24,9 +24,9 @@
 # the sourcing so that fasd doesn't overwrite
 # my personal aliases
 
-lazyload_init_fasd(){
-  eval "$(fasd --init auto)"
-}
+# lazyload_init_fasd(){
+eval "$(fasd --init auto)"
+# }
 
 unset zz
 alias a='fasd -laR'        # any
