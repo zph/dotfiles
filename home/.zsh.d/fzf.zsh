@@ -1,14 +1,55 @@
-function(){
-  local binary="$1"
-}
-
-fzf(){
-  unfunction "$0"
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-  $0 "$@"
-}
+# Lazyload means the function doesn't work the first time :-/
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+
+is_in_git_repo() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+gf() {
+  is_in_git_repo &&
+    git -c color.status=always status --short |
+    fzf --height 40% -m --ansi --nth 2..,.. | awk '{print $2}'
+}
+
+gb() {
+  is_in_git_repo &&
+    git branch -a -vv --color=always | grep -v '/HEAD\s' |
+    fzf --height 40% --ansi --multi --tac | sed 's/^..//' | awk '{print $1}' |
+    sed 's#^remotes/[^/]*/##' |
+    git checkout
+}
+
+gt() {
+  is_in_git_repo &&
+    git tag --sort -version:refname |
+    fzf --height 40% --multi
+}
+
+gh() {
+  is_in_git_repo &&
+    git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph |
+    fzf --height 40% --ansi --no-sort --reverse --multi | grep -o '[a-f0-9]\{7,\}'
+}
+zle -N gh
+bindkey '^g^h' gh
+# bind '"\C-g\C-h": "$(gh)\e\C-e\er"'
+
+gr() {
+  is_in_git_repo &&
+    git remote -v | awk '{print $1 " " $2}' | uniq |
+    fzf --height 40% --tac | awk '{print $1}'
+}
+
+zle -N gr
+bindkey '^g^r' gr
+
+# bind '"\er": redraw-current-line'
+# bind '"\C-g\C-f": "$(gf)\e\C-e\er"'
+# bind '"\C-g\C-b": "$(gb)\e\C-e\er"'
+# bind '"\C-g\C-t": "$(gt)\e\C-e\er"'
+# bind '"\C-g\C-h": "$(gh)\e\C-e\er"'
 
 # [ -f $FZF_ZSH_CONFIG ] && source $FZF_ZSH_CONFIG
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
@@ -16,7 +57,7 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 # #   - Exit if there's no match (--exit-0)
 # Copy the original fzf function to __fzf
 
-# f () {
+# f(){
 #   if [ -z $TMUX ];then
 #     fzf "$@"
 #   else
@@ -35,11 +76,13 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 #   fi
 # }
 
-#fe() {
-#  local file
-#  file=$(fzf --query="$1" --select-1 --exit-0)
-#  [ -n "$file" ] && ${EDITOR:-vim} "$file"
-#}
+fe() {
+  local file
+  file=$(fzf --query="$1" --select-1 --exit-0)
+  [ -n "$file" ] && ${EDITOR:-vim} "$file"
+}
+zle -N fe
+bindkey '^o' fe
 
 ## fh - repeat history
 #fh() {
@@ -61,15 +104,15 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 ## Modified version where you can press
 ##   - CTRL-O to open with `open` command,
 ##   - CTRL-E or Enter key to open with the $EDITOR
-#fo() {
-#  local out file key
-#  IFS=$'\n' out=($(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e))
-#  key=$(head -1 <<< "$out")
-#  file=$(head -2 <<< "$out" | tail -1)
-#  if [ -n "$file" ]; then
-#    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
-#  fi
-#}
+fo() {
+  local out file key
+  IFS=$'\n' out=($(fzf-tmux --query="$1" --exit-0 --expect=ctrl-o,ctrl-e))
+  key=$(head -1 <<< "$out")
+  file=$(head -2 <<< "$out" | tail -1)
+  if [ -n "$file" ]; then
+    [ "$key" = ctrl-o ] && open "$file" || ${EDITOR:-vim} "$file"
+  fi
+}
 
 ## fd - cd to selected directory
 #fd() {
@@ -184,29 +227,29 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 ## enter shows you the contents of the stash
 ## ctrl-d shows a diff of the stash against your current HEAD
 ## ctrl-b checks the stash out as a branch, for easier merging
-#fstash() {
-#  local out q k sha
-#  while out=$(
-#    git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
-#    fzf --ansi --no-sort --query="$q" --print-query \
-#        --expect=ctrl-d,ctrl-b);
-#  do
-#    readarray -t out <<< "$out"
-#    q="${out[0]}"
-#    k="${out[1]}"
-#    sha="${out[-1]}"
-#    sha="${sha%% *}"
-#    [[ -z "$sha" ]] && continue
-#    if [[ "$k" == 'ctrl-d' ]]; then
-#      git diff $sha
-#    elif [[ "$k" == 'ctrl-b' ]]; then
-#      git stash branch "stash-$sha" $sha
-#      break;
-#    else
-#      git stash show -p $sha
-#    fi
-#  done
-#}
+# fstash() {
+#   local out q k sha
+#   while out=$(
+#     git stash list --pretty="%C(yellow)%h %>(14)%Cgreen%cr %C(blue)%gs" |
+#     fzf --ansi --no-sort --query="$q" --print-query \
+#         --expect=ctrl-d,ctrl-b);
+#   do
+#     readarray -t out <<< "$out"
+#     q="${out[0]}"
+#     k="${out[1]}"
+#     sha="${out[-1]}"
+#     sha="${sha%% *}"
+#     [[ -z "$sha" ]] && continue
+#     if [[ "$k" == 'ctrl-d' ]]; then
+#       git diff $sha
+#     elif [[ "$k" == 'ctrl-b' ]]; then
+#       git stash branch "stash-$sha" $sha
+#       break;
+#     else
+#       git stash show -p $sha
+#     fi
+#   done
+# }
 
 ##tm() {
 ##  local session
@@ -311,7 +354,7 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 #  fi
 #}
 
-## Install or open the webpage for the selected application 
+## Install or open the webpage for the selected application
 ## using brew cask search as input source
 ## and display a info quickview window for the currently marked application
 #install() {
@@ -332,8 +375,8 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 #}
 
 
-## Uninstall or open the webpage for the selected application 
-## using brew list as input source (all brew cask installed applications) 
+## Uninstall or open the webpage for the selected application
+## using brew list as input source (all brew cask installed applications)
 ## and display a info quickview window for the currently marked application
 #uninstall() {
 #  local token
@@ -382,4 +425,3 @@ export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,
 #    awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
 #    fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open > /dev/null 2> /dev/null
 #}
-

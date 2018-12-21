@@ -677,4 +677,14 @@ class Object
   end
 end
 
-GitSmart.run('smart-pull', ARGV)
+def main
+  cmd = ARGV.shift
+  case cmd
+  when 'pull', 'merge', 'log' then GitSmart.run("smart-#{cmd}", ARGV)
+  else
+    puts "Received unknown command #{cmd} when only pull, smart, and log are valid"
+    exit(1)
+  end
+end
+
+main

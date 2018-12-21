@@ -27,4 +27,7 @@ lazyload_init_chruby(){
   source /usr/local/share/chruby/chruby.sh
   source /usr/local/share/chruby/auto.sh
   zph/prepend_to_path "$PATHS_TO_PREFIX_BEFORE_CHRUBY"
+  chruby 2.5.3
 }
+
+lazyload_hook chruby ruby

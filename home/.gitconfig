@@ -16,7 +16,7 @@
   ui = true
 [alias]
     # git-smart aliases
-  sp = "!git tidy && git smart-pull"
+  sp = "!git tidy && git smart pull"
   a = add
   ai = "!git add --intent-to-add ."
   aa = add --all
@@ -111,7 +111,8 @@
   hp = "!. ~/.githelpers && show_git_head"
   l = "!. ~/.githelpers && pretty_git_log"
   la = !git l --all
-  ll = !git r --all
+  # ll = !git r --all
+  ll = !git smart log
   lo = !git log --oneline
   r = !git l -30
   ra = !git r --all
@@ -168,7 +169,7 @@
   helper = osxkeychain
 [difftool "sourcetree"]
   cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path = 
+  path =
 [mergetool "sourcetree"]
   cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
   trustExitCode = true

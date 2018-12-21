@@ -65,8 +65,8 @@ alias pry_console="bundle exec pry --gem"
 # With tab completion on the filenames.
 # This guide was awesome in figuring this out: http://devmanual.gentoo.org/tasks-reference/completion/index.html
 
-_integration(){
-  local cur=${COMP_WORDS[COMP_CWORD]}
-  COMPREPLY=( $(compgen -W "$(find spec/**/*.rb)" -- $cur) )
-}
-complete -F _integration rt
+# _integration(){
+#   local cur=${COMP_WORDS[COMP_CWORD]}
+#   COMPREPLY=( $(compgen -W "$(find spec/**/*.rb)" -- $cur) )
+# }
+# complete -F _integration rt

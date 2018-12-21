@@ -92,9 +92,22 @@ autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 
 " Experimental
 Plug 'w0rp/ale'
+" gem install sqlint
 let g:ale_linters = {
 \   'ruby': ['ruby'],
+\   'javascript': ['eslint'],
+\   'sql': ['sqlint'],
+\   'yaml': ['prettier']
 \}
+let g:ale_fixers = {
+\   'ruby': ['ruby'],
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'elixir': ['mix_format'],
+\   'javascript': ['prettier'],
+\   'sql': ['pg_format'],
+\   'yaml': ['prettier']
+\}
+let g:ale_fix_on_save = 1
 Plug 'editorconfig/editorconfig-vim'
 Plug 'chase/vim-ansible-yaml'
 Plug 'ludovicchabant/vim-gutentags'
@@ -118,10 +131,14 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'leafgarland/typescript-vim'
 Plug 'hashivim/vim-terraform'
-
+" Plug 'mhinz/vim-mix-format'
+" let g:mix_format_on_save = 1
+" let g:mix_format_silent_errors = 1
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'kassio/neoterm'
+  tnoremap <Esc> <C-\><C-n>
 else
   Plug 'Shougo/deoplete.nvim'
   Plug 'roxma/nvim-yarp'

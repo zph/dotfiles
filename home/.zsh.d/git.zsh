@@ -52,7 +52,8 @@ function gcimpu(){
   git push
 }
 #compdef _git gcom=git-commit
-# alias gco='git checkout'
+alias gco='git checkout'
+alias gcof='git checkout $(gb)'
 #compdef _git gco=git-checkout
 alias gcm='git checkout master'
 # alias gb='git branch'

@@ -169,7 +169,9 @@ _source_zshd_modules(){
 }
 
 
-ZSHRC_MODULES=( 00-fasd \
+ZSHRC_MODULES=(
+                lazyload \
+                00-fasd \
                 99-direnv \
                 ag \
                 aliases.conf \
@@ -208,7 +210,6 @@ ZSHRC_MODULES=( 00-fasd \
                 image-optimization \
                 kubernetes \
                 last-command \
-                lazyload \
                 less \
                 linux \
                 marker \

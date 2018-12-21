@@ -87,19 +87,19 @@ tabspaces: 8
 font:
   # Normal (roman) font face
   normal:
-    family: Menlo
+    family: Fira Code
     # The `style` can be specified to pick a specific face.
-    #style: Regular
+    style: Regular
 
   # Bold font face
   bold:
-    family: Menlo
+    family: Fira Code
     # The `style` can be specified to pick a specific face.
-    #style: Bold
+    style: Semibold
 
   # Italic font face
   italic:
-    family: Menlo
+    family: Fira Code
     # The `style` can be specified to pick a specific face.
     #style: Italic
 
@@ -381,7 +381,7 @@ key_bindings:
   - { key: Home,                    chars: "\x1b[H",   mode: ~AppCursor  }
   - { key: End,                     chars: "\x1bOF",   mode: AppCursor   }
   - { key: End,                     chars: "\x1b[F",   mode: ~AppCursor  }
-  - { key: Key0,     mods: Command, action: ResetFontSize                }
+    #- { key: Key0,     mods: Command, action: ResetFontSize                }
   - { key: Equals,   mods: Command, action: IncreaseFontSize             }
   - { key: Minus,    mods: Command, action: DecreaseFontSize             }
   - { key: K,        mods: Command, action: ClearHistory                 }
@@ -498,8 +498,10 @@ key_bindings:
   - { key: Key7,  mods: Command,       chars: "\x18\x37" }
   - { key: Key8,  mods: Command,       chars: "\x18\x38" }
   - { key: Key9,  mods: Command,       chars: "\x18\x39" }
+  - { key: Key0,  mods: Command,       chars: "\x18\x30" }
   - { key: Left,  mods: Command,       chars: "\x18\x48" }
   - { key: Down,  mods: Command,       chars: "\x18\x4a" }
   - { key: Up,    mods: Command,       chars: "\x18\x4b" }
   - { key: Right, mods: Command,       chars: "\x18\x4c" }
-
+    # Note that I'm using C-x as my leader in Tmux config
+    # which is \x18 code and \x7c is | <- pipe
