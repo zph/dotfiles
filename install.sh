@@ -51,6 +51,7 @@ setup_opt_using_stow(){
 install_osx_packages(){
   brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
   install_gifwit
+  sudo "${DOTFILES}/home/.config/tmutil/setup-exclusions"
 }
 
 main() {
