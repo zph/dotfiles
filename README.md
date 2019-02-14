@@ -21,7 +21,7 @@ In VM
 
 Read through install.rb and then ....
 ```
-curl -L https://raw.githubusercontent.com/zph/zph/master/install.rb | ruby -
+curl -L https://raw.githubusercontent.com/zph/zph/master/install.sh | bash -
 ```
 
 Pay attention to the prompts if you have conflicting files.
