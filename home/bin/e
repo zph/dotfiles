@@ -2,6 +2,11 @@
 #
 # ruby recreation of `bin/e`
 
+# Load no gems beyond stdlib due to native extensions breaking
+# and rebuilding between different ruby versions and chruby/system.
+# Also should speed up script timing. ZPH
+$LOAD_PATH.delete_if { |l| l[/\/(Site|gems|extensions)\//] }
+
 require 'optparse'
 require 'optparse/time'
 require 'ostruct'
@@ -16,6 +21,10 @@ class E
 
   def has_linenumber?
     !!input[/:\d+/]
+  end
+
+  def home
+    ENV['HOME']
   end
 
   def vim_command_for_linenumber
@@ -45,8 +54,23 @@ class E
     exec "#{vim} #{args}"
   end
 
+  def fzf_preview
+    # Try bat, highlight, coderay, rougify in turn, then fall back to cat
+    %W{
+fzf --preview '[[ $(file --mime {}) =~ binary ]] &&
+                 echo {} is a binary file ||
+                 (bat --style=numbers --color=always {} ||
+                  highlight -O ansi -l {} ||
+                  coderay {} ||
+                  rougify {} ||
+                  cat {}) 2> /dev/null | head -500'
+}
+  end
+
   def execute
     case
+    when input.empty? && has_bin?("fzf")
+      exec_editor("$(#{File.join([home, "bin", "fzf_file_preview"])})")
     when input.empty?
       exec_editor("")
     when File.exists?(input), Dir.exists?(input)

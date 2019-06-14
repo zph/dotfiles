@@ -10,7 +10,7 @@ HOMESICK="$REPOS/homeshick/bin/homeshick"
 REPO="git@github.com:zph/zph.git"
 OPT_FOLDER="$DOTFILES/home/opt"
 
-case "$UNAME" in
+case "$(uname)" in
   Darwin)
     OS="osx";;
   Linux)
@@ -49,9 +49,16 @@ setup_opt_using_stow(){
 }
 
 install_osx_packages(){
+  # TODO: check if brew is installed, if not, install it.
+  if [[ ! -x "$(which brew)" ]];then
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  fi
+
   brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
   install_gifwit
   sudo "${DOTFILES}/home/.config/tmutil/setup-exclusions"
+  # Install Tmux Package Manager
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 main() {
@@ -71,16 +78,15 @@ main() {
            )
 
   # For neovim location
-  ln -s ~/.vim ~/.config/nvim
+  # --symlink --interactive to prompt in case of conflict
+  ln -si ~/.vim ~/.config/nvim
 
   (
     cd "$DOTFILES/home" || exit 1
     for link in "${TO_LINK[@]}"; do
-      ln -s "$DOTFILES/$link" "$HOME/$link"
+      ln -si "$DOTFILES/$link" "$HOME/$link"
     done
   )
-
-  setup_opt_using_stow
 
   case $OS in
     osx)
@@ -89,6 +95,8 @@ main() {
     *)
       echo "Unsupported OS for easy install, please review $DOTFILES/home/.config/brewfile/Brewfile"
   esac
+
+  setup_opt_using_stow
 }
 
 main "$@"

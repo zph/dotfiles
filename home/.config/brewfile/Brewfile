@@ -266,6 +266,7 @@ brew "zmap"
 brew "znapzend"
 brew "zsh"
 brew "zstd"
+brew "stow"
 brew "go-swagger/go-swagger/go-swagger"
 brew "heroku/brew/heroku"
 brew "railwaycat/emacsmacport/emacs-mac", link: false

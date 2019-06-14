@@ -21,7 +21,8 @@ Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-scriptease'
 Plug 'prettier/vim-prettier', { 'do': 'npm install -g' }
 "let g:prettier#autoformat = 0
-autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
+" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
+autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.graphql,*.vue PrettierAsync
 if !has('nvim')
   Plug 'tpope/vim-sensible'
 endif
@@ -33,7 +34,7 @@ Plug 'AndrewRadev/switch.vim'
 Plug 'Raimondi/delimitMate'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neosnippet.vim'
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 Plug 'ap/vim-css-color'
 Plug 'bling/vim-airline'
 Plug 'bogado/file-line'
@@ -94,13 +95,11 @@ autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 Plug 'w0rp/ale'
 " gem install sqlint
 let g:ale_linters = {
-\   'ruby': ['ruby'],
 \   'javascript': ['eslint'],
 \   'sql': ['sqlint'],
 \   'yaml': ['prettier']
 \}
 let g:ale_fixers = {
-\   'ruby': ['ruby'],
 \   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'elixir': ['mix_format'],
 \   'javascript': ['prettier'],
@@ -113,10 +112,19 @@ Plug 'chase/vim-ansible-yaml'
 Plug 'ludovicchabant/vim-gutentags'
 let g:gutentags_ctags_tagfile = ".tags"
 let g:gutentags_cache_dir = "~/tmp"
+" Bug related to quick editing a single file when in large repo
+" where tag creation job continues after vim exit and appears to hang.
+" https://github.com/ludovicchabant/vim-gutentags/issues/168
+" https://github.com/ludovicchabant/vim-gutentags/issues/178
+let g:gutentags_exclude_filetypes = ['gitcommit', 'gitrebase']
 if executable('ptags')
-  "let g:gutentags_ctags_executable = 'ptags'
+  let g:gutentags_ctags_executable = 'ptags'
+endif
+
+if executable('rg')
   let g:gutentags_file_list_command = 'rg --files'
 endif
+
 Plug 'slashmili/alchemist.vim'
 Plug 'nazo/pt.vim'
 
@@ -131,12 +139,10 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'leafgarland/typescript-vim'
 Plug 'hashivim/vim-terraform'
-" Plug 'mhinz/vim-mix-format'
-" let g:mix_format_on_save = 1
-" let g:mix_format_silent_errors = 1
 
 if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  " TMP disabled
+  "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'kassio/neoterm'
   tnoremap <Esc> <C-\><C-n>
 else
@@ -225,6 +231,29 @@ let g:deoplete#enable_at_startup = 1
 " endif
 
 "" End neocomp
+
+"""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""
+" Credit: https://gist.github.com/jecxjo/544d4bc3db417c367e6e6caa7146a4b5
+" Keybase - saltpack
+augroup SALTPACK
+  au!
+  " Make sure nothing is written to ~/.viminfo
+  au BufReadPre,FileReadPre *.saltpack set viminfo=
+  " No other files with unencrypted info
+  au BufReadPre,FileReadPre *.saltpack set noswapfile noundofile nobackup
+
+  " Reading Files, assumes you can decrypt
+  "au BufReadPost,FileReadPost *.saltpack :%!keybase decrypt 2> /dev/null
+  au BufReadPost,FileReadPost *.saltpack :%!keybase decrypt 2> /dev/null
+
+  " Writing requires users
+  au BufWritePre,FileReadPre *.saltpack let usernames = input('Users: ')
+  au BufWritePre,FileReadPre *.saltpack :exec "%!keybase encrypt " . usernames
+  au BufWritePost,FileReadPost *.saltpack u
+augroup END
+"""""""""""""""""""""""""""""""
+
 
 autocmd BufRead,BufNewFile *.go set tabstop=4 shiftwidth=4 noexpandtab softtabstop=4
 autocmd BufRead,BufNewFile *.go set lcs=tab:\ \ ,nbsp:_,extends:&,precedes:<
@@ -426,12 +455,6 @@ set expandtab
 set showmatch  " Show matching brackets.
 set mat=5  " Bracket blinking.
 set list
-" Show $ at end of line and trailing space as ~.... disable this as
-" it's distracting for screencasts
-" set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
-" set lcs=tab:\|_,
-" Courtesy of @alindeman
-set listchars+=trail:*
 
 set novisualbell  " No blinking .
 set noerrorbells  " No noise.
@@ -1111,8 +1134,13 @@ if executable('ag')
   nmap <Leader>aa :Ag<SPACE><cword><SPACE><CR>
 endif
 
+" TODO: combine ag/rg/pt and unify on just one of them
 if executable('rg')
   let g:ackprg = 'rg --vimgrep'
+  " Use rg in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = {
+    \ 'fallback': 'rg %s -l --nocolor -g ""'
+    \ }
 endif
 
 if executable('pt')
@@ -1176,9 +1204,13 @@ nnoremap J mjJ`j
 nnoremap <leader>] >i{<CR>
 nnoremap <leader>[ <i{<CR>
 
-set lcs=tab:›\ ,nbsp:_,extends:&,precedes:<
-"set listchars+=trail:💔
 set fcs=fold:-
+" Show $ at end of line and trailing space as ~.... disable this as
+" it's distracting for screencasts
+" set lcs=tab:\ \ ,eol:$,trail:~,extends:>,precedes:<
+set listchars=tab:›\ ,nbsp:_,extends:&,precedes:<
+set listchars+=trail:»
+
 nnoremap <silent> <leader>c :set nolist!<CR>
 
 " resize current buffer by +/- 5
@@ -1267,23 +1299,7 @@ command! -bang WA wa<bang>
 
 set diffopt=vertical
 
-" " Improve location list/quickfix windows, ie behave like ag.vim
-" function! AGopen()
-"   :lopen
-"   exec "nnoremap <silent> <buffer> q :ccl<CR>"
-"   exec "nnoremap <silent> <buffer> t <C-W><CR><C-W>T"
-"   exec "nnoremap <silent> <buffer> T <C-W><CR><C-W>TgT<C-W><C-W>"
-"   exec "nnoremap <silent> <buffer> o <CR>"
-"   exec "nnoremap <silent> <buffer> go <CR><C-W><C-W>"
-"   exec "nnoremap <silent> <buffer> h <C-W><CR><C-W>K"
-"   exec "nnoremap <silent> <buffer> H <C-W><CR><C-W>K<C-W>b"
-"   exec "nnoremap <silent> <buffer> v <C-W><CR><C-W>H<C-W>b<C-W>J<C-W>t"
-"   exec "nnoremap <silent> <buffer> gv <C-W><CR><C-W>H<C-W>b<C-W>J"
-"   echom "ag.vim keys: q=quit <cr>/t/h/v=enter/tab/split/vsplit go/T/H/gv=preview versions of same"
-" endfunction
-
 " command! -bang AGopen call AGopen()
-set listchars+=trail:*
 
 "set verbosefile=~/.vimdebugging.log
 "set verbose=15

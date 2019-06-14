@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# Load no gems beyond stdlib due to native extensions breaking
+# and rebuilding between different ruby versions and chruby/system.
+# Also should speed up script timing. ZPH
+$LOAD_PATH.delete_if { |l| l[/\/(gems|extensions)\//] }
 #########################################################
 ##  Generated Code: do not submit patches.
 ##  Submit patches against non-generated version of code.

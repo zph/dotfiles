@@ -1,4 +1,4 @@
-LOCAL_RUBY_VERSION="2.5.3"
+LOCAL_RUBY_VERSION="2.6.2"
 
 install_chruby(){
   wget -O chruby-0.3.8.tar.gz https://github.com/postmodern/chruby/archive/v0.3.8.tar.gz
@@ -20,14 +20,14 @@ fi
 EOF
 
   source /usr/local/share/chruby/chruby.sh
-  chruby 2.1
+  chruby "$LOCAL_RUBY_VERSION"
 }
 
 lazyload_init_chruby(){
   source /usr/local/share/chruby/chruby.sh
   source /usr/local/share/chruby/auto.sh
   zph/prepend_to_path "$PATHS_TO_PREFIX_BEFORE_CHRUBY"
-  chruby 2.5.3
+  chruby "$LOCAL_RUBY_VERSION"
 }
 
 lazyload_hook chruby ruby

@@ -42,6 +42,17 @@ gr() {
     fzf --height 40% --tac | awk '{print $1}'
 }
 
+fzf_preview_window(){
+# Try bat, highlight, coderay, rougify in turn, then fall back to cat
+fzf --preview '[[ $(file --mime {}) =~ binary ]] &&
+                 echo {} is a binary file ||
+                 (bat --style=numbers --color=always {} ||
+                  highlight -O ansi -l {} ||
+                  coderay {} ||
+                  rougify {} ||
+                  cat {}) 2> /dev/null | head -500'
+}
+
 zle -N gr
 bindkey '^g^r' gr
 

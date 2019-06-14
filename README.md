@@ -26,6 +26,11 @@ curl -L https://raw.githubusercontent.com/zph/zph/master/install.sh | bash -
 
 Pay attention to the prompts if you have conflicting files.
 
+Manual Process
+===
+
+Setup commandline utility for VPN control: https://blog.timac.org/2018/0719-vpnstatus/
+
 Credit
 ===
 Much of it is adopted from others.  See individual files for credits.
