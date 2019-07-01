@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
 
-set -eou pipefail
-set -x
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
 
-UNAME="$(uname -a)"
 REPOS="$HOME/.homesick/repos"
 DOTFILES="$REPOS/dotfiles"
 HOMESICK="$REPOS/homeshick/bin/homeshick"
 REPO="git@github.com:zph/zph.git"
 OPT_FOLDER="$DOTFILES/home/opt"
 
-case "$(uname)" in
-  Darwin)
-    OS="osx";;
-  Linux)
-    OS="linux";;
-  FreeBSD)
-    OS="freebsd";;
-esac
+OS="$(uname -a | awk '{print tolower($1)}')"
 
 install_gifwit(){
   # No longer on app store and dev was non-responsive when I emailed :(.
@@ -97,7 +90,7 @@ main() {
   ln -si ~/.vim ~/.config/nvim
 
   case $OS in
-    osx)
+    darwin)
       install_osx_packages
       ;;
     *)
