@@ -390,7 +390,7 @@ _normalize_keys(){
   bindkey -M vicmd '^R' history-incremental-search-backward
   # # More Vi keybinds for searching
   # bindkey '^P' history-search-backward
-  # bindkey '^N' history-search-forward 
+  # bindkey '^N' history-search-forward
 
   # Keybind for opening command in full editor
   autoload -z edit-command-line
@@ -448,6 +448,23 @@ zph/remove_blank_path_entries(){
   export PATH=$(echo $PATH | sed 's/::*/:/g')
 }
 
+zph/sanitize_path(){
+  # Remove duplicates and expand to absolute path, resolving symlinks for better dedup.
+  # The first instance of a path is treated as the rightful ultimate position in PATH array
+  # DEDUP PATH credit: https://unix.stackexchange.com/a/325729
+  # Use canonical path. Darwin version of command lacks the comparable flag
+  # and I tend to have gnu tools availble by default.
+  local platform="$(uname -a | awk '{print tolower($1)}')"
+  if [[ "$platform" == "darwin" ]];then
+    reader="greadlink"
+  else
+    reader="readlink"
+  fi
+  # Use full canonical paths and remove colon from trailing location.
+  export PATH="$(echo "$PATH" | tr ":" "\n" | xargs -I {} $reader -f {} | tr "\n" ":" | sed 's/:$//g')"
+  export PATH=$(zsh -fc "typeset -TU P=$PATH p; echo \$P")
+}
+
 _set_zsh_hooks(){
   add-zsh-hook chpwd _set_prompt
   add-zsh-hook precmd _set_prompt
@@ -464,9 +481,6 @@ _zshrc_main(){
   ############
   # Execute Functions
   _zshrc_pre_init
-  zph/prepend_to_path "${HOME}/bin"
-  zph/prepend_to_path "${HOME}/bin_local"
-  zph/remove_from_path "~/bin"
   _local_configs
   _set_zsh_settings
   _ignore_listed_zshd_commands
@@ -480,8 +494,14 @@ _zshrc_main(){
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   _set_zsh_hooks
+
+  # Must come last to ensure primacy
+  zph/prepend_to_path "${HOME}/bin"
+  zph/prepend_to_path "${HOME}/bin_local"
 }
 
 _zshrc_main
 
 lazyload_initialize "${(ok)functions}"
+
+zph/sanitize_path

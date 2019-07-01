@@ -92,6 +92,7 @@ autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 
 
 " Experimental
+Plug 'rhysd/vim-crystal'
 Plug 'w0rp/ale'
 " gem install sqlint
 let g:ale_linters = {
@@ -108,6 +109,7 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 Plug 'editorconfig/editorconfig-vim'
+let g:EditorConfig_exclude_patterns = ['fugitive://.\*']
 Plug 'chase/vim-ansible-yaml'
 Plug 'ludovicchabant/vim-gutentags'
 let g:gutentags_ctags_tagfile = ".tags"
@@ -117,9 +119,11 @@ let g:gutentags_cache_dir = "~/tmp"
 " https://github.com/ludovicchabant/vim-gutentags/issues/168
 " https://github.com/ludovicchabant/vim-gutentags/issues/178
 let g:gutentags_exclude_filetypes = ['gitcommit', 'gitrebase']
-if executable('ptags')
-  let g:gutentags_ctags_executable = 'ptags'
-endif
+" Ptags doesn't work because it doesn't accept the --append command
+" in ctags that gutentags relies on. - 2019
+" if executable('ptags')
+"   let g:gutentags_ctags_executable = 'ptags'
+" endif
 
 if executable('rg')
   let g:gutentags_file_list_command = 'rg --files'
@@ -231,7 +235,9 @@ let g:deoplete#enable_at_startup = 1
 " endif
 
 "" End neocomp
-
+" Security Patch: https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set modelines=0
+set nomodeline
 """""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""
 " Credit: https://gist.github.com/jecxjo/544d4bc3db417c367e6e6caa7146a4b5
@@ -1138,9 +1144,6 @@ endif
 if executable('rg')
   let g:ackprg = 'rg --vimgrep'
   " Use rg in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = {
-    \ 'fallback': 'rg %s -l --nocolor -g ""'
-    \ }
 endif
 
 if executable('pt')
