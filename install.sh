@@ -66,6 +66,9 @@ main() {
     git clone "${REPO}" "${DOTFILES}"
   fi
 
+  wget --content-disposition https://bin.suyash.io/zph/kit -O ~/bin_local/kit && \
+    chmod +x ~/bin_local/kit
+
   if [[ ! -d "$HOME/.homesick/repos/homeshick" ]];then
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
   fi
