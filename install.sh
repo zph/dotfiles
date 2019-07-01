@@ -49,8 +49,19 @@ setup_opt_using_stow(){
 }
 
 install_osx_packages(){
-  # TODO: check if brew is installed, if not, install it.
-  if [[ ! -x "$(which brew)" ]];then
+  TO_LINK=(Library/KeyBindings/DefaultKeyBinding.dict \
+           .config/brewfile \
+           .config/karabiner \
+           )
+
+  (
+    cd "$DOTFILES/home" || exit 1
+    for link in "${TO_LINK[@]}"; do
+      ln -si "$DOTFILES/$link" "$HOME/$link"
+    done
+  )
+
+  if [[ ! -x "$(command -v brew)" ]];then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 
@@ -69,27 +80,21 @@ main() {
   wget --content-disposition https://bin.suyash.io/zph/kit -O ~/bin_local/kit && \
     chmod +x ~/bin_local/kit
 
+  BINARY_INSTALLS=(sharkdp/bat github/hub stedolan/jq)
+
+  for b in "${BINARY_INSTALLS[@]}"; do
+    "$HOME/bin_local/kit" --install "$b" --output "$HOME/bin_local"
+  done
+
   if [[ ! -d "$HOME/.homesick/repos/homeshick" ]];then
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
   fi
 
   $HOMESICK link "dotfiles"
 
-  TO_LINK=(Library/KeyBindings/DefaultKeyBinding.dict \
-           .config/brewfile \
-           .config/karabiner \
-           )
-
   # For neovim location
   # --symlink --interactive to prompt in case of conflict
   ln -si ~/.vim ~/.config/nvim
-
-  (
-    cd "$DOTFILES/home" || exit 1
-    for link in "${TO_LINK[@]}"; do
-      ln -si "$DOTFILES/$link" "$HOME/$link"
-    done
-  )
 
   case $OS in
     osx)
