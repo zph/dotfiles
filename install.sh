@@ -15,7 +15,7 @@ OS="$(uname -a | awk '{print tolower($1)}')"
 install_gifwit(){
   # No longer on app store and dev was non-responsive when I emailed :(.
   # Happy to replace this with official mechanism.
-  APPS=(http://data.xargs.io/gifwit.tgz)
+  APPS=(http://data.xargs.io/gifwit.tgz https://blog.timac.org/2018/0719-vpnstatus/VPNStatus.app.zip)
   for app in "${APPS[@]}";do
     tmpdir="$(mktemp -d)"
     remove_temp() {
@@ -26,7 +26,14 @@ install_gifwit(){
     (
       cd $"tmpdir "|| exit 1
       wget "$app"
-      rm -rf ./*.tgz
+      case "$app" in
+        *.zip)
+          unzip ./*.zip ;;
+        *.tgz)
+          tar -xvf ./*.tgz ;;
+          *) exit 1
+      esac
+      rm -rf ./*.tgz ./*.zip
       mv ./* ~/Applications/
     )
 

@@ -1,7 +1,7 @@
 # Lazyload means the function doesn't work the first time :-/
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{.git,node_modules}/*" 2> /dev/null'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow -g "!{_build,.git,node_modules}/*" 2> /dev/null'
 
 is_in_git_repo() {
   git rev-parse HEAD > /dev/null 2>&1
@@ -47,9 +47,6 @@ fzf_preview_window(){
 fzf --preview '[[ $(file --mime {}) =~ binary ]] &&
                  echo {} is a binary file ||
                  (bat --style=numbers --color=always {} ||
-                  highlight -O ansi -l {} ||
-                  coderay {} ||
-                  rougify {} ||
                   cat {}) 2> /dev/null | head -500'
 }
 

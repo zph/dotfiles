@@ -35,6 +35,8 @@ Plug 'Raimondi/delimitMate'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neosnippet.vim'
 "Plug 'SirVer/ultisnips'
+" Security Patch: https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+Plug 'zph/securemodelines'
 Plug 'ap/vim-css-color'
 Plug 'bling/vim-airline'
 Plug 'bogado/file-line'
@@ -92,6 +94,7 @@ autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 
 
 " Experimental
+Plug 'dag/vim-fish'
 Plug 'rhysd/vim-crystal'
 Plug 'w0rp/ale'
 " gem install sqlint
@@ -132,6 +135,8 @@ endif
 Plug 'slashmili/alchemist.vim'
 Plug 'nazo/pt.vim'
 
+Plug 'lifepillar/pgsql.vim'
+let g:sql_type_default = 'pgsql'
 Plug 'Shougo/vimproc.vim', { 'do': 'make' }
 Plug 'janko-m/vim-test'
 nmap <silent> <leader>t :TestNearest<CR>
@@ -164,6 +169,7 @@ Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 
 Plug 'LnL7/vim-nix'
+Plug 'keith/swift.vim'
 
 call plug#end()
 
@@ -235,9 +241,6 @@ let g:deoplete#enable_at_startup = 1
 " endif
 
 "" End neocomp
-" Security Patch: https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-set modelines=0
-set nomodeline
 """""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""
 " Credit: https://gist.github.com/jecxjo/544d4bc3db417c367e6e6caa7146a4b5
@@ -594,6 +597,7 @@ fun! <SID>StripTrailingWhitespaces()
 endfun
 
 autocmd FileType c,cpp,java,php,ruby,python,haml,javascript autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd BufEnter Brewfile setlocal filetype=ruby
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -676,6 +680,7 @@ endfunction
 let g:slime_target = "tmux"
 
 " Slimux settings
+let g:slimux_select_from_current_window = 1
 map <Leader>s :SlimuxREPLSendLine<CR>
 vmap <Leader>s :SlimuxREPLSendSelection<CR>
 map <Leader>d :SlimuxShellLast<CR>

@@ -98,7 +98,7 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
 defaults write -g InitialKeyRepeat -int 11 # normal minimum is 15 (225 ms)
-defaults write -g KeyRepeat -int 2 # normal minimum is 2 (30 ms)
+defaults write -g KeyRepeat -int 3 # normal minimum is 2 (30 ms)
 # defaults write NSGlobalDomain KeyRepeat -int 0
 
 # Set language and text formats
@@ -411,6 +411,12 @@ killall Dock
 ###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
+#
+# Disable video on start with Zoom
+# For just your local account
+defaults write ~/Library/Preferences/us.zoom.config.plist ZDisableVideo 1
+# For all users on the machine
+sudo defaults write /Library/Preferences/us.zoom.config.plist ZDisableVideo 1
 
 for app in Finder Dock Mail Safari iTunes iCal Address\ Book SystemUIServer Twitter; do
 	killall "$app" > /dev/null 2>&1

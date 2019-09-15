@@ -5,7 +5,5 @@ IFS=$'\n\t'
 shopt -s extdebug
 
 git log --tags --simplify-by-decoration --date=short --pretty="format:%h  %ad %d" | \
-  grep 'tag:' | \
-  sed 's/tag: //g' | \
-  tr -d "()" | \
+  grep -Eo "v\d+\.\d+\.\d+" | \
   awk -F ',' '{print $1}'

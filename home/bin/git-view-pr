@@ -3,6 +3,10 @@
 require 'open-uri'
 require 'json'
 
+# # Load no gems beyond stdlib due to native extensions breaking
+# # and rebuilding between different ruby versions and chruby/system.
+# # Also should speed up script timing. ZPH
+# $LOAD_PATH.delete_if { |l| l[/\/(gems|extensions)\//] }
 # base_link fails if we don't grep for origin branch
 DEFAULT_REMOTE = "origin"
 base_link = `git remote -v | grep #{DEFAULT_REMOTE} | head -1`
@@ -36,5 +40,3 @@ rescue => e
   puts e.inspect
   abort("Nope")
 end
-# puts json['default_branch']
-# # curl -H "Authorization: token OAUTH-TOKEN" https://api.github.com/repos/:owner/:repo/pulls

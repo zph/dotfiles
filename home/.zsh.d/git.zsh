@@ -3,6 +3,9 @@
 # and oh-my-zsh
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
 
+# https://github.com/robbyrussell/oh-my-zsh/issues/2394#issuecomment-45287624
+alias __git-checkout_main=_git_checkout
+
 __hub_path="$(which hub)"
 if [[ -x "$__hub_path" ]]; then
   alias g="$__hub_path";
@@ -21,6 +24,7 @@ compctl -K _complete_git-go git-go
 alias gg="git go"
 compctl -K _complete_git-go gg
 
+# compdef _git git-switch=git-checkout
 #compdef _git gcl=git-clone
 alias gst='git status -s'
 #compdef _git gst=git-status
@@ -51,7 +55,7 @@ function gcimpu(){
   git commit -m $@;
   git push
 }
-#compdef _git gcom=git-commit
+compdef _git gcom=git-commit
 alias gco='git checkout'
 alias gcof='git checkout $(gb)'
 #compdef _git gco=git-checkout
@@ -64,10 +68,10 @@ alias gcount='git shortlog -sn'
 #compdef gcount=git
 alias gcp='git cherry-pick'
 #compdef _git gcp=git-cherry-pick
-alias gl='git log --pretty=oneline --abbrev-commit'
+alias gll='git log --pretty=oneline --abbrev-commit'
 alias glo="git log --pretty=format:'%h %ad | %s%d [%an]' --date=short --abbrev-commit"
 #compdef _git gll=git-log
-alias gll="git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
+#alias gll="git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
 #compdef _git gll=git-log
 alias glg='git log --stat --max-count=5'
 #compdef _git glg=git-log

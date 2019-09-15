@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Edited by hand for expedience ^_^.
 ###-- GENERATED CODE -- DO NOT EDIT --###
 module BashStrict
   VERSION = "0.1.0"
@@ -270,8 +271,12 @@ class CLI
               else
                 ARGF.read
               end
-    data = BashStrict::Parser.call(content)
-    puts(BashStrict::Parser.normalize(data))
+    if content.split("\n").grep(/bash_strict_mode/).grep(/disable=true/).empty?
+      data = BashStrict::Parser.call(content)
+      puts(BashStrict::Parser.normalize(data))
+    else
+      print(content)
+    end
   end
 end
 

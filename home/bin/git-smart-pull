@@ -354,7 +354,7 @@ class GitRepo
   end
 
   def read_log(nr)
-    git('log', '--oneline', '-n', nr.to_s).split("\n").map { |l| l.split(" ",2) }
+    git('log', '--oneline', '-n', nr.to_s).split("\n").map { |l| l.split(" ", 2) }
   end
 
   def last_commit_messages(nr)
@@ -491,7 +491,7 @@ GitSmart.register 'smart-merge' do |repo, args|
 
     #Report the number of commits on merge_target we're about to merge in.
     new_commits_on_merge_target = repo.rev_list(merge_base, merge_target)
-    puts "Branch '#{merge_target}' has diverged by #{new_commits_on_merge_target.length} commit#{'s' if new_commits_on_merge_target.length != 1}. Merging in."
+    puts "Branch '#{merge_target}' has diverged by #{new_commits_on_merge_target.length} commit(s). Merging in."
 
     #Determine if our branch has moved on.
     if head == merge_base
@@ -502,7 +502,7 @@ GitSmart.register 'smart-merge' do |repo, args|
     else
       #Report how many commits on our branch since merge_target diverged.
       new_commits_on_branch = repo.rev_list(merge_base, head)
-      puts "Branch '#{current_branch}' has #{new_commits_on_branch.length} new commit#{'s' if new_commits_on_merge_target.length != 1} since '#{merge_target}' diverged."
+      puts "Branch '#{current_branch}' has #{new_commits_on_branch.length} new commit(s) since '#{merge_target}' diverged."
     end
 
     #Before we merge, detect if there are local changes and stash them.
@@ -578,7 +578,7 @@ GitSmart.register 'smart-pull' do |repo, args|
     #Report how many commits are new locally, since that's useful information.
     new_commits_locally = repo.rev_list(merge_base, head)
     if !new_commits_locally.empty?
-      note "You have #{new_commits_locally.length} new commit#{'s' if new_commits_locally.length != 1} on '#{branch}'."
+      note "You have #{new_commits_locally.length} new commit(s) on '#{branch}'."
     end
 
     #By comparing the merge_base to both HEAD and the remote, we can
@@ -590,11 +590,9 @@ GitSmart.register 'smart-pull' do |repo, args|
       success "Already up-to-date"
     else
       #If the remote _has_ moved on, we actually have some work to do:
-      #
       #First, report how many commits are new on remote. Because that's useful information, too.
       new_commits_on_remote = repo.rev_list(merge_base, remote)
-      is_are, s_or_not = (new_commits_on_remote.length == 1) ? ['is', ''] : ['are', 's']
-      note "There #{is_are} #{new_commits_on_remote.length} new commit#{s_or_not} on '#{upstream_branch}'."
+      note "#{new_commits_on_remote.length} new commit(s) on '#{upstream_branch}'."
 
       #Next, detect if there are local changes and stash them.
       stash_required = repo.dirty?
@@ -606,7 +604,6 @@ GitSmart.register 'smart-pull' do |repo, args|
       success_messages = []
 
       #Then, bring the local branch up to date.
-      #
       #If our local branch hasn't moved on, that's easy - we just need to fast-forward.
       if merge_base == head
         puts "Local branch '#{branch}' has not moved on. Fast-forwarding..."

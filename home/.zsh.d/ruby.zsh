@@ -29,16 +29,6 @@ function run_bundler_cmd (){
   fi
 }
 
-function gemul(){
-  if [ $1 ]; then
-    gem_name=$1
-  else
-    gem_name=`pwd | awk -F / '{print $NF}'`
-  fi
-  gem uninstall --executables "$gem_name"
-  rake install
-}
-
 function gem_reinstall(){
   gem uninstall $1
   gem install $1

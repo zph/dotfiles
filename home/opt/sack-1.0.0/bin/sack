@@ -29,6 +29,19 @@ F(){
 EOF
 }
 
+# Usage sack init_fish | source
+init_fish(){
+  cat <<EOF
+function S
+  sack search \$argv
+end
+
+function F
+  sack edit \$argv
+end
+EOF
+}
+
 search(){
   local terms="$*"
   rm -f "$SEARCH_TERM"
@@ -63,7 +76,9 @@ main(){
       edit "$@"
       ;;
     init)
-      init
+      init;;
+    init_fish)
+      init_fish
       ;;
   esac
 }

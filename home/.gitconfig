@@ -29,11 +29,14 @@
   bn = "!git rev-parse --abbrev-ref HEAD | tr -d '\n'"
   ci = commit -v
   cim = commit -m
+  cin = commit -n -m
   com = "!git checkout ${GIT_MASTER:-master}"
     # cl = clone
   cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
+  cos = "!git switch"
   co = checkout
+  cof = "!git checkout `git status -s | awk '{print $2}' | fzf`"
   dc = diff --cached
   dh = diff HEAD~1
   d = diff
@@ -91,6 +94,9 @@
   modified = !git ls-files -m
   unapply = !git stash show -p | git apply -R
   remove-deleted = !git ls-files --deleted | xargs git rm
+  wta = "!f() { git worktree add ~/src/worktree/$1 $1 && echo ~/src/worktree/$1; }; f"
+  wt = worktree
+  wtp = worktree prune
     # Divergence (commits we added and commits remote added)
     # div = divergence
 
@@ -155,6 +161,9 @@
   branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
   ribbon = tag --force _ribbon origin/master
   catchup = log --patch --reverse --topo-order _ribbon..origin/master
+  # https://stackoverflow.com/questions/957928/is-there-a-way-to-get-the-git-root-directory-in-one-command#comment9747528_957978
+  # so it's possible to do `git exec make` which switches it to top of git repo
+  exec = "!exec "
 
 [merge]
   tool = vimdiff
