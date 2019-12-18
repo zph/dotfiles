@@ -82,9 +82,10 @@ main() {
 
   BINARY_INSTALLS=(sharkdp/bat github/hub stedolan/jq)
 
-  for b in "${BINARY_INSTALLS[@]}"; do
-    "$HOME/bin_local/kit" --install "$b" --output "$HOME/bin_local"
-  done
+# TODO: Requires wget and kit
+#  for b in "${BINARY_INSTALLS[@]}"; do
+#    "$HOME/bin_local/kit" --install "$b" --output "$HOME/bin_local"
+#  done
 
   if [[ ! -d "$HOME/.homesick/repos/homeshick" ]];then
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
