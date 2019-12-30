@@ -4,6 +4,10 @@
 # grep for specific regex in git log 'git log -S "SITEMAP" --pretty=oneline --abbrev-commit'
 
 # https://github.com/robbyrussell/oh-my-zsh/issues/2394#issuecomment-45287624
+# NOTE: setting this in .gitconfig does not resolve correctly to link even when
+# hardcoded
+export GIT_ASKPASS=~/bin/git-askpass
+
 alias __git-checkout_main=_git_checkout
 
 __hub_path="$(which hub)"

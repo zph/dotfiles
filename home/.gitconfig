@@ -217,3 +217,9 @@
   required = true
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
+[url "https://ssh@github.com/"]
+	insteadOf = ssh://git@github.com/
+[url "https://git@github.com/"]
+	insteadOf = git@github.com:
+[url "https://api@github.com/"]
+	insteadOf = https://github.com/
