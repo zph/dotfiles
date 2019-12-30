@@ -175,7 +175,7 @@
   excludesfile = ~/.gitignore_global
   pager = diff-so-fancy | less --tabs=4 -RFX
 [credential]
-  helper = osxkeychain
+	helper = cache --timeout=3600
 [difftool "sourcetree"]
   cmd = opendiff \"$LOCAL\" \"$REMOTE\"
   path =
@@ -217,9 +217,11 @@
   required = true
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
+# Standardization https://coolaj86.com/articles/vanilla-devops-git-credentials-cheatsheet/
+# Relys on setting GIT_ASKPASS ENV variable
 [url "https://ssh@github.com/"]
-	insteadOf = ssh://git@github.com/
+  insteadOf = ssh://git@github.com/
 [url "https://git@github.com/"]
-	insteadOf = git@github.com:
+  insteadOf = git@github.com:
 [url "https://api@github.com/"]
-	insteadOf = https://github.com/
+  insteadOf = https://github.com/
