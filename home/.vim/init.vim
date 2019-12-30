@@ -57,7 +57,10 @@ Plug 'jpalardy/vim-slime'
 Plug 'kana/vim-textobj-user'
 Plug 'kchmck/vim-coffee-script'
 Plug 'ledger/vim-ledger'
-Plug 'lukerandall/haskellmode-vim'
+Plug 'neovimhaskell/haskell-vim'
+let g:ale_linters = {'haskell': ['hlint', 'ghc']}
+let g:ale_haskell_ghc_options = '-fno-code -v0 -isrc'
+Plug 'LnL7/vim-nix'
 Plug 'mattn/ctrlp-mark'
 Plug 'mattn/ctrlp-register'
 Plug 'mattn/emmet-vim'
@@ -170,6 +173,7 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'LnL7/vim-nix'
 Plug 'keith/swift.vim'
+Plug 'jceb/vim-orgmode'
 
 call plug#end()
 

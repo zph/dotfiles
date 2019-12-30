@@ -18,6 +18,10 @@
 # alias mkdir='mkdir -p' # Make mkdir recursive
 # alias tree='tree -L 2 -fi'
 
+t() {
+  cd "$(mktemp -d mktemp -t $1-XXXXXXX)"
+}
+
 # Credit: https://twitter.com/brandon_rhodes/status/1050570678032850944
 alias "$"=""
 alias shfmt="shfmt -i 2 -ci"

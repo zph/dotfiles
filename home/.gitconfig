@@ -111,7 +111,7 @@
     #   ra = recent commits, all reachable refs
     #   l = all commits, only current branch
     #   la = all commits, all reachable refs
-    # ll = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
+  ll2 = "log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short"
   h = !git head
   head = !git l -1
   hp = "!. ~/.githelpers && show_git_head"
