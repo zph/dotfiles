@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+Alias = Struct.new(:name, :value) do
+  def to_fish
+    "alias #{name} #{value}"
+  end
+end
+
+StubAlias = Alias.new("__bash_to_fish", "'echo 1'")
+
+def main(dir)
+  aliases = `cat #{dir}/*.zsh | grep alias | sed 's/^ *//'g | grep -v "^#"`.chomp
+  as = aliases.split("\n")
+              .map { |a| a.gsub(/alias /, '')}
+              .map { |a| a.gsub(/\$@/, '$argv')}
+              .map { |a| s = a.split("=", 2); Alias.new(*s) }
+              .reject { |s| s.name[/\$/] } # For now
+              .reject { |s| s.name[/^[-_]/] } # For now
+              .reject { |s| s.value[/fasd/] } # For now
+              .reject { |s| s.name[/^[[:punct:]]/] } # For now
+              .reject { |s| s.value[/^['"]\$/] } # For now
+              .reject { |s| s.value[/nocorrect/] } # For now
+              .map do |a|
+    a.value.gsub!(/\$\(/, '(')
+    a.value.gsub!(/`(.*)`/, "(#{$1})")
+    a
+  end
+    .sort_by { |a| a.name } << StubAlias
+  as.each { |a| puts a.to_fish }
+end
+
+main ARGV[0]

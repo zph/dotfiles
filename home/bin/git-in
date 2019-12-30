@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Usage: git-in $DIR -- status
+# Summary: Helps run git commands with shorter syntax for specifying where to run it from
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+GIT_REPO="$1"
+shift
+
+# shellcheck disable=SC2191
+GIT_ARGS=(--git-dir="$GIT_REPO/.git" --work-tree="$GIT_REPO")
+
+case "$1" in
+  --) shift;;
+  *);;
+esac
+
+git "${GIT_ARGS[@]}" "$@"

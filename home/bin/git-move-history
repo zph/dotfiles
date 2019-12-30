@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Usage: move history of one subfolder in git repo into different repo, keeping history
+# NOTE: might need to run `git am --skip` a couple times at the end to allow empty patches
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+SUBFOLDER="$1"
+OUTPUT_REPO="$2"
+git log --pretty=email --patch-with-stat --reverse -- "$SUBFOLDER" | (cd "$OUTPUT_REPO" && git am)

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+numfmt --to=iec-i "$@"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+echo
+BASEDIR="$HOME/src/crystal_lib"
+WORKDIR="$(mktemp -d)"
+BASE="$(basename "$1")"
+
+main(){
+  (
+    cd "$BASEDIR"
+    crystal run "$BASEDIR/src/main.cr" -- "$BASE" > "$WORKDIR/$BASE"
+    crystal tool format "$WORKDIR/$BASE"
+    bat "$WORKDIR/$BASE"
+  )
+}
+
+main "$@"
