@@ -100,6 +100,13 @@ autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 Plug 'dag/vim-fish'
 Plug 'rhysd/vim-crystal'
 Plug 'w0rp/ale'
+Plug 'martinda/Jenkinsfile-vim-syntax'
+" Vim/typescript/jsx/tsx
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+Plug 'jparise/vim-graphql'
 " gem install sqlint
 let g:ale_linters = {
 \   'javascript': ['eslint'],
@@ -151,6 +158,11 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'hail2u/vim-css3-syntax'
 Plug 'leafgarland/typescript-vim'
 Plug 'hashivim/vim-terraform'
+Plug 'BurntSushi/ripgrep'
+Plug 'fiatjaf/neuron.vim'
+let g:path_neuron = $HOME.'/.nix-profile/bin/neuron'
+let g:zkdir = $HOME.'/.notes'
+let g:path_jq = '/usr/local/bin/jq'
 
 if has('nvim')
   " TMP disabled
@@ -164,6 +176,7 @@ else
   " Don't bother about checking whether Escape is being used as a means to enter
   " " a Meta-key combination, just register Escape immediately
   set noesckeys
+  Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 endif
 
 "Golang
@@ -185,9 +198,10 @@ call plug#end()
 " endif
 
 if has('nvim')
-  let g:python_host_prog = '/Users/zph/.pyenv/versions/neovim2/bin/python'
-  let g:python3_host_prog = '/Users/zph/.pyenv/versions/neovim3/bin/python'
+  let g:python_host_prog = $HOME.'/.pyenv/versions/neovim2/bin/python'
+  let g:python3_host_prog = $HOME.'/.pyenv/versions/neovim3/bin/python'
 endif
+
 let g:deoplete#enable_at_startup = 1
 " OCaml
 "let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
