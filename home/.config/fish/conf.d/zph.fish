@@ -27,9 +27,16 @@ set ZSH_PATH (cat ~/.zsh_env | grep "^PATH=" | awk -F= '{print $2}')
 for path in (string split ':' $ZSH_PATH | tail -r)
   set PATH $path $PATH
 end
+
+# Rust
+set PATH $HOME/.cargo/bin $PATH
+set PAGER /usr/local/bin/bat
+
+set EDITOR "/usr/local/bin/nvim"
 alias vim $EDITOR
 alias gs 'git status -s'
 alias wk 'cd ~/src/worktree'
+alias dc 'docker-compose'
 
 if not functions -q fisher
   set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
@@ -68,5 +75,6 @@ end
 # mkdir /usr/local/Cellar/bash/5.0.7/share/bashdb
 # touch /usr/local/Cellar/bash/5.0.7/share/bashdb/bashdb-main.inc
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
+source (brew --prefix asdf)/asdf.fish
 
-eval (starship init fish)
+starship init fish | source

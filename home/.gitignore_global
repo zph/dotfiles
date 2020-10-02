@@ -110,3 +110,6 @@ tags
 
 # JetBrains IDEs
 **/.idea/*
+
+# Jenkins
+deploy.log

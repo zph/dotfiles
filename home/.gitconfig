@@ -15,6 +15,8 @@
 [color]
   ui = true
 [alias]
+  ap = add -p
+  ci = commit -v
     # git-smart aliases
   sp = "!git tidy && git smart pull"
   a = add
@@ -164,6 +166,7 @@
   # https://stackoverflow.com/questions/957928/is-there-a-way-to-get-the-git-root-directory-in-one-command#comment9747528_957978
   # so it's possible to do `git exec make` which switches it to top of git repo
   exec = "!exec "
+	new = !git init && git symbolic-ref HEAD refs/heads/main
 
 [merge]
   tool = vimdiff
@@ -193,6 +196,7 @@
 [heroku]
   remote = staging
 [init]
+	defaultBranch = main
 # templatedir = ~/.git_init_template
 [log]
   date = iso8601
