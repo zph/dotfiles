@@ -1,4 +1,5 @@
 call plug#begin()
+"""" Fundamentals
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-classpath'
 Plug 'tpope/vim-commentary'
@@ -9,85 +10,113 @@ Plug 'tpope/vim-fireplace'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-git'
-Plug 'tpope/vim-haml'
-Plug 'tpope/vim-leiningen'
 Plug 'tpope/vim-markdown'
 Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-projectionist'
 Plug 'tpope/vim-ragtag'
-Plug 'tpope/vim-rails'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rsi'
 Plug 'tpope/vim-scriptease'
-Plug 'prettier/vim-prettier', { 'do': 'npm install -g' }
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-vinegar'
 "let g:prettier#autoformat = 0
 " autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue PrettierAsync
 autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.graphql,*.vue PrettierAsync
 if !has('nvim')
   Plug 'tpope/vim-sensible'
 endif
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-vinegar'
 
-Plug 'AndrewRadev/switch.vim'
-Plug 'Raimondi/delimitMate'
-Plug 'Shougo/neosnippet-snippets'
-Plug 'Shougo/neosnippet.vim'
-"Plug 'SirVer/ultisnips'
-" Security Patch: https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-Plug 'zph/securemodelines'
+""""" Javascript/Typescript
+Plug 'prettier/vim-prettier', { 'do': 'npm install -g' }
+Plug 'othree/yajs.vim'
+"Plug 'raichoo/purescript-vim'
+" Vim/typescript/jsx/tsx
+Plug 'cakebaker/scss-syntax.vim'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'jparise/vim-graphql'
+Plug 'leafgarland/typescript-vim'
+Plug 'leafgarland/typescript-vim'
+Plug 'pangloss/vim-javascript'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+
+""""" CSS
 Plug 'ap/vim-css-color'
+
+""""" Display
 Plug 'bling/vim-airline'
 Plug 'bogado/file-line'
+Plug 'vim-airline/vim-airline-themes'
+
+""""" Controls
+Plug 'Shougo/neosnippet-snippets'
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/vimproc.vim', { 'do': 'make' }
+Plug 'Shougo/unite.vim'
+Plug 'Raimondi/delimitMate'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'derekwyatt/vim-scala'
 Plug 'tmhedberg/matchit'
-Plug 'elazar/visSum.vim'
-Plug 'elixir-lang/vim-elixir'
-Plug 'epeli/slimux'
+Plug 'jpalardy/vim-slime'
+let g:slime_target = "tmux"
+let g:slime_paste_file = "$HOME/.slime_paste"
 Plug 'ervandew/supertab'
-Plug 'fatih/vim-go'
 Plug 'godlygeek/tabular'
-Plug 'guns/vim-clojure-static'
 Plug 'honza/vim-snippets'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'jimenezrick/vimerl'
-Plug 'jpalardy/vim-slime'
 Plug 'kana/vim-textobj-user'
-Plug 'kchmck/vim-coffee-script'
-Plug 'ledger/vim-ledger'
+Plug 'mattn/ctrlp-mark'
+Plug 'mattn/ctrlp-register'
+Plug 'mattn/emmet-vim'
+Plug 'mileszs/ack.vim'
+Plug 'nazo/pt.vim'
+
+Plug 'sjl/gundo.vim'
+Plug 'vim-scripts/AutoTag'
+Plug 'vim-scripts/ZoomWin'
+
+""""" Security
+" Security Patch: https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+Plug 'zph/securemodelines'
+
+""""" Color
+Plug 'rking/vim-detailed'
+
+""""" Misc
+
+""""" Elixir/Erlang
+Plug 'elixir-lang/vim-elixir'
+Plug 'jimenezrick/vimerl'
+Plug 'slashmili/alchemist.vim'
+
+""""" Golang
+Plug 'fatih/vim-go'
+
+""""" Haskell/Nix
 Plug 'neovimhaskell/haskell-vim'
 let g:ale_linters = {'haskell': ['hlint', 'ghc']}
 let g:ale_haskell_ghc_options = '-fno-code -v0 -isrc'
 Plug 'LnL7/vim-nix'
-Plug 'mattn/ctrlp-mark'
-Plug 'mattn/ctrlp-register'
-Plug 'mattn/emmet-vim'
-Plug 'mattn/gist-vim'
-Plug 'mattn/webapi-vim'
-Plug 'nelstrom/vim-textobj-rubyblock'
-Plug 'othree/yajs.vim'
-Plug 'raichoo/purescript-vim'
+
+""""" Clojure/Lisp
+" Rainbow parens
 Plug 'raymond-w-ko/vim-niji'
-Plug 'mileszs/ack.vim'
-Plug 'rking/vim-detailed'
-Plug 'rking/vim-ruby-refactoring'
-Plug 'scrooloose/nerdtree'
-Plug 'sjl/gundo.vim'
-Plug 'skalnik/vim-vroom'
-Plug 'slim-template/vim-slim'
-Plug 't9md/vim-ruby-xmpfilter'
-Plug 'terryma/vim-expand-region'
-Plug 'terryma/vim-multiple-cursors'
-Plug 'vim-airline/vim-airline-themes'
+
+""""" Ruby
+" Slow startup
+"Plug 'nelstrom/vim-textobj-rubyblock'
+" Plug 'skalnik/vim-vroom'
+" Plug 't9md/vim-ruby-xmpfilter'
+" Plug 'terryma/vim-expand-region'
+" Plug 'terryma/vim-multiple-cursors'
 Plug 'vim-ruby/vim-ruby'
-Plug 'vim-scripts/AutoTag'
-Plug 'vim-scripts/ZoomWin'
-Plug 'vim-scripts/lua.vim'
-Plug 'vim-scripts/paredit.vim'
-Plug 'wting/rust.vim'
-Plug 'xolox/vim-misc'
+" Plug 'janko-m/vim-test'
+" nmap <silent> <leader>t :TestNearest<CR>
+" nmap <silent> <leader>T :TestFile<CR>
+" nmap <silent> <leader><leader>t :TestSuite<CR>
+" nmap <silent> <leader>l :TestLast<CR>
+
+""""" Bash
 Plug 'Chiel92/vim-autoformat'
 noremap <F3> :Autoformat<CR>
 let g:formatterpath = [$HOME.'/bin']
@@ -96,17 +125,12 @@ let g:formatters_sh = ['bash_strict_mode']
 autocmd FileType sh,bash autocmd BufWritePre <buffer> :Autoformat
 
 
+
 " Experimental
+Plug 'xolox/vim-misc'
 Plug 'dag/vim-fish'
 Plug 'rhysd/vim-crystal'
 Plug 'w0rp/ale'
-Plug 'martinda/Jenkinsfile-vim-syntax'
-" Vim/typescript/jsx/tsx
-Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
-Plug 'jparise/vim-graphql'
 " gem install sqlint
 let g:ale_linters = {
 \   'javascript': ['eslint'],
@@ -142,33 +166,20 @@ if executable('rg')
   let g:gutentags_file_list_command = 'rg --files'
 endif
 
-Plug 'slashmili/alchemist.vim'
-Plug 'nazo/pt.vim'
-
+"""" Postgres
 Plug 'lifepillar/pgsql.vim'
 let g:sql_type_default = 'pgsql'
-Plug 'Shougo/vimproc.vim', { 'do': 'make' }
-Plug 'janko-m/vim-test'
-nmap <silent> <leader>t :TestNearest<CR>
-nmap <silent> <leader>T :TestFile<CR>
-nmap <silent> <leader><leader>t :TestSuite<CR>
-nmap <silent> <leader>l :TestLast<CR>
-Plug 'Shougo/unite.vim'
-Plug 'cakebaker/scss-syntax.vim'
-Plug 'hail2u/vim-css3-syntax'
-Plug 'leafgarland/typescript-vim'
 Plug 'hashivim/vim-terraform'
-Plug 'BurntSushi/ripgrep'
-Plug 'fiatjaf/neuron.vim'
-let g:path_neuron = $HOME.'/.nix-profile/bin/neuron'
-let g:zkdir = $HOME.'/.notes'
-let g:path_jq = '/usr/local/bin/jq'
+" Very slow startup
+" Plug 'fiatjaf/neuron.vim'
+" let g:path_neuron = $HOME.'/.nix-profile/bin/neuron'
+" let g:zkdir = $HOME.'/.notes'
+" let g:path_jq = '/usr/local/bin/jq'
 
 if has('nvim')
-  " TMP disabled
-  "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'kassio/neoterm'
   tnoremap <Esc> <C-\><C-n>
+  Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 else
   Plug 'Shougo/deoplete.nvim'
   Plug 'roxma/nvim-yarp'
@@ -176,7 +187,6 @@ else
   " Don't bother about checking whether Escape is being used as a means to enter
   " " a Meta-key combination, just register Escape immediately
   set noesckeys
-  Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 endif
 
 "Golang
@@ -185,8 +195,6 @@ Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 
 Plug 'LnL7/vim-nix'
-Plug 'keith/swift.vim'
-Plug 'jceb/vim-orgmode'
 
 call plug#end()
 
@@ -203,62 +211,6 @@ if has('nvim')
 endif
 
 let g:deoplete#enable_at_startup = 1
-" OCaml
-"let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-"execute "set rtp+=" . g:opamshare . "/merlin/vim"
-
-" if has('lua')
-" "=bundle Shougo/neocomplete.vim
-"   let g:neocomplete#force_overwrite_completefunc = 1
-"   let g:neocomplete#enable_at_startup = 1
-"   let g:acp_enableAtStartup = 0
-"   " Use neocomplete.
-"   let g:neocomplete#enable_at_startup = 1
-"   " Use smartcase.
-"   let g:neocomplete#enable_smart_case = 1
-"   " Set minimum syntax keyword length.
-"   let g:neocomplete#sources#syntax#min_keyword_length = 3
-"   let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-"   " Define dictionary.
-"   let g:neocomplete#sources#dictionary#dictionaries = {
-"       \ 'default' : '',
-"       \ 'vimshell' : $HOME.'/.vimshell_hist',
-"       \ 'scheme' : $HOME.'/.gosh_completions'
-"           \ }
-
-"   " Define keyword.
-"   if !exists('g:neocomplete#keyword_patterns')
-"       let g:neocomplete#keyword_patterns = {}
-"   endif
-"   let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-"   " Plugin key-mappings.
-"   inoremap <expr><C-g>     neocomplete#undo_completion()
-"   inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-"   " Recommended key-mappings.
-"   " <CR>: close popup and save indent.
-"   inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"   function! s:my_cr_function()
-"     return neocomplete#close_popup() . "\<CR>"
-"     " For no inserting <CR> key.
-"     "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-"   endfunction
-"   " <TAB>: completion.
-"   inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-"   " <C-h>, <BS>: close popup and delete backword char.
-"   inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-"   inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-"   inoremap <expr><C-y>  neocomplete#close_popup()
-"   inoremap <expr><C-e>  neocomplete#cancel_popup()
-"   " Close popup by <Space>.
-"   inoremap <expr><Space> pumvisible() ? neocomplete#close_popup()."\<Space>" : "\<Space>"
-" else
-"   " somehow disable neocomplete?
-" endif
-
-"" End neocomp
 """""""""""""""""""""""""""""""
 """""""""""""""""""""""""""""""
 " Credit: https://gist.github.com/jecxjo/544d4bc3db417c367e6e6caa7146a4b5
@@ -570,39 +522,6 @@ let g:airline_symbols.paste = 'ρ'
 let g:airline_symbols.paste = 'Þ'
 let g:airline_symbols.paste = '∥'
 let g:airline_symbols.whitespace = 'Ξ'
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Test functions from gary bernhardt
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" SWITCH BETWEEN TEST AND PRODUCTION CODE
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-function! OpenTestAlternate()
-  let new_file = AlternateForCurrentFile()
-  exec ':e ' . new_file
-endfunction
-function! AlternateForCurrentFile()
-  let current_file = expand("%")
-  let new_file = current_file
-  let in_spec = match(current_file, '^spec/') != -1
-  let going_to_spec = !in_spec
-  let in_app = match(current_file, '\<controllers\>') != -1 || match(current_file, '\<models\>') != -1 || match(current_file, '\<views\>') != -1 || match(current_file, '\<helpers\>') != -1
-  if going_to_spec
-    if in_app
-      let new_file = substitute(new_file, '^app/', '', '')
-    end
-    let new_file = substitute(new_file, '\.e\?rb$', '_spec.rb', '')
-    let new_file = 'spec/' . new_file
-  else
-    let new_file = substitute(new_file, '_spec\.rb$', '.rb', '')
-    let new_file = substitute(new_file, '^spec/', '', '')
-    if in_app
-      let new_file = 'app/' . new_file
-    end
-  endif
-  return new_file
-endfunction
-nnoremap <leader>. :call OpenTestAlternate()<cr>
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Always strip trailing whitespace
 " Courtesy of MarkSim: https://github.com/marksim/.dotfiles/blob/master/.vimrc#L120-L130
@@ -683,17 +602,6 @@ augroup END
 " make tab completion for files/buffers work like bash
 set wildmenu
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Promote Variable to Rspec Let
-function! PromoteToLet()
-  :normal! dd
-  :normal! P
-  :.s/\(\w\+\) = \(.*\)$/let(:\1) { \2 }/
-  :normal ==
-endfunction
-:command! PromoteToLet :call PromoteToLet()
-:map <Leader>u :PromoteToLet<CR>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Slime tmux settings
 let g:slime_target = "tmux"
 
@@ -830,8 +738,8 @@ nmap <Leader>p :CtrlPMixed<CR>
 " imap <C-p> <ESC>:Unite file_rec/async<CR>
 " nmap <C-p> :Unite file_rec/async<CR>
 " nnoremap <silent> ,g :<C-u>Unite grep:. -buffer-name=search-buffer<CR>
-if executable('pt')
-  let g:unite_source_grep_command = 'pt'
+if executable('rg')
+  let g:unite_source_grep_command = 'rg'
   let g:unite_source_grep_default_opts = '--nogroup --nocolor'
   let g:unite_source_grep_recursive_opt = ''
   let g:unite_source_grep_encoding = 'utf-8'
@@ -870,20 +778,6 @@ nmap <Leader>m :!open -a Marked.app "%"<CR><CR>
 imap <Leader>rr <ESC>:!ruby %<CR>
 nmap <Leader>rr :!ruby %<CR>
 
-" nmap <Leader>st :%s/\n/ /g<CR>
-" nmap <Leader>sh :%!fmt -n 100<CR>
-" nmap <Leader>shh <Leader>st<Leader>sh
-" vnoremap <Leader>sh :!fmt -n 100<CR>
-" nmap <Leader>sm :%!fmt -n 75<CR>
-" vnoremap <Leader>sm :!fmt -n 75<CR>
-
-" Courtesy of rking's ruby-pry.vim
-" …also, Insert Mode as bpry<space>
-iabbr bpry require'pry';binding.pry
-" And pry-remote
-iabbr bpryr require'pry-remote';binding.pry_remote
-
-
 if executable('pry')
   imap <Leader>pi <ESC>:call PryToggle()<CR>
   nmap <Leader>pi :call PryToggle()<CR>
@@ -904,11 +798,6 @@ if executable('pry')
   iabbr bpry require'pry';binding.pry
   " And pry-remote
   iabbr bpryr require'pry-remote';binding.pry_remote
-
-  " Add the pry debug line with \bp (or <Space>bp, if you did: map <Space> <Leader> )
-  " map <Leader>bp orequire'pry';binding.pry<esc>:w<cr>
-  " Alias for one-handed operation:
-  " map <Leader><Leader>p <Leader>bp
 
   " Keep pry from annoyingly hanging around when using, e.g. pry-rescue/minitest
   map <f3> :wa<cr>:call system('kill-pry-rescue')<cr>
@@ -931,7 +820,7 @@ autocmd FileType * let b:easytags_auto_highlight = 0
 " let b:easytags_auto_highlight = 0
 
 " TODO
-" use _ as 2nd leader to prefixing commands
+" use - as 2nd leader to prefixing commands
 map - <Leader><Leader>
 
 " Proper linewrap behavior
@@ -1017,7 +906,6 @@ endfunction
 nnoremap <leader>h <Esc>:call ToggleHardMode()<CR>
 
 map <leader>q :q
-command Rake :!rake
 
 " let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsExpandTrigger="<c-j>"
@@ -1042,26 +930,11 @@ nnoremap <leader>ee :!iex -r % -S mix<CR>
 " So as to not conflict with multi-cursors
 " let g:NumberToggleTrigger="<F5>"
 
-" HACK: to reset multi-cursor mappings to default b/c of numbertoggle
-" TODO: not working
-" overwriting them
-"" Default mapping
-" let g:multi_cursor_use_default_mapping=0
-" let g:multi_cursor_next_key='<C-m>'
-" let g:multi_cursor_prev_key='<C-p>'
-" let g:multi_cursor_skip_key='<C-x>'
-" let g:multi_cursor_quit_key='<Esc>'
-
-" Coffeescript
-nnoremap <leader>cr :w\|:CoffeeRun<cr>
-
 " project specific vimrcs
 " ie in root of project have a .vimrc
 set exrc
 set secure
 
-" Commit_massage
-nnoremap <leader>com :normal gg<cr>:r!commit_message<cr>:normal ggddA<cr>
 " Pipe request to waiting window on test-commands.sh loop
 "o:w\|:silent !echo "bundle exec m -l 92 spec/routes/routes_spec.rb" > test-commands
 ":nnoremap <leader>ra :w\|:silent !echo "bundle exec m -l 92 %" > test-commands<CR>
@@ -1244,9 +1117,6 @@ nnoremap <C-left> :vertical resize +3<cr>
 nnoremap <C-down> :resize +3<cr>
 nnoremap <C-up> :resize -3<cr>
 nnoremap <C-right> :vertical resize -3<cr>"
-
-nnoremap <leader>rs :rubydo $_.gsub! %r{
-vnoremap <leader>rs :rubydo $_.gsub! %r{
 
 " Close quickfix pane from any other pane
 nnoremap <leader>cc :cclose
