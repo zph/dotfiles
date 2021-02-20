@@ -65,6 +65,8 @@ end
 if test -x (command -v mmake)
   alias make='mmake'
 end
+
+alias vim='nvim'
 # __bash_to_fish
 # if ! string split ',' (functions) | grep __bash_to_fish
 #   aliases_bash_to_fish "$HOME/.zsh.d" | source
