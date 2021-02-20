@@ -57,7 +57,7 @@ install_osx_packages(){
   (
     cd "$DOTFILES/home" || exit 1
     for link in "${TO_LINK[@]}"; do
-      ln -si "$DOTFILES/$link" "$HOME/$link"
+      ln -fsi "$DOTFILES/$link" "$HOME/$link"
     done
   )
 
