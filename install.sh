@@ -15,7 +15,7 @@ OS="$(uname -a | awk '{print tolower($1)}')"
 install_gifwit(){
   # No longer on app store and dev was non-responsive when I emailed :(.
   # Happy to replace this with official mechanism.
-  APPS=(http://data.xargs.io/gifwit.tgz https://blog.timac.org/2018/0719-vpnstatus/VPNStatus.app.zip)
+  APPS=(https://data.xargs.io/gifwit.tgz)
   for app in "${APPS[@]}";do
     tmpdir="$(mktemp -d)"
     remove_temp() {
@@ -57,7 +57,7 @@ install_osx_packages(){
   (
     cd "$DOTFILES/home" || exit 1
     for link in "${TO_LINK[@]}"; do
-      ln -fsi "$DOTFILES/$link" "$HOME/$link"
+      ln -fs "$DOTFILES/$link" "$HOME/$link"
     done
   )
 
@@ -76,16 +76,6 @@ main() {
   if [[ ! -d "${DOTFILES}" ]];then
     git clone "${REPO}" "${DOTFILES}"
   fi
-
-  wget --content-disposition https://bin.suyash.io/zph/kit -O ~/bin_local/kit && \
-    chmod +x ~/bin_local/kit
-
-  BINARY_INSTALLS=(sharkdp/bat github/hub stedolan/jq)
-
-# TODO: Requires wget and kit
-#  for b in "${BINARY_INSTALLS[@]}"; do
-#    "$HOME/bin_local/kit" --install "$b" --output "$HOME/bin_local"
-#  done
 
   if [[ ! -d "$HOME/.homesick/repos/homeshick" ]];then
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
