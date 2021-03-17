@@ -49,36 +49,38 @@ setup_opt_using_stow(){
 }
 
 install_osx_packages(){
-  TO_LINK=(Library/KeyBindings/DefaultKeyBinding.dict \
-           .config/brewfile \
-           .config/karabiner \
-           )
+  # TODO: Experimental exclusion to see if I need to still manually symlink
+  # these.
+  # TO_LINK=(Library/KeyBindings/DefaultKeyBinding.dict \
+  #          .config/brewfile \
+  #          .config/karabiner \
+  #          )
 
-  (
-    cd "$DOTFILES/home" || exit 1
-    for link in "${TO_LINK[@]}"; do
-      ln -fs "$DOTFILES/$link" "$HOME/$link"
-    done
-  )
+  # (
+  #   cd "$DOTFILES/home" || exit 1
+  #   for link in "${TO_LINK[@]}"; do
+  #     ln -fs "$DOTFILES/$link" "$HOME/$link"
+  #   done
+  # )
 
   if [[ ! -x "$(command -v brew)" ]];then
     /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 
   brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
-  install_gifwit
+  # install_gifwit
   sudo "${DOTFILES}/home/.config/tmutil/setup-exclusions"
   # Install Tmux Package Manager
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 
 main() {
-  if [[ ! -d "${DOTFILES}" ]];then
-    git clone "${REPO}" "${DOTFILES}"
-  fi
-
   if [[ ! -d "$HOME/.homesick/repos/homeshick" ]];then
     git clone git://github.com/andsens/homeshick.git "$HOME/.homesick/repos/homeshick"
+  fi
+
+  if [[ ! -d "${DOTFILES}" ]];then
+    git clone "${REPO}" "${DOTFILES}"
   fi
 
   $HOMESICK link "dotfiles"
