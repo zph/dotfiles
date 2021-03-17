@@ -48,8 +48,6 @@ $HOME/bin/sack init_fish | source
 direnv hook fish | source
 
 # Requires chruby-fish from brew
-# source /usr/local/opt/chruby/share/chruby/chruby.fish
-# source /usr/local/opt/chruby/share/chruby/auto.fish
 source  /usr/local/opt/chruby-fish/share/chruby/chruby.fish
 source  /usr/local/opt/chruby-fish/share/chruby/auto.fish
 # Ruby

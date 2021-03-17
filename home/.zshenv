@@ -1,1 +1,2 @@
 
+source "$HOME/.cargo/env"

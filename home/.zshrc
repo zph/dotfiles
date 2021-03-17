@@ -455,8 +455,8 @@ zph/sanitize_path(){
   # Use canonical path. Darwin version of command lacks the comparable flag
   # and I tend to have gnu tools availble by default.
   local platform="$(uname -a | awk '{print tolower($1)}')"
-  if [[ "$platform" == "darwin" ]];then
-    reader="greadlink"
+  if [[ "$platform" == "darwin" ]] && [[ -x "$(command -v $HOME/bin/readlinkf)" ]];then
+    reader="$HOME/bin/readlinkf"
   else
     reader="readlink"
   fi
