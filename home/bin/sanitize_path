@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+# EXAMPLE = "/Users/zph/bin_local:/Users/zph/bin:/usr/local/opt/curl/bin:/Users/zph/Library/Python/2.7/bin:/usr/local/bin/npm:/usr/local/share/npm/bin:/usr/local/opt/mongodb@3.2/bin:/Users/zph/go/bin:/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/zph/.cargo/bin:/usr/ucb:/Users/zph/bin/shell:/Users/zph/bin/linux:/usr/local/opt/go/libexec/bin:"
+
+list = ARGV[0].split(":").compact.map do |p|
+  File.expand_path(p)
+end
+
+output = []
+list.each do |e|
+  if output.include?(e)
+    next
+  else
+    output << e
+  end
+end
+
+print output.join(":").squeeze(":")
