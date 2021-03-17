@@ -451,18 +451,9 @@ zph/remove_blank_path_entries(){
 zph/sanitize_path(){
   # Remove duplicates and expand to absolute path, resolving symlinks for better dedup.
   # The first instance of a path is treated as the rightful ultimate position in PATH array
-  # DEDUP PATH credit: https://unix.stackexchange.com/a/325729
-  # Use canonical path. Darwin version of command lacks the comparable flag
-  # and I tend to have gnu tools availble by default.
-  local platform="$(uname -a | awk '{print tolower($1)}')"
-  if [[ "$platform" == "darwin" ]] && [[ -x "$(command -v $HOME/bin/readlinkf)" ]];then
-    reader="$HOME/bin/readlinkf"
-  else
-    reader="readlink"
-  fi
-  # Use full canonical paths and remove colon from trailing location.
-  export PATH="$(echo "$PATH" | tr ":" "\n" | xargs -I {} $reader -f {} | tr "\n" ":" | sed 's/:$//g')"
-  export PATH=$(zsh -fc "typeset -TU P=$PATH p; echo \$P")
+  # Due to compatibility issues with readlink (gnu and bsd) this is now a
+  # simple ruby script. If portability becomes an issue I'll rewrite it to python or perl.
+  export PATH="$(sanitize_path "$PATH")"
 }
 
 _set_zsh_hooks(){
