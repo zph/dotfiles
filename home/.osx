@@ -1,5 +1,8 @@
+#!/usr/bin/env bash
+set -x
 # ~/.osx — http://mths.be/osx
 
+echo "Setting OSX Settings with Sudo prompt>"
 ###############################################################################
 # Try to disable startup sound                                                #
 ###############################################################################

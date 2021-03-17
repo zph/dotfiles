@@ -72,6 +72,7 @@ install_osx_packages(){
   sudo "${DOTFILES}/home/.config/tmutil/setup-exclusions"
   # Install Tmux Package Manager
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  sudo bash "${DOTFILES}/home/.osx"
 }
 
 main() {
