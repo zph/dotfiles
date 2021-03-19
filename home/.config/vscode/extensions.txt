@@ -1,0 +1,13 @@
+asvetliakov.vscode-neovim
+bceskavich.theme-dracula-at-night
+eamodio.gitlens
+lunaryorn.fish-ide
+ms-azuretools.vscode-docker
+ms-python.python
+ms-toolsai.jupyter
+ms-vscode-remote.remote-containers
+ms-vscode.Theme-TomorrowKit
+rust-lang.rust
+sdras.night-owl
+skyapps.fish-vscode
+svsool.markdown-memo

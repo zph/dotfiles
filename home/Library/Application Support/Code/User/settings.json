@@ -1,0 +1,7 @@
+{
+    "workbench.colorTheme": "Tomorrow Night Bright",
+    "vscode-neovim.neovimExecutablePaths.darwin": "/usr/local/bin/nvim",
+    "window.zoomLevel": 1,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true
+}
