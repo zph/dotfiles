@@ -421,6 +421,13 @@ defaults write ~/Library/Preferences/us.zoom.config.plist ZDisableVideo 1
 # For all users on the machine
 sudo defaults write /Library/Preferences/us.zoom.config.plist ZDisableVideo 1
 
+# Disable accent hold characters
+defaults write -g ApplePressAndHoldEnabled -bool false
+
+# Disable sounds
+defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
+
+
 for app in Finder Dock Mail Safari iTunes iCal Address\ Book SystemUIServer Twitter; do
 	killall "$app" > /dev/null 2>&1
 done
