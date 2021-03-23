@@ -32,8 +32,8 @@
         {
             "text": "TODO",
             "color": "red",
-            "border": "1px solid red",
-            "borderRadius": "2px", //NOTE: using borderRadius along with `border` or you will see nothing change
+            //"border": "1px solid red",
+            //"borderRadius": "2px", //NOTE: using borderRadius along with `border` or you will see nothing change
             "backgroundColor": "rgba(0,0,0,.2)",
             //other styling properties goes here ...
         }
@@ -49,5 +49,25 @@
         "**/*.css",
         "**/*.scss",
         "**/*.md"
-    ]
+    ],
+    "highlight.regexFlags": "g",
+    "highlight.maxMatches": 250, // Maximum number of matches to decorate per regex, in order not to crash the app with accidental cathastropic regexes
+    "highlight.decorations": { "rangeBehavior": 1 },
+    "highlight.regexes": {
+        "(#[\\w]+)": [
+            {
+              "color": "#4495d4",
+              "filterLanguageRegex": "markdown",
+            },
+          ],
+          "(@\\w+)": [
+            {
+              "color": "#4de0ff",
+              "filterLanguageRegex": "markdown",
+            }
+          ]
+    },
+    "window.zoomLevel": 1,
+    "markdown.extension.tableFormatter.normalizeIndentation": true,
+    "editor.tabSize": 2,
 }
