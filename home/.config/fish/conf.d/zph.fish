@@ -10,9 +10,12 @@ function update_zsh_vars
   zsh -c 'source ~/.zshrc && env > ~/.zsh_env'
 end
 
-# if not -f $HOME/.zsh_env
-#   update_zsh_vars
-# end
+# Disable fish greeting
+set fish_greeting
+
+if test ! -f $HOME/.zsh_env
+  update_zsh_vars
+end
 
 set ENVVARS EDITOR
 set MANPATH ""
@@ -35,6 +38,7 @@ set PAGER /usr/local/bin/bat
 set EDITOR "/usr/local/bin/nvim"
 alias vim $EDITOR
 alias gs 'git status -s'
+zoxide init fish | source
 alias wk 'cd ~/src/worktree'
 alias dc 'docker-compose'
 
