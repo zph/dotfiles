@@ -7,8 +7,6 @@
     "telemetry.enableTelemetry": false,
     "editor.minimap.enabled": false,
     "breadcrumbs.enabled": false,
-    "workbench.statusBar.visible": false,
-    "workbench.activityBar.visible": false,
     "todohighlight.keywords": [
         "DEBUG",
         "REVIEW",
@@ -16,6 +14,12 @@
             "text": "DEFER",
             "color": "#006600",
             "backgroundColor": "#00ff00",
+            "overviewRulerColor": "grey"
+        },
+        {
+            "text": "DONE",
+            "color": "#008000",
+            "backgroundColor": "rgba(0,0,0,.2)",
             "overviewRulerColor": "grey"
         },
         {
@@ -27,7 +31,7 @@
         {
             "text": "HACK",
             "color": "#000",
-            "isWholeLine": false,
+            "isWholeLine": false
         },
         {
             "text": "TODO",
@@ -52,15 +56,18 @@
     ],
     "highlight.regexFlags": "g",
     "highlight.maxMatches": 250, // Maximum number of matches to decorate per regex, in order not to crash the app with accidental cathastropic regexes
-    "highlight.decorations": { "rangeBehavior": 1 },
+    "highlight.decorations": {
+
+
+       "rangeBehavior": 1 },
     "highlight.regexes": {
-        "(#[\\w]+)": [
+        "(#[-:\\w]+)": [
             {
               "color": "#4495d4",
               "filterLanguageRegex": "markdown",
             },
           ],
-          "(@\\w+)": [
+          "(@[-:\\w]+)": [
             {
               "color": "#4de0ff",
               "filterLanguageRegex": "markdown",
@@ -78,4 +85,7 @@
     "foam.openDailyNote.onStartup": true,
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false
+    "workbench.statusBar.visible": false,
+    "window.zoomLevel": 1,
+    "go.toolsManagement.autoUpdate": true,
 }

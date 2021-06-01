@@ -66,9 +66,9 @@ function run_bundler_cmd
   end
 end
 
-if test -x (command -v mmake)
-  alias make='mmake'
-end
+# if test -x (command -v mmake)
+#   alias make='mmake'
+# end
 
 alias vim='nvim'
 # __bash_to_fish

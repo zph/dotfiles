@@ -77,6 +77,12 @@ install_osx_packages(){
   # Install Tmux Package Manager
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   sudo bash "${DOTFILES}/home/.osx"
+
+  if [[ ! -x "$(command -v asdf)" ]];then
+    # Setup ASDF Plugins
+    asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+    asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git
+  fi
 }
 
 main() {

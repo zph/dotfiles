@@ -1,11 +1,4 @@
 # Much of the customization in this Config originated from Gary Bernhardt and other sources.
-[include]
-  # Include is used to load private configurations
-  path = "~/.config/git/config.local"
-  # Content
-  # [github]
-  #   token = <TOKEN>
-  #   oauth-token = <TOKEN>
 [user]
   name = Zander Hill
   email = zander@xargs.io
@@ -229,3 +222,10 @@
   insteadOf = git@github.com:
 [url "https://api@github.com/"]
   insteadOf = https://github.com/
+[include]
+  # Include is used to load private configurations
+  path = "~/.config/git/config.local"
+  # Content
+  # [github]
+  #   token = <TOKEN>
+  #   oauth-token = <TOKEN>

@@ -199,8 +199,9 @@ else
   Plug 'fatih/vim-go'
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
-
   Plug 'LnL7/vim-nix'
+
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
   call plug#end()
 

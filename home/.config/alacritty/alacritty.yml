@@ -280,6 +280,8 @@ live_config_reload: true
 shell:
   program: /usr/local/bin/fish
   # args:
+  #   - "tmux"
+  # args:
   #   - --login
 
 # Key bindings
