@@ -67,7 +67,15 @@
             }
           ]
     },
-    "window.zoomLevel": 1,
     "markdown.extension.tableFormatter.normalizeIndentation": true,
     "editor.tabSize": 2,
+    "window.zoomLevel": 1,
+    "foam.decorations.links.enable": true,
+    "foam.openDailyNote.filenameFormat": "isoDate",
+    "foam.openDailyNote.directory": "journal", // a relative directory path will get appended to the workspace root. An absolute directory path will be used unmodified.
+    "foam.openDailyNote.fileExtension": "md",
+    "foam.openDailyNote.titleFormat": "yyyy-mm-dd",
+    "foam.openDailyNote.onStartup": true,
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false
 }
