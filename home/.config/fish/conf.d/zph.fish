@@ -36,6 +36,7 @@ set PATH $HOME/.cargo/bin $PATH
 set PAGER /usr/local/bin/bat
 
 set EDITOR "/usr/local/bin/nvim"
+set HOMEBREW_NO_AUTO_UPDATE 1
 alias vim $EDITOR
 alias gs 'git status -s'
 zoxide init fish | source
