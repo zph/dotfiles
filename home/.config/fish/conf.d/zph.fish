@@ -83,4 +83,5 @@ alias vim='nvim'
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 source (brew --prefix asdf)/asdf.fish
 
+set SSH_AUTH_SOCK "~/.1password/agent.sock"
 starship init fish | source
