@@ -2,6 +2,7 @@ tags
 home/.config/hub
 home/.vim/.netrwhist
 config/
+!Library/Preferences/espanso/config/
 var/
 
 home/.tmux.conf.osx
