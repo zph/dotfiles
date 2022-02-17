@@ -2,16 +2,7 @@
 # Original file: default.yml
 
 matches:
-  - trigger: ":espanso"
-    replace: Hi there!
   - trigger: ":date"
-    replace: "{{mydate}}"
-    vars:
-      - name: mydate
-        type: date
-        params:
-          format: "%m/%d/%Y"
-  - trigger: ":ds"
     replace: "{{mydate}}"
     vars:
       - name: mydate
