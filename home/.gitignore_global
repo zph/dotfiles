@@ -85,7 +85,7 @@ node_modules/
 .tool-versions
 
 # For Python pre-commit
-.pre-commit-config.yaml
+# .pre-commit-config.yaml
 .vscode/
 
 .binstubs/
