@@ -7,7 +7,8 @@ shopt -s extdebug
 REPOS="$HOME/.homesick/repos"
 DOTFILES="$REPOS/dotfiles"
 HOMESICK="$REPOS/homeshick/bin/homeshick"
-REPO="git@github.com:zph/zph.git"
+# Use the https version to avoid needing git key at install stage
+REPO="https://github.com/zph/zph.git"
 OPT_FOLDER="$DOTFILES/home/opt"
 
 OS="$(uname -a | awk '{print tolower($1)}')"
