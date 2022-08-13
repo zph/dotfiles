@@ -65,7 +65,7 @@ install_osx_packages(){
   # )
 
   if [[ ! -x "$(command -v brew)" ]];then
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
   brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
