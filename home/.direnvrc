@@ -1,3 +1,12 @@
+# Crude workaround due to hermit not having fish support
+# Use as `layout hermit` in .envrc files
+layout_hermit() {
+  ./bin/hermit env > .hermit_env
+  set -o allexport
+  source .hermit_env && rm ./.hermit_env
+  set +o allexport
+}
+
 add_extra_vimrc() {
   local extravim="$(find_up .vimrc)"
   echo "Extra vim: $extravim"
