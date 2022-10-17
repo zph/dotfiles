@@ -218,8 +218,8 @@
 # Relys on setting GIT_ASKPASS ENV variable
 [url "https://ssh@github.com/"]
   insteadOf = ssh://git@github.com/
-[url "https://git@github.com/"]
-  insteadOf = git@github.com:
+; [url "https://git@github.com/"]
+;   insteadOf = git@github.com:
 [url "https://api@github.com/"]
   insteadOf = https://github.com/
 [include]
@@ -229,3 +229,5 @@
   # [github]
   #   token = <TOKEN>
   #   oauth-token = <TOKEN>
+[includeif "gitdir:~/src/work"]
+  path = ~/.gitconfig-work
