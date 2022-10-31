@@ -4,7 +4,7 @@
 set -eou pipefail
 set -x
 
-readonly GS_BIN="/usr/local/bin/gs"
+readonly GS_BIN="${GS_BIN:-/usr/local/bin/gs}"
 
 if [[ ! -d "output" ]];then
   mkdir "./output"
