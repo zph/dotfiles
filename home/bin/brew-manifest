@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -x
+
+nvim "$HOME/.config/brewfile/Brewfile"

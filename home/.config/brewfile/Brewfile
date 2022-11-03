@@ -13,6 +13,9 @@ TAPS = %w[
   rcmdnk/file
 ]
 
+brew 'sqlite', link: true
+brew 'curl', link: true
+
 BREWS = %w[
   antigen
   asdf
@@ -87,39 +90,42 @@ BREWS = %w[
 ]
 
 CASKS = %w[
-  zph/zph/datagrip
-  zph/zph/dash
-  alfred
-  dash
   1password
   1password-cli
   alacritty
+  alfred
+  around
   aws-vault
   bartender
   ccmenu
+  dash
+  docker
+  dropbox
+  espanso
   fantastical
   font-fira-code
   git-credential-manager-core
-  rectangle
-  the-unarchiver
-  vlc
-  espanso
-  keybase
-  telegram
+  google-chrome
   karabiner-elements
+  keybase
   raindropio
+  rectangle
+  telegram
+  the-unarchiver
   visual-studio-code
+  vlc
+  zph/zph/dash
+  zph/zph/datagrip
 ]
 
 MAS = [
-  ["1Password for Safari", 1569813296],
   ["GrandPerspective", 1111570163],
   ["iA Writer", 775737590],
   ["Keynote", 409183694],
   ["Kindle", 405399194],
   ["Numbers", 409203825],
   ["Pages", 409201541],
-  ["Pixelmator", 407963104],
+  # ["Pixelmator", 407963104],
   ["rcmd", 1596283165],
   ["Slack", 803453959],
   ["YubiKey Personalization Tool", 638161122],
@@ -128,6 +134,4 @@ MAS = [
 TAPS.each { |c| tap c }
 CASKS.each { |c| cask c }
 BREWS.each { |c| brew c }
-brew "sqlite", link: true
-brew "curl", link: true
-MAS.each {|c| mas c.first, id: c[1] }
+MAS.each {|name, id| mas name, id: id }
