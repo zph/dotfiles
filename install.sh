@@ -80,8 +80,11 @@ install_osx_packages(){
 
   if [[ ! -x "$(command -v asdf)" ]];then
     # Setup ASDF Plugins
+    asdf plugin-add python
+    asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
     asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
     asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git
+    asdf plugin-add haskell https://github.com/vic/asdf-haskell.git
   fi
 }
 
