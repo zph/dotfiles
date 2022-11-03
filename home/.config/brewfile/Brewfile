@@ -1,115 +1,133 @@
-tap "zph/zph"
-tap "cirruslabs/cli"
-tap "earthly/earthly"
-tap "espanso/espanso"
-tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/cask-fonts"
-tap "homebrew/core"
-tap "homebrew/services"
-tap "microsoft/git"
-tap "neovim/neovim"
-tap "rcmdnk/file"
-brew "antigen"
-brew "asdf"
-brew "aspell"
+TAPS = %w[
+  zph/zph
+  cirruslabs/cli
+  earthly/earthly
+  espanso/espanso
+  homebrew/bundle
+  homebrew/cask
+  homebrew/cask-fonts
+  homebrew/core
+  homebrew/services
+  microsoft/git
+  neovim/neovim
+  rcmdnk/file
+]
+
+BREWS = %w[
+  antigen
+  asdf
+  aspell
+  python@3.10
+  awscli
+  bash
+  bat
+  cabal-install
+  pkg-config
+  cask
+  chamber
+  cmake
+  colordiff
+  ctags
+  zstd
+  dhall
+  dhall-json
+  diff-so-fancy
+  direnv
+  dos2unix
+  esbuild
+  fasd
+  ffind
+  fish
+  fzf
+  gh
+  git
+  git-extras
+  gnupg
+  go
+  goreleaser
+  hadolint
+  htop
+  httpie
+  hub
+  hugo
+  jpeg
+  jq
+  just
+  ldns
+  libfido2
+  libssh
+  libxml2
+  mas
+  mosh
+  neovim
+  openssh
+  openssl@3
+  pwgen
+  reattach-to-user-namespace
+  ripgrep
+  rlwrap
+  rsync
+  shellcheck
+  shfmt
+  ssh-copy-id
+  starship
+  stow
+  terraform
+  tmux
+  watch
+  watchexec
+  wdiff
+  wget
+  yarn
+  zoxide
+  zsh
+  cirruslabs/cli/tart
+  earthly/earthly/earthly
+  go-swagger/go-swagger/go-swagger
+]
+
+CASKS = %w[
+  zph/zph/datagrip
+  zph/zph/dash
+  alfred
+  dash
+  1password
+  1password-cli
+  alacritty
+  aws-vault
+  bartender
+  ccmenu
+  fantastical
+  font-fira-code
+  git-credential-manager-core
+  rectangle
+  the-unarchiver
+  vlc
+  espanso
+  keybase
+  telegram
+  karabiner-elements
+  raindropio
+  visual-studio-code
+]
+
+MAS = [
+  ["1Password for Safari", 1569813296],
+  ["GrandPerspective", 1111570163],
+  ["iA Writer", 775737590],
+  ["Keynote", 409183694],
+  ["Kindle", 405399194],
+  ["Numbers", 409203825],
+  ["Pages", 409201541],
+  ["Pixelmator", 407963104],
+  ["rcmd", 1596283165],
+  ["Slack", 803453959],
+  ["YubiKey Personalization Tool", 638161122],
+]
+
+TAPS.each { |c| tap c }
+CASKS.each { |c| cask c }
+BREWS.each { |c| brew c }
 brew "sqlite", link: true
-brew "python@3.10"
-brew "awscli"
-brew "bash"
-brew "bat"
-brew "cabal-install"
-brew "pkg-config"
-brew "cask"
-brew "chamber"
-brew "cmake"
-brew "colordiff"
-brew "ctags"
-brew "zstd"
 brew "curl", link: true
-brew "dhall"
-brew "dhall-json"
-brew "diff-so-fancy"
-brew "direnv"
-brew "dos2unix"
-brew "esbuild"
-brew "fasd"
-brew "ffind"
-brew "fish"
-brew "fzf"
-brew "gh"
-brew "git"
-brew "git-extras"
-brew "gnupg"
-brew "go"
-brew "goreleaser"
-brew "hadolint"
-brew "htop"
-brew "httpie"
-brew "hub"
-brew "hugo"
-brew "jpeg"
-brew "jq"
-brew "just"
-brew "ldns"
-brew "libfido2"
-brew "libssh"
-brew "libxml2"
-brew "mas"
-brew "mosh"
-brew "neovim"
-brew "openssh"
-brew "openssl@3"
-brew "pwgen"
-brew "reattach-to-user-namespace"
-brew "ripgrep"
-brew "rlwrap"
-brew "rsync"
-brew "shellcheck"
-brew "shfmt"
-brew "ssh-copy-id"
-brew "starship"
-brew "stow"
-brew "terraform"
-brew "tmux"
-brew "watch"
-brew "watchexec"
-brew "wdiff"
-brew "wget"
-brew "yarn"
-brew "zoxide"
-brew "zsh"
-brew "cirruslabs/cli/tart"
-brew "earthly/earthly/earthly"
-brew "go-swagger/go-swagger/go-swagger"
-cask "zph/zph/datagrip"
-cask "alfred"
-cask "dash"
-cask "1password"
-cask "1password-cli"
-cask "alacritty"
-cask "aws-vault"
-cask "bartender"
-cask "ccmenu"
-cask "fantastical"
-cask "font-fira-code"
-cask "git-credential-manager-core"
-cask "rectangle"
-cask "the-unarchiver"
-cask "vlc"
-cask "espanso"
-cask "keybase"
-cask "telegram"
-cask "karabiner-elements"
-cask "raindropio"
-mas "1Password for Safari", id: 1569813296
-mas "GrandPerspective", id: 1111570163
-mas "iA Writer", id: 775737590
-mas "Keynote", id: 409183694
-mas "Kindle", id: 405399194
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
-mas "Pixelmator", id: 407963104
-mas "rcmd", id: 1596283165
-mas "Slack", id: 803453959
-mas "YubiKey Personalization Tool", id: 638161122
+MAS.each {|c| mas c.first, id: c[1] }
