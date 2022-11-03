@@ -86,6 +86,16 @@ defaults write NSGlobalDomain AppleEnableSwipeNavigateWithScrolls -bool true
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.threeFingerHorizSwipeGesture -int 1
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerHorizSwipeGesture -int 1
 
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerDrag -int 1
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerHorizSwipeGesture -int 0
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerTapGesture -int 0
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerVertSwipeGesture -int 0
+
+defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerDrag -int 1
+defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerHorizSwipeGesture -int 1
+defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerTapGesture -int 0
+defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerVertSwipeGesture -int 0
+
 # Disable “natural” (Lion-style) scrolling
 # defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
@@ -100,7 +110,7 @@ defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
-defaults write -g InitialKeyRepeat -int 11 # normal minimum is 15 (225 ms)
+defaults write -g InitialKeyRepeat -int 14 # normal minimum is 15 (225 ms)
 defaults write -g KeyRepeat -int 3 # normal minimum is 2 (30 ms)
 # defaults write NSGlobalDomain KeyRepeat -int 0
 
@@ -426,6 +436,9 @@ defaults write -g ApplePressAndHoldEnabled -bool false
 
 # Disable sounds
 defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
+
+# Ensure vscode with neovim allows repeating keys when held
+defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false
 
 
 for app in Finder Dock Mail Safari iTunes iCal Address\ Book SystemUIServer Twitter; do
