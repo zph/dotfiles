@@ -61,18 +61,10 @@ brew "neovim"
 brew "openssh"
 brew "openssl@3"
 brew "pwgen"
-# Use asdf
-# brew "pyenv"
-# brew "pyenv-virtualenv"
 brew "reattach-to-user-namespace"
 brew "ripgrep"
 brew "rlwrap"
 brew "rsync"
-# TODO use asdf
-# brew "ruby"
-# brew "ruby-build"
-# brew "ruby-install", args: ["HEAD"]
-# brew "ruby@3.0"
 brew "shellcheck"
 brew "shfmt"
 brew "ssh-copy-id"
@@ -108,6 +100,8 @@ cask "vlc"
 cask "espanso"
 cask "keybase"
 cask "telegram"
+cask "karabiner-elements"
+cask "raindropio"
 mas "1Password for Safari", id: 1569813296
 mas "GrandPerspective", id: 1111570163
 mas "iA Writer", id: 775737590
