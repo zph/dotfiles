@@ -71,14 +71,13 @@ install_osx_packages(){
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
 
-  brew bundle --file="${DOTFILES}/home/.config/brewfile/Brewfile"
-  # install_gifwit
+  ~/bin/brew-apply
   sudo "${DOTFILES}/home/.config/tmutil/setup-exclusions"
   # Install Tmux Package Manager
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   sudo bash "${DOTFILES}/home/.osx"
 
-  if [[ ! -x "$(command -v asdf)" ]];then
+  if [[ -x "$(command -v asdf)" ]];then
     # Setup ASDF Plugins
     asdf plugin-add python
     asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git

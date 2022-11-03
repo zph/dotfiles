@@ -19,7 +19,6 @@ EXCLUSIONS=(
   ~/Library/Caches
   ~/Library/Containers/com.docker.docker/Data/vms
   ~/Library/Logs
-  ~/src
   ~/tmp
   ~/"VirtualBox VMs"
 )
