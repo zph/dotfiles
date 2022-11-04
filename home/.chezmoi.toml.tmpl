@@ -1,0 +1,8 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $is_work := promptStringOnce . "is_work" "Is this a work laptop? [true|false]" -}}
+{{- $github_username := promptStringOnce . "github_username" "Github Username" -}}
+
+[data]
+    email = {{ $email | quote }}
+    is_work = {{ $is_work | quote }}
+    github_username = {{ $github_username | quote }}
