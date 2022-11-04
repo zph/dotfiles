@@ -1,10 +1,9 @@
 # Much of the customization in this Config originated from Gary Bernhardt and other sources.
+# Setting up Github PAT: https://www.learnhowtoprogram.com/introduction-to-programming/getting-started-with-intro-to-programming/creating-and-using-a-git-pat
 [user]
   name = Zander Hill
   email = zander@xargs.io
   signingkey = 6CBA19142E2EBACB
-[commit]
-#  gpgSign = true
 [color]
   ui = true
 [alias]
@@ -218,8 +217,9 @@
 # Relys on setting GIT_ASKPASS ENV variable
 [url "https://ssh@github.com/"]
   insteadOf = ssh://git@github.com/
-; [url "https://git@github.com/"]
-;   insteadOf = git@github.com:
+# Disable the git->https to flip back to keys not PAT
+[url "https://git@github.com/"]
+  insteadOf = git@github.com:
 [url "https://api@github.com/"]
   insteadOf = https://github.com/
 [include]
