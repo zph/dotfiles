@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# git branch --merged dev | grep -v -E '^\s*(\*\s)?(dev|qa)$' | xargs git branch -d
+
+git branch --merged | grep -v -E '^\s*(\*\s)?(dev|qa|release|master)$' | xargs git branch -d

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+readonly FILE="$1"
+readonly DUMP_FILE="/tmp/${FILE}.dbbackup.sql"
+# Drop to .sql file
+sqlite3 "$FILE" '.dump' > "$DUMP_FILE"
+# Import from .sql file
+sqlite3 "${FILE}.refresh" < "$DUMP_FILE"

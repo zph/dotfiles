@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Credit: https://vauxmaker.wordpress.com/2020/07/11/how-to-flatten-the-history-of-a-git-repository-safely/
+
+set -eou pipefail
+set -x
+readonly BRANCH="${BRANCH:-main}"
+
+git checkout --orphan "future-${BRANCH}"
+git add -A # Add all files and commit them
+git commit
+git branch -D ${BRANCH} # Deletes $BRANCH
+git branch -m ${BRANCH} # Rename the current branch to $BRANCH
+git push -f origin ${BRANCH} # Force push $BRANCH to remote

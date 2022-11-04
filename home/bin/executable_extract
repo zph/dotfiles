@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Credit: https://raw.githubusercontent.com/jamescategory/extract/master/extract
+#
+# extract
+#
+# Here's a good extracter for compressed files like tar.gz, tar.xz, rar, zip, 7z, etc.
+
+set -x
+set -eou pipefail
+
+# check whether programs like unrar, 7z, etc are installed
+function is_installed {
+  local program="$1"
+  if ! command -v "$program"; then
+    (>&2 echo "$1 is required to extract this file but $1 is not installed. Abort.")
+    exit 1
+  fi
+}
+
+check_filetype_from_stdin(){
+  file - < /dev/stdin | awk -F ": " '{print $2}' | awk '{print $1}'
+}
+
+extract_using_stdin(){
+  local filetype="$(check_filetype_from_stdin)"
+  case "$filetype"  in
+    gzip)
+      is_installed "tar" && tar xvf "-"
+      ;;
+    bzip2) is_installed "bunzip2" && bunzip2 "-" ;;
+    # *.gz  ) is_installed "gunzip"  && gunzip  "${FILENAME}"  ;;
+    bzip2)
+      is_installed "tar" && tar xvf "-"
+
+  esac
+}
+
+extract_using_filename(){
+  FILENAME="$1"
+
+  #extract files
+  case "${FILENAME}" in
+    *.tar.gz | *.tar.bz2 | *.tar.xz | *.tar | \
+      *.tar.lzma | *.tgz | *.tbz2 | *.taz | *.tar.Z | \
+      *.tlz | *.tar.lz | *.txz | *.tz2 | \
+      - )
+      is_installed "tar" && tar xvf "${FILENAME}"
+      ;;
+    *.rar ) is_installed "unrar"   && unrar x "${FILENAME}"  ;;
+    *.7z  ) is_installed "7z"      && 7z x "${FILENAME}"  ;;
+    *.bz2 ) is_installed "bunzip2" && bunzip2 "${FILENAME}" ;;
+    *.gz  ) is_installed "gunzip"  && gunzip  "${FILENAME}"  ;;
+    *.zip ) is_installed "unzip"   && unzip "${FILENAME}"  ;;
+    *) echo "extract: unsupported file extension."
+  esac
+}
+
+main(){
+  case $# in
+    0) extract_using_stdin;;
+    1) extract_using_filename "$1";;
+  esac
+}
+
+main "$@"

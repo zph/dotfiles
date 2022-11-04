@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby --disable-gems
+
+class XInput
+  DEVICE = "bcm5974"
+  ENABLED_VALUE = "1"
+  DISABLED_VALUE = "0"
+
+  attr_accessor :output, :device, :hash
+  def initialize(device)
+    @output = `xinput list-props "#{device}"`
+    @device = device
+    @hash = {}
+  end
+
+  def get_status
+    current = state
+    enabled_key = current.keys.grep(/Device Enabled/).first
+    status = current[enabled_key]
+  end
+
+  def state
+    output = `xinput list-props "#{device}"`
+    parsed = output.gsub("\t", '').split("\n").map { |i| i.split(":")}
+    Hash[parsed[1..-1]]
+  end
+
+  def enabled?
+    get_status == ENABLED_VALUE
+  end
+
+  def disabled?
+    get_status == DISABLED_VALUE
+  end
+
+  def disable
+    set_state(DISABLED_VALUE)
+  end
+
+  def enable
+    set_state(ENABLED_VALUE)
+  end
+
+  def set_state(status)
+    `xinput -set-prop "#{device}" "Device Enabled" #{status}`
+  end
+
+  def toggle
+    case
+    when enabled?
+      disable
+    when disabled?
+      enable
+    end
+  end
+
+  def self.toggle(device)
+    xinput = new(device)
+    xinput.toggle
+  end
+
+end
+
+XInput.toggle(XInput::DEVICE)

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Git contributers sorted by actitity
+# View committers to a project, sorted by number of contributions:
+git log --format='%an' | sort | uniq -c | sort -k1 -r

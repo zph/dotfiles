@@ -1,0 +1,116 @@
+# Compiled source #
+# ###################
+*.com
+!*@*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+#
+# # Packages #
+# ############
+# # it's better to unpack these files and commit the raw source
+# # git has its own built in compression methods
+# *.7z
+# *.dmg
+# *.gz
+# *.iso
+# *.jar
+# *.rar
+# *.tar
+# *.zip
+#
+# # Logs and databases #
+# ######################
+# *.log
+# *.sql
+# *.sqlite
+#
+# # OS generated files #
+# ######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+coverage.vim
+# Bundle location
+*/vendor/*
+
+# Backup files from editors
+## Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+## Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Tag files
+doc/tags
+tags
+**/*.envrc
+*.direnv
+.bundle
+.repl_rake.rb
+.my.cnf
+.bin
+.powrc
+.rspec.zph
+*.keep
+
+# git new-workdir
+.workdirs
+
+# For Elixir
+.iex.exs
+.iex_history
+.elixir_ls/
+.agignore
+node_modules/
+~/.config/*
+*secret.exs
+.tool-versions
+
+# For Python pre-commit
+.pre-commit-config.yaml
+.vscode/
+
+.binstubs/
+env.*
+tags
+tags.lock
+tags.temp
+
+# Python
+*.pyc
+
+# Ansible
+*.retry
+
+*.min.js
+tags
+.tags
+.tags.*
+
+# Syncthing tag
+.stfolder
+
+# JetBrains IDEs
+**/.idea/*
+
+# Jenkins
+deploy.log
+.neuron

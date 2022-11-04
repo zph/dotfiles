@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+IFS="\n\t"
+readonly FILE1="$1"
+readonly FILE2="$2"
+
+main(){
+  local val1=$(stat -f '%i' "${FILE1}")
+  local val2=$(stat -f '%i' "${FILE2}")
+  [ $val1 = $val2 ] && echo 'true' || echo 'false'
+}
+
+main

@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+branch_name    = `git rev-parse --abbrev-ref HEAD`.chomp
+DIVIDERS       = %r{[-|_|/|\/]}
+
+parts          = branch_name.match(/(?<initials>.+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+
+INITIALS       = parts[:initials].split(DIVIDERS).join("/").upcase
+PIVOTAL_NUMBER = parts[:number]
+DESCRIPTION    = parts[:description].gsub(/#{DIVIDERS}/, ' ')
+
+commit_message = "[#{INITIALS}] [#{PIVOTAL_NUMBER}] #{ARGF}"
+
+STDOUT << commit_message

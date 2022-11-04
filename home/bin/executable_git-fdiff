@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+git diff --numstat ${1:-HEAD~1} | awk '{print $3}'

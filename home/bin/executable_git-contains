@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Checks remote
+# $2 = sha
+# $1 = branch
+# git pull
+# git remote update --prune
+output=$(git branch --contains "$2" | grep -Ei --colour=auto "$1")
+
+if [[ $? == 0 ]]; then
+  echo "$2 in $1"
+else
+  echo "ERROR: $2 not present in $1"
+  exit 42
+fi

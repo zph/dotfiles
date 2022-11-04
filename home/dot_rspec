@@ -1,0 +1,4 @@
+# /.rspec
+
+--format progress
+--color

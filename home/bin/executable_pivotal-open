@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+story=`git rev-parse --abbrev-ref HEAD | tr -d '\n' | egrep -o '\d{5,}'`
+open "https://www.pivotaltracker.com/story/show/$story"

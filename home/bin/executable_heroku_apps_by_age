@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+assure_prereqs(){
+# Requires JQ
+  local jq_bin=$(which jq)
+  if [[ -z $jq_bin ]];then
+    echo "Requires JQ binary, please install with brew install jq"
+    exit 1
+  fi
+}
+
+app_info(){
+  local app_name=$1
+  json_api "apps/$app_name"
+}
+
+dynos_info(){
+  local app_name=$1
+  json_api "apps/$app_name/dynos"
+}
+
+json_api(){
+  local path=$1
+  curl -s -n -H "Accept: application/vnd.heroku+json; version=3" https://api.heroku.com/$path
+}
+
+main(){
+  assure_prereqs
+  local APPS=$(hk apps | cut -d " " -f 1)
+
+  for app in $APPS
+  do
+    local info_row=$(dynos_info $app | jq '.[0] | .size, .state, .updated_at' | tr '\n' ' ' | tr -d '\"')
+    echo "$app $info_row"
+  done
+}
+
+main

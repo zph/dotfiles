@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+(
+    git fetch --quiet
+    git branch |
+    sed 's/*/ /' |
+    while read branch; do
+        (
+            set +e
+            git show-ref origin/$branch > /dev/null
+            if [[ $? == 1 ]]; then
+                printf "\x1b[38;5;1m$branch\x1b[38;5;m\n";
+            else
+                incoming_count=`git rev-list $branch..origin/$branch | wc -l`
+                outgoing_count=`git rev-list origin/$branch..$branch | wc -l`
+                if [[ $incoming_count == $outgoing_count ]]; then
+                    printf "\x1b[38;5;2m$branch\x1b[38;5;m}$incoming_count incoming}$outgoing_count outgoing\n";
+                else
+                    printf "\x1b[38;5;3m$branch\x1b[38;5;m}$incoming_count incoming}$outgoing_count outgoing\n";
+                fi
+            fi
+        )
+    done |
+    column -s '}' -t
+)

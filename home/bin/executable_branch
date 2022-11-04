@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+initials = `cat ~/.initials`.chomp
+pv = ARGV[0]
+description = ARGV[1..-1].join("_")
+
+exec "git checkout -b #{[initials, pv, description].join('_')}"

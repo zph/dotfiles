@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+
+function get_new_commandlinefu (){
+  curl http://www.commandlinefu.com/commands/random/plaintext -s -L | tail -n3 | head -n2 > ~/.motd
+}
+
+if [[ -f ~/.motd ]]; then
+  get_new_commandlinefu
+else
+  touch ~/.motd
+  get_new_commandlinefu
+fi
+
+cat ~/.motd

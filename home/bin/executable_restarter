@@ -1,0 +1,23 @@
+#!/usr/bin/ruby --disable-gems
+
+require 'net/http'
+
+exit(1) unless ARGV[0]
+
+PREFIX = ENV['COMPANY_PREFIX']
+TOKEN = ENV["#{PREFIX}_SECRET_TOKEN"]
+
+def app_env(application)
+  env_var = [PREFIX, application, "CONTROL_PORT"].join('_')
+  port    = ENV[env_var]
+  "http://0.0.0.0:#{port}/restart?token=#{TOKEN}"
+end
+
+app = ARGV[0].dup.upcase
+
+url = app_env(app)
+
+puts url
+
+uri = URI(url)
+Net::HTTP.get(uri)

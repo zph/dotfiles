@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Credit: https://askubuntu.com/a/256449
+
+set -eou pipefail
+set -x
+
+readonly GS_BIN="${GS_BIN:-/usr/local/bin/gs}"
+
+if [[ ! -d "output" ]];then
+  mkdir "./output"
+fi
+
+for f in "$@";do
+  "$GS_BIN" -sDEVICE=pdfwrite \
+    -dCompatibilityLevel=1.4 \
+    -dPDFSETTINGS=/ebook \
+    -dNOPAUSE -dQUIET -dBATCH \
+    -sOutputFile="output/$(basename "$f" '.pdf')_small.pdf" "$f"
+done

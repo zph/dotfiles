@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# disks-list-serial-numbers
+
+if [ $# -ne 0 ] ; then
+  echo "usage: disks-list-serial-numbers" >&2
+  exit 1
+fi
+
+drives=`ls /dev/ada* | grep ada[0-9]$`
+
+for drive in $drives ; do
+  info=`diskinfo -v $drive`
+  echo $info | awk '{ print $1, $40 }'
+done

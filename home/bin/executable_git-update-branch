@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# git fetch
+# git update-ref -m "merge HEAD: Fast forward" refs/heads/"$1" HEAD
+set -x
+
+REMOTE=${1:-"origin"}
+git fetch $REMOTE
+git rebase $REMOTE/master

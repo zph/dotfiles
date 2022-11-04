@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Simple Twitter backup script
+
+set -eou pipefail
+
+readonly BACKUP_DIR="$HOME/Dropbox/backups/twitter"
+
+function count_tweets(){
+  local tweet_type="$1"
+  echo `wc -l ${tweet_type}-${DAY}.csv | awk '{print $1}'`
+}
+
+function archive(){
+  local cmd="$1"
+  local filename="${2:-$1}"
+  t ${cmd} --csv --number ${COUNT} > ${filename}-${DAY}.csv
+}
+
+function backup(){
+  echo "Backing up tweets..."
+  archive "timeline" "tweets"
+  # t timeline @_zph --csv --number $COUNT > tweets-$DAY.csv
+  echo "Backing up retweets..."
+  archive "retweets"
+  # t retweets --csv --number $COUNT > retweets-$DAY.csv
+  echo "Backing up favorites..."
+  archive "favorites"
+  # t favorites --csv --number $COUNT > favorites-$DAY.csv
+  echo "Backing up DM received..."
+  archive "direct_messages" "dm_received"
+  # t direct_messages --csv --number $COUNT > dm_received-$DAY.csv
+  echo "Backing up DM sent..."
+  archive "direct_messages_sent" "dm_sent"
+  # t direct_messages_sent --csv --number $COUNT > dm_sent-$DAY.csv
+  echo "Backing up followings..."
+  t followings --csv > followings-$DAY.csv
+}
+
+function report(){
+  printf "\nBacked up the following:\n"
+  echo "- $(count_tweets "tweets") tweets"
+  echo "- $(count_tweets "retweets") retweets"
+  echo "- $(count_tweets "favorites") favorites"
+  echo "- $(count_tweets "dm_received") DM received"
+  echo "- $(count_tweets "dm_sent") DM sent"
+  echo "- $(count_tweets "followings") followings"
+
+  echo "Done"
+}
+
+function main(){
+
+  if [[ ! -x `which t` ]];then
+    echo "Install t.gem"
+    exit 1
+  fi
+
+  readonly DAY=`date +'%Y-%m-%d'`
+  readonly COUNT=3000
+
+  backup
+  report
+}
+
+( cd $BACKUP_DIR && main )
+
+

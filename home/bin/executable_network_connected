@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+main() {
+  networksetup -getairportnetwork en0 | sed 's/Current Wi-Fi Network: //g'
+}
+
+main "$@"

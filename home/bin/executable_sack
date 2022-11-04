@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+SHORTCUTS="$HOME/.sack_shortcuts"
+SEARCH_TERM="$HOME/.sack_searchterm"
+
+check_dependencies(){
+  DEPS=(rg nvim)
+  for dep in "${DEPS[@]}";do
+    if ! command -v "$dep";then
+      echo "Missing dependency: $dep"
+      exit 1
+    fi
+  done
+}
+
+init(){
+  cat <<EOF
+S(){
+  sack search "\$@"
+}
+
+F(){
+  sack edit "\$@"
+}
+EOF
+}
+
+# Usage sack init_fish | source
+init_fish(){
+  cat <<EOF
+function S
+  sack search \$argv
+end
+
+function F
+  sack edit \$argv
+end
+EOF
+}
+
+search(){
+  local terms="$*"
+  rm -f "$SEARCH_TERM"
+  rm -f "$SHORTCUTS"
+  echo "$terms" > "$SEARCH_TERM"
+  rg --vimgrep "$*" | tee > "$SHORTCUTS"
+}
+
+edit(){
+  local line_no="$1"
+  local filename
+  local matching_line
+  matching_line="$(awk "NR==$line_no" "$SHORTCUTS")"
+  filename="$(echo "$matching_line"     | awk -F : '{print $1}' )"
+  line_in_file="$(echo "$matching_line" | awk -F : '{print $2}' )"
+  exec nvim "$filename" "+${line_in_file}"
+}
+
+show(){
+  rg "$(cat "$SEARCH_TERM")" "$SHORTCUTS"
+}
+
+main(){
+  local command="$1"
+  shift
+  case "$command" in
+    search|"")
+      search "$@"
+      show
+      ;;
+    edit)
+      edit "$@"
+      ;;
+    init)
+      init;;
+    init_fish)
+      init_fish
+      ;;
+  esac
+}
+
+main "$@"

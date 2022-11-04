@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+ruby -v | tail -1 | awk '{print $2}' | sed -e 's/p/-p/' > .ruby-version

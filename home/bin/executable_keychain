@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+#
+# Example usage:
+# $ ruby ~/bin/keychain USER@gmail.com imap.gmail.com
+# => S3KRETZ
+#
+# ARGV[0] = 'Account' in Keychain.app
+# ARGV[1] = 'Name' in Keychain.app
+# On first use for any password, it will prompt for 'Always Allow', 'Deny', 'Allow [Once]'.
+# If you want to use it without human interaction, you need to select Always Allow
+
+require 'open3'
+
+class Keychain
+  attr_accessor :account, :name, :user
+
+  BIN = '/usr/bin/security'
+
+  def initialize(account, name, user = ENV['USER'])
+    @account, @name, @user = account, name, user
+  end
+
+  def execute_command(cmd)
+    o, e, s = Open3.capture3(cmd)
+  end
+
+  def extract_password(stderr)
+    first_match = stderr.split("\n")
+                        .grep(/password: /)
+                        .first
+    password = if first_match
+                 first_match[/\Apassword: "(.*)"/]; $1
+               else
+                 nil
+               end
+  end
+
+  def get_internet_password
+    get_password(account, name, 'find-internet-password')
+  end
+
+  def get_generic_password
+    get_password(account, name, 'find-generic-password')
+  end
+
+  def keychain
+    "/Users/#{user}/Library/Keychains/login.keychain"
+  end
+
+  def get_password(account, name, type = 'find-internet-password')
+    cmd = "#{BIN} -v #{type} -g -a #{account} -s #{name} #{keychain}"
+
+    _, e, _ = execute_command(cmd)
+    extract_password(e)
+  end
+end
+
+def main
+  account, name = ARGV.values_at(0, 1)
+
+  key = Keychain.new(account, name)
+  possible_passwords = key.get_internet_password || key.get_generic_password
+
+  puts possible_passwords
+end
+
+main

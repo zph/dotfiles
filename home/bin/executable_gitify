@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+readonly ARGS="$@"
+readonly FILENAME="${1:-'.git/config'}"
+
+sed -i'' -e 's/git:\/\//git@/' $FILENAME
+sed -i'' -e 's/github.com\//github.com:/' $FILENAME

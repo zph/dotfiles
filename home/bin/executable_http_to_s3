@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Convert AWS S3 HTTP links to the S3 URL format
+set -x
+
+replacer(){
+  cat $@ | sed -e 's/\.s3\.amazonaws.com//g' -e 's/http/s3/g'
+}
+
+if [[ -z $1 ]];then
+  # Positional args
+  cat $@ | replacer
+else
+  # Stdin
+  echo $@ | replacer
+fi

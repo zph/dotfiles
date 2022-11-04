@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'nokogiri'
+require 'open-uri'
+
+def gather_and_parse(url)
+  Nokogiri::HTML.parse(open(url).read)
+end
+
+def gifbin
+  url = "http://www.gifbin.com/random"
+  parsed = gather_and_parse(url)
+  parsed.xpath('//*[@id="gif"]').first.attributes["src"].value
+end
+
+def funcage
+  url = "http://www.funcage.com/gif/?"
+  parsed = gather_and_parse(url)
+  gather_and_parselink = parsed.xpath('//*[@id="main"]/a[1]/img').first.attributes["src"].value
+  url.gsub(/\?$/, '') + gather_and_parselink.gsub(/\.\//, '')
+end
+
+gif_source = [:gifbin, :funcage].sample
+link = self.send(gif_source)
+exec "echo '#{link}' | pbcopy ; open #{link}"

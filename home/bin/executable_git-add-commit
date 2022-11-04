@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+stamp=$(date "+%Y-%m-%d %H:%M:%S")
+git add --all . && git commit -m "$stamp"

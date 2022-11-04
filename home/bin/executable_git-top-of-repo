@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+function git_top_level(){
+  "$(git rev-parse --show-toplevel)"
+}
+
+function up_from_top_level(){
+  "$(git_top_level)/.."
+}
+
+function submodule_inside_repo(){
+  cd "$(up_from_top_level)" && git rev-parse --is-inside-work-tree 2> /dev/null
+}
+
+function main() {
+  if [ "$(submodule_inside_repo)" != "true" ]; then
+    project_home=$(git_top_level)
+    cd "$project_home"
+    # "$@"
+  else
+    while [ "$(submodule_inside_repo)" = "true" ]; do
+      cd "$(up_from_top_level)"
+      if [ "$(submodule_inside_repo)" != "true" ]; then
+        cd "$(git_top_level)"
+        # "$@"
+      fi
+    done
+  fi
+}

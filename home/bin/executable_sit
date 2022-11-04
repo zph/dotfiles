@@ -1,0 +1,80 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+
+RESET = "\e[0m"
+BOLD  = "\e[1m"
+RED   = "\e[31m"
+YELLOW = "\e[33m"
+SACK_SHORTCUTS = "~/.sack_shortcuts"
+
+options = {}
+options[:list] = nil
+options[:vim] = nil
+options[:debug] = nil
+OptionParser.new do |opts|
+  opts.banner = "Usage: echo 'bad stacktrace from ruby' | sit"
+
+  opts.on('-l', '--list') do |v|
+    options[:list] = true
+  end
+  opts.on('--vim') do |v|
+    options[:vim] = true
+  end
+  opts.on('-d', '--debug') do |v|
+    options[:debug] = true
+  end
+end.parse!
+
+def color(color, string)
+  "#{color}#{string}#{RESET}"
+end
+
+def sack_shortcuts
+  File.read(File.expand_path(SACK_SHORTCUTS))
+end
+
+def read_file(io,lines)
+  io.readlines.each { |line| lines << line.chomp }
+end
+
+def extract_fields(string)
+  string.scan(%r{(?<whole_line>(?<file_name>#{ENV['HOME']}.*):(?<lineno>\d+):(?<msg>.*))}) #.map{ |i| i.reverse }
+end
+
+
+case
+when options[:list] == true
+  content = sack_shortcuts
+  output = content.split("\n").map{ |line| line.split }
+  response = output.map.with_index { |a,i|"#{BOLD}#{RED}[#{i+1}]#{RESET}  #{color(YELLOW, a[0])}:#{a[1]}" }.join("\n")
+  puts response
+  exit 0
+when options[:vim] == true
+  content = sack_shortcuts
+  output = content.split("\n").map{ |line| line.split }
+  # format desired filename:linenumber:comment
+  response = output.map.with_index { |a,i|"#{[ a[1], a[0],  a[2..-1].join(" ") ].join(":")}" }.join("\n")
+  puts response
+  exit 0
+else
+
+lines = []
+if ARGV.empty?
+  while !STDIN.eof?
+    lines += read_file(STDIN,lines)
+  end
+else
+  ARGV.each { |file| read_file(File.open(file),lines) }
+end
+
+input = lines.sort.join("\n")
+puts "Input #{input}" if options[:debug]
+  arrays = extract_fields(input)
+  puts "Arrays #{arrays}" if options[:debug]
+  content = arrays.map { |a| [a[2], a[1], a[3..-1]].join(" ") }.join("\n")
+  puts "Content: #{content}" if options[:debug]
+  File.write(File.expand_path("~/.sack_shortcuts"), content)
+  output = arrays.map.with_index { |a,i| "[#{color(YELLOW,i+1)}] #{a[1]}:#{color(YELLOW,a[2])}:#{color(BOLD, color(RED,a[3..-1].join(" ")))}" }.join("\n")
+  # puts output
+end

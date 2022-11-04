@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+# AUTHOR: Zander : zander@xargs.io : @_ZPH
+# LICENSE: MIT
+# Credit for initial script: http://stackoverflow.com/a/18341108/1930671
+
+set -o nounset
+# set -o pipefail
+# set -o errexit
+# set -o xtrace
+
+readonly PROGNAME=$(basename $0)
+
+readonly ARGS="$@"
+
+set -x
+
+readonly TO_MONITOR="$1";shift
+readonly CMD_TO_RUN="$*"
+readonly PID="$$"
+
+set +x
+
+PRIOR_ATIME="0"
+
+run_loop(){
+  while true
+
+  do
+
+    ATIME=`stat -f %Z ${TO_MONITOR}`
+
+    if ! [[ $ATIME == $PRIOR_ATIME ]];then
+
+      echo "CMD: ${CMD_TO_RUN}"
+      $($CMD_TO_RUN > /dev/null)
+      echo $?
+      PRIOR_ATIME=$ATIME
+    fi
+    sleep 1
+
+  done
+}
+
+usage(){
+  echo "$PROGNAME [file-to-watch] [*cmd-to-run]"
+  exit 1
+}
+
+main(){
+
+  if [[ $# -lt 2 ]];then
+    usage
+  fi
+
+  if [[ $CMD_TO_RUN == "" ]];then
+    echo "No cmd to execute"
+    exit 1
+  fi
+
+  run_loop
+}
+
+main $ARGS

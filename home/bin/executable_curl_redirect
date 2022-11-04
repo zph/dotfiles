@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+curl -Ls -w %{url_effective} -o /dev/null "$1"

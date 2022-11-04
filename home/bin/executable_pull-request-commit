@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+branch_name = `git rev-parse --abbrev-ref HEAD`.chomp
+DIVIDERS = %r{[-|_|/|\/]}
+
+begin
+  parts = branch_name.match(/(?<initials>[\w{2,3}|#{DIVIDERS}]+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+rescue
+  exit(1, 'Something is horribly wrong, RUN!')
+  # parts = branch_name.match(/(?<initials>[\w{2,3}|#{DIVIDERS}]+)#{DIVIDERS}(?<number>\d{5,})#{DIVIDERS}(?<description>.*)/)
+end
+
+
+INITIALS = parts[ :initials ].split(DIVIDERS).join("/").upcase
+PIVOTAL_NUMBER = parts[ :number ] || "000000"
+DESCRIPTION = parts[ :description ].gsub(/#{DIVIDERS}/, ' ')
+
+PR_CHECKLIST = if File.exists?(File.expand_path("~/.prchecklist"))
+                 File.read File.expand_path("~/.prchecklist")
+               else
+                 ""
+               end
+commented_out_git_diff_cached = "#" + `git diff --cached`.gsub(/\n/, "\n#")
+commit_message =<<MSG
+[#{INITIALS}] [#{PIVOTAL_NUMBER}] #{DESCRIPTION}
+
+Pivotal Story: https://www.pivotaltracker.com/story/show/#{PIVOTAL_NUMBER}
+
+#{ '#' * 80 }
+#
+#{ commented_out_git_diff_cached }
+#
+#{ '#' * 80 }
+MSG
+
+STDOUT << commit_message

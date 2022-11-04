@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+TMP="$(mktemp -d)"
+REPO="$1"
+
+set -x
+
+main(){
+  (
+    cd "$TMP"
+    # Use temporary folder and mod to build
+    go mod init tmp
+    go get "$REPO"
+    go build "$REPO"
+    ls
+  )
+}
+
+main "$@"

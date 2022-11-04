@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Credit: http://alvinalexander.com/blog/post/linux-unix/how-remove-non-printable-ascii-characters-file-unix
+tr -cd '\11\12\15\40-\176'

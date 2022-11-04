@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# disk-device-to-serial-number <device>
+
+if [ $# -ne 1 -o "$1" = -h -o "$1" = --help ] ; then
+  echo "usage: disk-device-to-serial-number <device>" >&2
+  echo "<device> = e.g. ada0p3 (not including /dev/ prefix)" >&2
+  exit 99
+fi
+
+info=`diskinfo -v $1`
+echo "$info" | awk '/# Disk ident\./ { print $1 }'

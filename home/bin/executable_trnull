@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Used to normalize output that's newline delimited
+
+tr '\n' '\0'

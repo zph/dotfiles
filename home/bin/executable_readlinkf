@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Usage: readlinkf -f filename
+
+set -eou pipefail
+
+case "$1" in
+  "-f") ;;
+  *) exit 1;;
+esac
+
+readonly filename="$2"
+
+perl -MCwd -e 'print Cwd::abs_path shift' "$filename"

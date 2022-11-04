@@ -1,0 +1,12 @@
+.mutt/cache/*
+ec2/bin/*
+.DS_Store
+.zsh_history
+.config/gtk*
+.config/inkscape*
+bin_local/
+.git_init_template/*
+bin/heroku/*
+bin/heroku
+bin/to-daily-status*
+bin_repos/imageflow

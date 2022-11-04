@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -Ceou pipefail
+IFS=$'\n\t'
+
+INPUT="$1"
+filename=$(basename "$1")
+TMPFILE=$(mktemp -t "${filename}".XXXXXXX) || exit 1
+
+copy_permissions(){
+  local old="$1"
+  local new="$2"
+  if [[ $OSTYPE == darwin* ]];then
+    # Note: OSX's BSD licensed CHMOD lacks --reference flag
+    chmod "$(stat -f %A "$old")" "$new"
+  else
+    # Copy over file permissions
+    chmod --reference "$old" "$new"
+  fi
+}
+
+# Run linter to insert safe mode lines
+bash_strict_mode "$INPUT" >> "$TMPFILE"
+
+# Copy into place
+mv "$TMPFILE" "$INPUT"

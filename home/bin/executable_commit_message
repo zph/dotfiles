@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+
+require 'open-uri'
+
+DIVIDERS = %r{[-_/\\]}
+
+PROVIDER, TASK_NAME, BASE_URL, WORKSPACE = ENV.values_at('COMMIT_MSG_PROVIDER',
+                                                         'COMMIT_MSG_TASK_NAME',
+                                                         'COMMIT_MSG_URL',
+                                                         'COMMIT_MSG_WORKSPACE')
+
+def run_specs
+  require 'minitest/autorun'
+  require 'minitest/pride'
+  require 'stringio'
+
+  describe "#main" do
+
+    it 'compiles message when valid' do
+      io = StringIO.new
+      id = "24121042524524"
+      main("#{id}/message_with_text_and_stuff", io)
+      expected = <<-MSG
+message with text and stuff
+
+[#{PROVIDER} ##{id}](#{[BASE_URL, WORKSPACE, id].join("/")})
+      MSG
+      io.string.must_equal expected
+    end
+  end
+end
+
+def match_pattern(bn)
+  bn.match(/(?<number>\d{1,})#{DIVIDERS}(?<description>.*)/)
+end
+
+def branch_name_from_git
+  `git rev-parse --abbrev-ref HEAD`.chomp
+end
+
+def default_message
+  ""
+end
+
+def link_line(id)
+  prefix = "[#{PROVIDER} ##{id}]"
+  suffix = %Q<(#{[BASE_URL, "PE-#{id}"].join('/')})>
+  [prefix, suffix].join
+end
+
+def main(branch_name, io = STDOUT)
+  begin
+    parts = match_pattern(branch_name)
+    raise(ArgumentError) unless parts[:number] && parts[:description]
+
+    id = String(parts[:number])
+    description = String(parts[:description]).gsub(/#{DIVIDERS}/, ' ')
+  rescue
+    io << default_message
+    exit(0)
+  end
+
+  commit_message = [description, "\n\n", link_line(id), "\n"].join
+
+  io << commit_message
+end
+
+if ARGV.first == "test"
+  module Kernel
+    def exit(*args)
+    end
+  end
+  run_specs
+else
+  main(branch_name_from_git)
+end

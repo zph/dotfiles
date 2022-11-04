@@ -1,0 +1,6 @@
+{
+	"daily": {
+	  "prefix": "daily",
+	  "body": "# ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+	}
+}

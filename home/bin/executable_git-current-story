@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+( git current-branch ; echo ; git log --oneline -n 10 --no-merges ) | grep -oEi '[0-9]{8,}' | head -1
+
+
