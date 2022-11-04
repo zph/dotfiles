@@ -1,7 +1,5 @@
-zph
-===
-
 My dotfiles
+===
 
 ![](http://data.xargs.io/no_place_like_home.gif)
 
@@ -9,7 +7,9 @@ Here's an explanation of the organization of files:
 
 [Blog Post About Dotfiles](https://blog.xargs.io/2013/02/getting-started-configuring-bashzsh/)
 
-Use at your own risk ;).
+Use at your own risk ^_^
+
+![](https://giphy.com/clips/thewebbyawards-VCemvD2ugI2mQg6KgB)
 
 Installation
 ===
@@ -19,17 +19,12 @@ Installation
 In VM
 ===
 
-Read through install.rb and then ....
+Read through repo and then ....
 ```
-curl -L https://raw.githubusercontent.com/zph/zph/master/install.sh | bash -
+$ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply zph
 ```
 
 Pay attention to the prompts if you have conflicting files.
-
-Manual Process
-===
-
-Setup commandline utility for VPN control: https://blog.timac.org/2018/0719-vpnstatus/
 
 Credit
 ===
