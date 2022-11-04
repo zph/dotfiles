@@ -3,3 +3,4 @@
 - Setup encryption for restricted files
 - Configure setup to either be `arm` or standard and conditionally load what I install in Brewfile
 - Setup a `minimal or full` install using ENV vars in chezmoi configuration and scripts
+[x] - Build tiny script to shrink and dedupe PATH

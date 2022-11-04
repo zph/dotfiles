@@ -81,7 +81,7 @@ alias vim='nvim'
 # mkdir /usr/local/Cellar/bash/5.0.7/share/bashdb
 # touch /usr/local/Cellar/bash/5.0.7/share/bashdb/bashdb-main.inc
 set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
-source (brew --prefix asdf)/asdf.fish
+source (brew --prefix asdf)/libexec/asdf.fish
 
 starship init fish | source
 
