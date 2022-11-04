@@ -2,7 +2,6 @@
 {{- $is_work := promptStringOnce . "is_work" "Is this a work laptop? [true|false]" -}}
 {{- $github_username := promptStringOnce . "github_username" "Github Username" -}}
 
-sourceDir = "~/.dotfiles"
 [data]
     email = {{ $email | quote }}
     is_work = {{ $is_work | quote }}

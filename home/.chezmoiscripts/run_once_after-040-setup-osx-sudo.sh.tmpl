@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+# OSX hash: {{ include "../home/executable_dot_osx" | sha256sum }}
+
+{{ if eq .chezmoi.os "darwin" -}}
+  sudo bash $HOME/.osx
+  sudo "${HOME}/.config/tmutil/setup-exclusions"
+{{ else if eq .chezmoi.os "linux" -}}
+{{ end -}}

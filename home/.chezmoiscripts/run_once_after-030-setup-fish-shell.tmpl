@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+echo "$(which fish)" | sudo tee -a /etc/shells
+
+chsh -s "$(which fish)"
