@@ -9,7 +9,7 @@ Here's an explanation of the organization of files:
 
 Use at your own risk ^_^
 
-![](https://media.giphy.com/media/JmVKG43o7T3NF91mOB/giphy.gif)
+![](https://i.giphy.com/media/JmVKG43o7T3NF91mOB/giphy.webp)
 
 Installation
 ===
