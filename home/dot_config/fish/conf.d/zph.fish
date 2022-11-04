@@ -84,3 +84,5 @@ set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 source (brew --prefix asdf)/asdf.fish
 
 starship init fish | source
+
+set PATH (brew --prefix)/bin $PATH
