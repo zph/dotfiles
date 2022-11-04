@@ -21,7 +21,7 @@ In VM
 
 Read through repo and then ....
 ```
-$ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply zph
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply zph
 ```
 
 Pay attention to the prompts if you have conflicting files.

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+GITHUB_USERNAME="zph"
+
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply "$GITHUB_USERNAME"

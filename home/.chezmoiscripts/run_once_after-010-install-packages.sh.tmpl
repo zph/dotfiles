@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+# Brewfile hash: {{ include "../home/dot_config/brewfile/Brewfile" | sha256sum }}
+~/bin/brew-apply
