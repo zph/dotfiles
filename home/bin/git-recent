@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-# Credit https://gist.github.com/kalimar/909ff4a7f8c136fc4ce4
-git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'

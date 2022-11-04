@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Usage code-setup extensions-file
-
-set -eou pipefail
-set -x
-
-readonly EXTENSIONS="${1:-$HOME/.config/vscode/extensions.txt}"
-
-xargs -I{} -- code --install-extension {} < "$EXTENSIONS"

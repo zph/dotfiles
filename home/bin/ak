@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-PARAM="\$${1}"
-cat | awk "{print $PARAM}"

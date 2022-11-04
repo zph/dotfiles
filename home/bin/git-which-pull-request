@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-git log --merges --ancestry-path --oneline "$1"..origin | tail

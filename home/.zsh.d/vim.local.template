@@ -1,3 +1,0 @@
-" Async Test Running courtesy of Gary Bernhardt
-" must start ~/bin/run_test.sh
-map <Leader>at :w\| :silent !echo bundle exec ruby spec/lib/rubocop/runner_spec.rb > test-commands<cr>

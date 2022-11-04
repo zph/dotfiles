@@ -1,3 +1,0 @@
-#!/bin/bash
-
-git log --oneline | head -n1 | awk '{ $1=""; print }' | sed 's/^ //g'

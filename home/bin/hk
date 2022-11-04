@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# In tribute to the better Heroku CLI: hk
-
-HEROKU_ENVIRONMENT="$1"
-shift
-
-heroku-binstub-by-environment "$HEROKU_ENVIRONMENT" "$*"

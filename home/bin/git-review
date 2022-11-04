@@ -1,5 +1,0 @@
-#!/bin/bash
-
-set -e
-
-git show -v HEAD~20..HEAD

@@ -1,7 +1,0 @@
-/.(git|svn|bzr|hg)/  # VCS special dir
-/node_modules/       # node.js dependencies directory
-*.min.(js|css)       # minified files
-*~                   # vim undo files
-*.swp                # vim swap files
-*.pyc                # python compiled
-*.zwc                # zsh compiled

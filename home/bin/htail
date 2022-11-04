@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-REMOTE_ALIAS=${1}
-
-heroku logs -t -r ${REMOTE_ALIAS}

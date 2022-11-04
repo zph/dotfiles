@@ -1,6 +1,0 @@
-set LOCAL_HOSTNAME "delta"
-#source $HOME/**/share/.workrc.fish
-
-if test -f ~/s/.work.fish
-  source ~/s/.work.fish
-end

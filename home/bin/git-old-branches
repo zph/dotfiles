@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-# Credit: http://blog.jessitron.com/2015/01/spring-cleaning-of-git-branches.html
-git branch -a |\
-  grep origin |\
-  grep -v HEAD |\
-  xargs -n 1 git log --date=iso --pretty=format:"%an %ad %d%n" -1 --decorate |\
-  grep -v master |\
-  sort

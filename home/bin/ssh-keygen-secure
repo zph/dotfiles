@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# Credit https://security.stackexchange.com/a/144044
-set -eou pipefail
-
-DESCRIPTOR="$1"
-
-ssh-keygen -t ed25519 -a 100 -C "$DESCRIPTOR"

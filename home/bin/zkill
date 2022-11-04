@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-PROCESS_NAME="$1"
-SIGNAL="${2:-9}"
-
-# Avoid loops
-/usr/bin/pkill -${SIGNAL} -f -I "$PROCESS_NAME"

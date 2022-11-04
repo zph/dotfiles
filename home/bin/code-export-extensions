@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-set -eou pipefail
-
-code --list-extensions > ~/.config/vscode/extensions.txt

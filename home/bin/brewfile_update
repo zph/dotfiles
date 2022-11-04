@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-BREWFILE="$HOME/.config/brewfile/Brewfile"
-
-brew bundle dump --force --file="$BREWFILE"

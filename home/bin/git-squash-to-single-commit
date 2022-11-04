@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-git reset $(git commit-tree HEAD^{tree} -m "Initial release")

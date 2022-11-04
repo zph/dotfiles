@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ifconfig | grep -oE 'inet (.*) netmask .* broadcast' | awk '{print $2}'

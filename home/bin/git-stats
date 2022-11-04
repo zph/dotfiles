@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -eou pipefail
-
-readonly BRANCH="$1"
-readonly GIT_USER="$(git config --get user.email)"
-# Thanks to @eevee
-git log --pretty=tformat: --numstat --author="$GIT_USER" "$BRANCH" |awk -F '\t' '/./{a+=$1;r+=$2;f[$3]=1}END{printf"%d; +%d -%d = %d\n",length(f),a,r,a-r}'

@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-awk '/oauth_token/{print $2}' "$HOME/.config/hub"

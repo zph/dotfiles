@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-nocorrect find . -name "$1"

@@ -1,3 +1,0 @@
-#!/usr/bin/env ruby
-
-git commit --no-verify -eF .git/COMMIT_EDITMSG

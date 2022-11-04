@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -eou pipefail
-set -x
-
-APP_NAME=${1}
-ID=${2}
-
-curl -n -H "Accept: application/vnd.heroku+json; version=3" https://api.heroku.com/apps/${APP_NAME}/dynos/${ID} -X DELETE

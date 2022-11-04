@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sudo discoveryutil mdnsflushcache;sudo discoveryutil udnsflushcaches;echo "DNS flushed"
-# dscacheutil -flushcache;sudo killall -HUP mDNSResponder # OSX 10.9

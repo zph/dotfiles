@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-git reset --soft "${1:-HEAD~1}"

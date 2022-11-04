@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-# Thanks to @jimmyorr http://stackoverflow.com/a/4207176
-git log $@ --no-merges

@@ -1,2 +1,0 @@
-#!/usr/bin/env sh
-git rev-parse --abbrev-ref HEAD | tr -d '\n' | egrep -o '\d{5,}' | pbcopy

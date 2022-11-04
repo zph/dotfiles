@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sudo adduser --disabled-password $1
-tweemux hubkey $1

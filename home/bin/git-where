@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Finds where that SHA belongs, ie what tag/branch
-
-# $@ = sha
-git name-rev --name-only "$@"

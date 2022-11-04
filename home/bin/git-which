@@ -1,3 +1,0 @@
-#!/bin/bash
-
-git alias | grep -e "^$1" --color=never | sed -e 's/ =/: aliased to/'
