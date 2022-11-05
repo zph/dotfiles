@@ -1,6 +1,7 @@
 # Instructions
 
 [ ] Log into ICloud
+[ ] Update commandline tools for xcode-select --install in System Updates
 [ ] Install dotfiles via chezmoi and install packages
 ```
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply zph
