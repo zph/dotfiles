@@ -1,1 +1,1 @@
-set PATH sanitize_path (bash -c 'echo $PATH')
+set PATH (sanitize_path (bash -c 'echo $PATH'))

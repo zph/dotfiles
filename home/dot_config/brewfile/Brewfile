@@ -86,7 +86,6 @@ BREWS = %w[
   zsh
   cirruslabs/cli/tart
   earthly/earthly/earthly
-  go-swagger/go-swagger/go-swagger
 ]
 
 CASKS = %w[
