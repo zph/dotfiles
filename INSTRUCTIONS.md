@@ -32,6 +32,10 @@ tart run ventura-base
 - Change dock preferences to small, autohide and no animation
 - Setup 3 finger drag in Accessibility > Pointer Control > Trackpad Options
 
+## If programs won't start on mac from Brew Cask
+- Select in finder
+- Cmd-click > "Open"
+- Approve non-signed binary
 
 ## References
 - https://github.com/geerlingguy/mac-dev-playbook/blob/master/full-mac-setup.md
