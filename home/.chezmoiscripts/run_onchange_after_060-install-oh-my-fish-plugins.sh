@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-omf install bang-bang
+fish -c "source ~/.config/fish/conf.d/omf.fish && omf install bang-bang"
