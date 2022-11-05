@@ -2,6 +2,11 @@
 {{- $is_work := promptStringOnce . "is_work" "Is this a work laptop? [true|false]" -}}
 {{- $github_username := promptStringOnce . "github_username" "Github Username" -}}
 
+encryption = "age"
+[age]
+    identity = "$HOME/.ssh/20221104-age-key-dotfiles.key"
+    recipient = "age1v8wd4qzgyktmp33h6p3w26cat63mr80ujqduzr4mj6xcdg3l6chsqtwdhh"
+
 [data]
     email = {{ $email | quote }}
     is_work = {{ $is_work | quote }}
