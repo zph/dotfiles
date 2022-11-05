@@ -2,5 +2,5 @@
 # Original file: default.yml
 
 # https://github.com/federico-terzi/espanso/issues/878#issuecomment-971853768
-search_trigger: "jkj"
+search_trigger: "::search"
 search_shortcut: "CTRL+SPACE"
