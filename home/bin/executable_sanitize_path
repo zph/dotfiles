@@ -6,13 +6,13 @@ list = ARGV[0].split(":").compact.map do |p|
   File.expand_path(p)
 end
 
-output = []
+output = {}
 list.each do |e|
-  if output.include?(e)
+  if output[e]
     next
   else
-    output << e
+    output[e] = 1
   end
 end
 
-print output.join(":").squeeze(":")
+print output.keys.join(":").squeeze(":")
