@@ -13,6 +13,7 @@
   #TERM: xterm-256color
 
 window:
+  opacity: 0.9
   # Window dimensions (changes require restart)
   #
   # Specified in number of columns/lines, not pixels.
@@ -114,7 +115,6 @@ font:
   #
   # Thin strokes are suitable for retina displays, but for non-retina screens
   # it is recommended to set `use_thin_strokes` to `false`
-  use_thin_strokes: true
 
 # Display the time it takes to redraw each frame.
 # render_timer: false
@@ -206,7 +206,7 @@ bell:
 #
 # Window opacity as a floating point number from `0.0` to `1.0`.
 # The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 0.9
+# background_opacity: 0.9
 
 # Mouse bindings
 #
@@ -238,7 +238,7 @@ mouse:
   # If this is `true`, the cursor is temporarily hidden when typing.
   hide_when_typing: true
 
-  url:
+  hints:
     # URL launcher
     #
     # This program is executed when clicking on a text which is recognized as a URL.
@@ -277,8 +277,8 @@ live_config_reload: true
 #
 # You can set `shell.program` to the path of your favorite shell, e.g. `/bin/fish`.
 # Entries in `shell.args` are passed unmodified as arguments to the shell.
-shell:
-  program: /usr/local/bin/fish
+# shell:
+#   program: zsh -l
   # args:
   #   - "tmux"
   # args:
