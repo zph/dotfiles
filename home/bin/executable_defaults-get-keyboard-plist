@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+#
+# Credit: https://hints.macworld.com/article.php?story=20060825072451882
+# and https://apple.stackexchange.com/a/88096
+
+set -eou pipefail
+set -x
+
+readonly PLIST="global-currenthost-keyboard.plist"
+
+# FIND GLOBALS
+# export globals
+# Print how to use it
+PREFERENCE_FILE="$(find ~/Library/Preferences/ByHost -name '.GlobalPreference*')"
+
+# Convert from binary format to XML
+plutil -convert xml1 -o - "$PREFERENCE_FILE" > $PLIST
+
+echo "Import into new system by running: defaults import -currentHost $PLIST"
