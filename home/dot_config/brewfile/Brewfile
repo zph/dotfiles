@@ -65,6 +65,7 @@ BREWS = %w[
   neovim
   openssh
   openssl@3
+  overmind
   pwgen
   reattach-to-user-namespace
   ripgrep
