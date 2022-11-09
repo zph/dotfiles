@@ -2,5 +2,6 @@
 
 set -eou pipefail
 
-# Brewfile hash: {{ include "../home/dot_config/brewfile/Brewfile" | sha256sum }}
+# Brewfile hash: {{ include "../home/dot_config/brewfile/Brewfile.full" | sha256sum }}
+# Brewfile hash: {{ include "../home/dot_config/brewfile/Brewfile.minimal" | sha256sum }}
 ~/bin/brew-apply
