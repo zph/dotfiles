@@ -1,0 +1,84 @@
+TAPS = %w[
+  zph/zph
+  cirruslabs/cli
+  espanso/espanso
+  homebrew/bundle
+  homebrew/cask
+  homebrew/cask-fonts
+  homebrew/core
+  homebrew/services
+  microsoft/git
+  neovim/neovim
+]
+
+brew 'sqlite', link: true
+brew 'curl', link: true
+
+BREWS = %w[
+  asdf
+  python@3.10
+  awscli
+  bash
+  bat
+  cask
+  colordiff
+  ctags
+  direnv
+  fish
+  fzf
+  gh
+  git
+  git-extras
+  go
+  goreleaser
+  hub
+  jq
+  just
+  mosh
+  neovim
+  openssh
+  openssl@3
+  reattach-to-user-namespace
+  ripgrep
+  rsync
+  shellcheck
+  shfmt
+  ssh-copy-id
+  starship
+  stow
+  terraform
+  tmux
+  watch
+  watchexec
+  wdiff
+  wget
+  yarn
+  zoxide
+  zsh
+  cirruslabs/cli/tart
+  earthly/earthly/earthly
+]
+
+CASKS = %w[
+  1password
+  1password-cli
+  alacritty
+  alfred
+  docker
+  espanso
+  font-fira-code
+  karabiner-elements
+  raindropio
+  rectangle
+  visual-studio-code
+  zph/zph/dash
+  zph/zph/datagrip
+]
+
+TAPS.each { |c| tap c }
+CASKS.each { |c| cask c }
+BREWS.each { |c| brew c }
+
+# Problem children
+#
+# cask: git-credential-manager-core

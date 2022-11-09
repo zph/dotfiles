@@ -1,6 +1,7 @@
 {{- $email := promptStringOnce . "email" "Email address" -}}
 {{- $is_work := promptStringOnce . "is_work" "Is this a work laptop? [true|false]" -}}
 {{- $github_username := promptStringOnce . "github_username" "Github Username" -}}
+{{- $is_minimal_install := promptStringOnce . "is_minimal_install" "Determines Brewfile thoroughness [true|false]" -}}
 
 encryption = "age"
 [age]
@@ -11,6 +12,7 @@ encryption = "age"
     email = {{ $email | quote }}
     is_work = {{ $is_work | quote }}
     github_username = {{ $github_username | quote }}
+    is_minimal_install = {{ $is_minimal_install | quote }}
 
 [scriptEnv]
     GITHUB_USERNAME = {{ $github_username | quote }}

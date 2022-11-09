@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+{{ if eq .is_minimal_install "true" }}
+brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.minimal"
+{{ else if eq .is_minimal_install "false" }}
+brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.minimal"
+brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.full"
+{{ end }}
