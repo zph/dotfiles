@@ -229,7 +229,7 @@
   # [github]
   #   token = <TOKEN>
   #   oauth-token = <TOKEN>
-[includeif "gitdir:~/src/work"]
+[includeif "gitdir:~/src/work/**"]
   path = ~/.gitconfig-work
 [gpg "ssh"]
-  allowedSignersFile = /Users/zph/.ssh/allowed_signers
+  allowedSignersFile = ~/.ssh/allowed_signers

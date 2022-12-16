@@ -1,6 +1,5 @@
 TAPS = %w[
   zph/zph
-  cirruslabs/cli
   espanso/espanso
   homebrew/bundle
   homebrew/cask
@@ -10,9 +9,6 @@ TAPS = %w[
   microsoft/git
   neovim/neovim
 ]
-
-brew 'sqlite', link: true
-brew 'curl', link: true
 
 BREWS = %w[
   asdf
@@ -55,7 +51,6 @@ BREWS = %w[
   yarn
   zoxide
   zsh
-  cirruslabs/cli/tart
   earthly/earthly/earthly
 ]
 
@@ -74,6 +69,18 @@ CASKS = %w[
   zph/zph/dash
   zph/zph/datagrip
 ]
+
+PLATFORM = `uname -m`.chomp.downcase
+
+case PLATFORM
+when 'arm64'
+  TAPS << 'cirruslabs/cli'
+  BREWS << 'cirruslabs/cli/tart'
+when 'x86_64'
+end
+
+brew 'sqlite', link: true
+brew 'curl', link: true
 
 TAPS.each { |c| tap c }
 CASKS.each { |c| cask c }
