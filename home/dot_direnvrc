@@ -1,7 +1,9 @@
 layout_hermit() {
   # Allow for alternate install locations of hermit
   local hermit_activate_bin="$(find . -name 'activate-hermit')"
-  source "$hermit_activate_bin"
+  if [[ ! -z "$hermit_activate_bin" ]];then
+    source "$hermit_activate_bin"
+  fi
 }
 
 add_extra_vimrc() {

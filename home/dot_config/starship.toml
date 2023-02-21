@@ -1,2 +1,6 @@
 [username]
 disabled = true
+[kubernetes]
+disabled = false
+detect_files = ['k8s']
+format = 'on [⛵ ($user on )($cluster in )$context \($namespace\)](dimmed green) '
