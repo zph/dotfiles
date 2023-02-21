@@ -5,6 +5,8 @@ set -x
 
 readonly CMD="$1"
 shift
+readonly TOPIC="$1"
+shift
 
 OUTPUT_DIR="$(find ~/src -name "til" -type d -maxdepth 1)"
 
@@ -13,13 +15,18 @@ if [[ ! -d "$OUTPUT_DIR" ]];then
   exit 1
 fi
 
+if [[ ! -d "$OUTPUT_DIR/docs/$TOPIC" ]];then
+  mkdir "$OUTPUT_DIR/docs/$TOPIC"
+fi
+
 (
   cd "$OUTPUT_DIR" || exit
 
   case "$CMD" in
     add)
-      filename="$(echo "$@" | tr " " "_" )"
-      touch "./docs/${filename}.md"
+      filename="$(echo "$@" | tr " " "_" |  tr '[:upper:]' '[:lower:]' )"
+      touch "$OUTPUT_DIR/docs/$TOPIC/${filename}.md"
+      exec "$EDITOR" "$OUTPUT_DIR/docs/$TOPIC/${filename}.md"
       ;;
   esac
 )
