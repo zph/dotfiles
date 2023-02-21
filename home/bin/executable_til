@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+set -x
+
+readonly CMD="$1"
+shift
+
+OUTPUT_DIR="$(find ~/src -name "til" -type d -maxdepth 1)"
+
+if [[ ! -d "$OUTPUT_DIR" ]];then
+  echo "Unable to find TIL directory"
+  exit 1
+fi
+
+(
+  cd "$OUTPUT_DIR" || exit
+
+  case "$CMD" in
+    add)
+      filename="$(echo "$@" | tr " " "_" )"
+      touch "./docs/${filename}.md"
+      ;;
+  esac
+)
