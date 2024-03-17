@@ -283,7 +283,7 @@ shell:
   args:
     - -l
     - -c
-    - "tmux attach || tmux"
+    - "/opt/homebrew/bin/fish"
 
 # shell:
 #   program: /Users/zph/bin/tmux-bin
