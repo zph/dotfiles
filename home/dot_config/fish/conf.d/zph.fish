@@ -33,7 +33,7 @@ end
 
 # Rust
 set PATH $HOME/.cargo/bin $PATH
-set PAGER /usr/local/bin/bat
+set PAGER (which bat)
 
 set EDITOR "/usr/local/bin/nvim"
 set HOMEBREW_NO_AUTO_UPDATE 1
@@ -80,10 +80,21 @@ alias vim='nvim'
 # Create the base dir
 # mkdir /usr/local/Cellar/bash/5.0.7/share/bashdb
 # touch /usr/local/Cellar/bash/5.0.7/share/bashdb/bashdb-main.inc
-set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
+# set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
 source (brew --prefix asdf)/libexec/asdf.fish
 
 starship init fish | source
 
+set PATH $HOME/.local/bin $PATH
 set PATH (brew --prefix)/bin $PATH
 alias c='chezmoi'
+
+# https://docs.atuin.sh/configuration/key-binding/
+set -gx ATUIN_NOBIND "false"
+atuin init fish | source
+
+# bind to ctrl-r in normal and insert mode, add any other bindings you want here too
+bind \cr _atuin_search
+bind -M insert \cr _atuin_search
+
+bind \cv edit_command_buffer
