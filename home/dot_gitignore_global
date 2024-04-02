@@ -114,3 +114,6 @@ tags
 # Jenkins
 deploy.log
 .neuron
+
+# Kubernetes
+kubeconfig.yml

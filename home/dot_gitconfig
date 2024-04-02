@@ -91,6 +91,8 @@
   wta = "!f() { git worktree add ~/src/worktree/$1 $1 && echo ~/src/worktree/$1; }; f"
   wt = worktree
   wtp = worktree prune
+  wtc = worktree-clone
+  wc = worktree-clone
     # Divergence (commits we added and commits remote added)
     # div = divergence
 
