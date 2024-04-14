@@ -36,7 +36,6 @@ set PATH $HOME/.cargo/bin $PATH
 set PAGER (which bat)
 
 set EDITOR (which nvim)
-set HOMEBREW_NO_AUTO_UPDATE 1
 alias vim $EDITOR
 alias edit $EDITOR
 alias gs 'git status -s'
