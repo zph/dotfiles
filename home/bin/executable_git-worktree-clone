@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# TODO:
+# - ensure command to add runs in git repo root
+# - simplify add command to do right thing
 
 # Source: On 2024/04/01 https://morgan.cugerone.com/blog/workarounds-to-git-worktree-using-bare-repository-and-cannot-fetch-remote-branches/
 # Add an alias to gitconfig

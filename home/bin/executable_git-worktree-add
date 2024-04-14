@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# USAGE: git worktree-add ARGVs
+# # Create wt from existing branch as new branch
+# git worktree-add <NAME of new branch off existing branch>
+# # Create wt from branch
+# git worktree-add <path> <branch>
+# # Create throwaway wt from current HEAD
+# git worktree-add -d <path>
+
+set -eou pipefail
+set -x
+
+(
+  cd "$(git root)" || exit 1
+  git worktree add --track "$@"
+)
