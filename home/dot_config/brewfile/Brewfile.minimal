@@ -52,7 +52,6 @@ BREWS = %w[
   zoxide
   zsh
   earthly/earthly/earthly
-  ubi
 ]
 
 CASKS = %w[

@@ -133,8 +133,3 @@ TAPS.each { |c| tap c }
 CASKS.each { |c| cask c }
 BREWS.each { |c| brew c }
 MAS.each {|name, id| mas name, id: id }
-
-# Problem children
-#
-# cask: git-credential-manager-core
-# cask: keybase
