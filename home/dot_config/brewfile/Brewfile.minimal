@@ -52,6 +52,7 @@ BREWS = %w[
   zoxide
   zsh
   earthly/earthly/earthly
+  ubi
 ]
 
 CASKS = %w[
@@ -85,7 +86,3 @@ brew 'curl', link: true
 TAPS.each { |c| tap c }
 CASKS.each { |c| cask c }
 BREWS.each { |c| brew c }
-
-# Problem children
-#
-# cask: git-credential-manager-core
