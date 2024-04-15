@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Created because git-extras includes a git-cp that interferes with my cherry-picking
+
+set -eou pipefail
+
+git cherry-pick "$@"
