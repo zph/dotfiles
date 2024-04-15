@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# DEPRECATED
 
 # git fetch
 # git update-ref -m "merge HEAD: Fast forward" refs/heads/"$1" HEAD

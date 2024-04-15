@@ -9,8 +9,8 @@
 [alias]
   ap = add -p
   ci = commit -v
-    # git-smart aliases
-  sp = "!git tidy && git smart pull"
+  # Named this way because of formerly using git-smart-pull
+  sp = update
   a = add
   ai = "!git add --intent-to-add ."
   aa = add --all
@@ -24,7 +24,7 @@
   ci = commit -v
   cim = commit -m
   cin = commit -n -m
-  com = "!git checkout ${GIT_MASTER:-master}"
+  com = "!git checkout $(git branch-default)"
     # cl = clone
   cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
@@ -80,11 +80,11 @@
   sf = show --pretty="format:" --name-only
   stash = !git stash --include-untracked
   sv = !git show -v -v
-  spp = "!git stash && git pull && git stash pop"
-  srp = "!git stash && git rebase dev && git stash pop"
+  spp = update
+  srp = update
   conflicts = !git ls-files -u | cut -f 2 | sort -u
   c = !git ls-files -u | cut -f 2 | sort -u
-  ub = update-branch
+  ub = update
   modified = !git ls-files -m
   unapply = !git stash show -p | git apply -R
   remove-deleted = !git ls-files --deleted | xargs git rm
@@ -151,9 +151,8 @@
     # show branches that have not been merged into current (HEAD) branch
   not-merged        = !git fetch --all --prune && git branch --all --no-merged HEAD
     # fetch and rebase from upstream/master then push current branch to origin
-  sync              = !git pull --no-rebase --ff upstream master && git push -u origin +HEAD
-    # same as `git sync` but also rebases
-  sync-rebase       = !git pull --rebase --ff upstream master && git push -u origin +HEAD
+  sync              = update
+  sync-rebase       = update
   branch-by-recent  = !git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short)'
   ribbon = tag --force _ribbon origin/master
   catchup = log --patch --reverse --topo-order _ribbon..origin/master
@@ -219,11 +218,16 @@
 # Relys on setting GIT_ASKPASS ENV variable
 [url "https://ssh@github.com/"]
   insteadOf = ssh://git@github.com/
-# Disable the git->https to flip back to keys not PAT
-[url "https://git@github.com/"]
-  insteadOf = git@github.com:
-[url "https://api@github.com/"]
+[url "git@github.com:"]
   insteadOf = https://github.com/
+
+# Disable the git->https to flip back to keys not PAT
+; [url "https://git@github.com/"]
+;   insteadOf = git@github.com:
+; [url "https://api@github.com/"]
+;   insteadOf = https://github.com/
+; [url "https://api@github.com/"]
+;   insteadOf = https://github.com/
 [include]
   # Include is used to load private configurations
   path = "~/.config/git/config.local"

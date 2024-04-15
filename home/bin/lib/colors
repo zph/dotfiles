@@ -1,0 +1,72 @@
+#!/etc/bin/env bash
+# Source: https://raw.githubusercontent.com/visaroy/bashcolors/master/bashcolors
+# From commit: f8a8883f391effc8bf39a02981f03b3cf9e90b20
+# Credit to the authors: visaroy
+# Extensions by: zph
+
+# easy to use in bash/shell scripts in between 'echo' outputs
+# use ${var} in echo ""
+# example1: echo -e "${red} Cauntion info text... ${bla,whi} black text in with background"
+# example2: echo -e "${gre} Good news text... ${coloroff} normal text..."
+# you can use rgb code if as well, eg. echo -e "${rgb001} blue color text...${c0}"
+# +++++++++++++++++++++++++++++++++++++++++++++++++
+# + you can use various kind of schortcuts easy to remember:
+# + 3 letter short;   rgb triplet;    1 letter short;   full name;
+# +
+# example:
+# echo -e "${gre}green text, ${mag}magenta text, ${coloroff}default"
+coloroff='\e[0m'     # default
+
+# basic colors (rgb order)
+bla='\e[0;30m'; rgb000='\e[0;30m'; k='\e[0;30m'; black='\e[0;30m'     # 000 black
+blu='\e[0;34m'; rgb001='\e[0;34m'; b='\e[0;34m'; blue='\e[0;34m'      # 001 blue
+gre='\e[0;32m'; rgb010='\e[0;32m'; g='\e[0;32m'; green='\e[0;32m'     # 010 green
+cya='\e[0;36m'; rgb011='\e[0;36m'; c='\e[0;36m'; cyan='\e[0;36m'      # 011 cyan
+red='\e[0;31m'; rgb100='\e[0;31m'; r='\e[0;31m'; red='\e[0;31m'       # 100 red
+mag='\e[0;35m'; rgb101='\e[0;35m'; m='\e[0;35m'; magenta='\e[0;35m'   # 101 magenta
+yel='\e[0;33m'; rgb110='\e[0;33m'; y='\e[0;33m'; yellow='\e[0;33m'    # 110 yellow
+whi='\e[0;97m'; rgb111='\e[0;97m'; w='\e[0;97m'; green='\e[0;97m'     # 111 white
+
+# ligth colors (add letter l before)
+lbla='\e[0;90m'; l000='\e[0;90m'; lk='\e[0;90m'; lblack='\e[0;90m'     # 000 light black
+lblu='\e[0;94m'; l001='\e[0;94m'; lb='\e[0;94m'; lblue='\e[0;94m'      # 001 light blue
+lgre='\e[0;92m'; l010='\e[0;92m'; lg='\e[0;92m'; lgreen='\e[0;92m'     # 010 light green
+lcya='\e[0;96m'; l011='\e[0;96m'; lc='\e[0;96m'; lcyan='\e[0;96m'      # 011 light cyan
+lred='\e[0;91m'; l100='\e[0;91m'; lr='\e[0;91m'; lred='\e[0;91m'       # 100 light red
+lmag='\e[0;95m'; l101='\e[0;95m'; lm='\e[0;95m'; lmagenta='\e[0;95m'   # 101 light magenta
+lyel='\e[0;93m'; l110='\e[0;93m'; ly='\e[0;93m'; lyellow='\e[0;93m'    # 110 light yellow
+lwhi='\e[0;97m'; l111='\e[0;97m'; lw='\e[0;97m'; lwhite='\e[0;97m'     # 111 light white
+
+# dark colors (add letter d before) - dimmed colors
+dbla='\e[2;30m'; d000=$dbla; dk=$dbla; darkblack='\e[2;30m'     # 000 dark black
+dblu='\e[2;34m'; d001=$dblu; db=$dblu; darkblue='\e[2;34m'      # 001 dark blue
+dgre='\e[2;32m'; d010=$dgre; dg=$dgre; darkgreen='\e[2;32m'     # 010 dark green
+dcya='\e[2;36m'; d011=$dcya; dc=$dcya; darkcyan='\e[2;36m'      # 011 dark cyan
+dred='\e[2;31m'; d100=$dred; dr=$dred; darkred='\e[2;31m'       # 100 dark red
+dmag='\e[2;35m'; d101=$dmag; dm=$dmag; darkmagenta='\e[2;35m'   # 101 dark magenta
+dyel='\e[2;33m'; d110=$dyel; dy=$dyel; darkyellow='\e[2;33m'    # 110 dark yellow
+dwhi='\e[2;39m'; d111=$dwhi; dw=$dwhi; darkwhite='\e[2;39m'     # 111 dark white (default)
+
+# background colors (add bck before)
+bckbla='\e[40m'; bck000=$bckbla; bckk=$bckbla; backblack='\e[40m'     # 000 background black
+bckblu='\e[44m'; bck001=$bckblu; bckb=$bckblu; backblue='\e[44m'        # 001 background blue
+bckgre='\e[42m'; bck010=$bckgre; bckg=$bckgre; backgreen='\e[42m'     # 010 background green
+bckcya='\e[46m'; bck011=$bckcya; bckc=$bckcya; backcyan='\e[46m'      # 011 background cyan
+bckred='\e[41m'; bck100=$bckred; bckr=$bckred; backred='\e[41m'       # 100 background red
+bckmag='\e[45m'; bck101=$bckmag; bckm=$bckmag; backmagenta='\e[45m'   # 101 background magenta
+bckyel='\e[43m'; bck110=$bckmag; bcky=$bckyel; backyellow='\e[43m'    # 110 background yellow
+bckwhi='\e[107m'; bck111=$bckwhi; bckw=$bckwhi; backwhite='\e[107m'     # 111 background white
+
+# light background colors (add lbck before)
+lbckbla='\e[100m'; lbck000=$lbckbla; lbckk=$lbckbla; lightbackblack='\e[40m'     # 000 light background black
+lbckblu='\e[104m'; lbck001=$lbckblu; lbckb=$lbckblu; lightbackblue='\e[44m'        # 001 light background blue
+lbckgre='\e[102m'; lbck010=$lbckgre; lbckg=$lbckgre; lightbackgreen='\e[42m'     # 010 light background green
+lbckcya='\e[106m'; lbck011=$lbckcya; lbckc=$lbckcya; lightbackcyan='\e[46m'      # 011 light background cyan
+lbckred='\e[101m'; lbck100=$lbckred; lbckr=$lbckred; lightbackred='\e[41m'       # 100 light background red
+lbckmag='\e[105m'; lbck101=$lbckmag; lbckm=$lbckmag; lightbackmagenta='\e[45m'   # 101 light background magenta
+lbckyel='\e[103m'; lbck110=$lbckmag; lbcky=$lbckyel; lightbackyellow='\e[43m'    # 110 light background yellow
+lbckwhi='\e[107m'; lbck111=$lbckwhi; lbckw=$lbckwhi; lightbackwhite='\e[107m'     # 111 light background white
+
+# bold
+
+# underlined
