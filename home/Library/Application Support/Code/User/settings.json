@@ -1,12 +1,10 @@
 {
-    "workbench.colorTheme": "Tomorrow Night Bright",
+    "workbench.colorTheme": "Solarized Light",
     "vscode-neovim.neovimExecutablePaths.darwin": "/usr/local/bin/nvim",
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
-    "editor.minimap.enabled": false,
-    "breadcrumbs.enabled": false,
     "todohighlight.keywords": [
         "DEBUG",
         "REVIEW",
@@ -76,7 +74,6 @@
     },
     "markdown.extension.tableFormatter.normalizeIndentation": true,
     "editor.tabSize": 2,
-    "window.zoomLevel": 1,
     "foam.decorations.links.enable": true,
     "foam.openDailyNote.filenameFormat": "isoDate",
     "foam.openDailyNote.directory": "journal", // a relative directory path will get appended to the workspace root. An absolute directory path will be used unmodified.
@@ -84,8 +81,25 @@
     "foam.openDailyNote.titleFormat": "yyyy-mm-dd",
     "foam.openDailyNote.onStartup": true,
     "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false
+    "explorer.confirmDragAndDrop": false,
     "workbench.statusBar.visible": false,
-    "window.zoomLevel": 1,
     "go.toolsManagement.autoUpdate": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "editor.minimap.enabled": false,
+    "buf.binaryPath": ".hermit/bin/buf",
+    "security.workspace.trust.untrustedFiles": "open",
+    "deno.enable": true,
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "python.defaultInterpreterPath": "/Users/zph/src/runbook-exploration/.direnv/python-3.11.7",
+    "runme.experiments.outputPersistence": true,
+    "git.openRepositoryInParentFolders": "always",
+    "jupyter.interactiveWindow.textEditor.executeSelection": true,
+    "window.zoomLevel": 1,
+    "jupyter.interactiveWindow.cellMarker.codeRegex": "^((#|//)\\s*%%|#\\s*\\<codecell\\>|(#|//)\\s*In\\[\\d*?\\]|(#|//)\\s*In\\[ \\])",
+    "jupyter.interactiveWindow.cellMarker.markdownRegex": "^((#|//)\\s*%%\\s*\\[markdown\\]|(#|//)\\s*\\<markdowncell\\>)",
+    "diffEditor.codeLens": true,
 }
