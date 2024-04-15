@@ -85,7 +85,6 @@ BREWS = %w[
   yarn
   zoxide
   zsh
-  cirruslabs/cli/tart
   earthly/earthly/earthly
 ]
 

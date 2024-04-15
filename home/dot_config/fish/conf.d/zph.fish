@@ -85,6 +85,7 @@ source (brew --prefix asdf)/libexec/asdf.fish
 starship init fish | source
 
 set PATH $HOME/.local/bin $PATH
+set PATH $HOME/.hermit/bin $PATH
 set PATH (brew --prefix)/bin $PATH
 alias c='chezmoi'
 

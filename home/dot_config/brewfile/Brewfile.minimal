@@ -74,8 +74,6 @@ PLATFORM = `uname -m`.chomp.downcase
 
 case PLATFORM
 when 'arm64'
-  TAPS << 'cirruslabs/cli'
-  BREWS << 'cirruslabs/cli/tart'
 when 'x86_64'
 end
 
