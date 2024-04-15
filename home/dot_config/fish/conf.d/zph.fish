@@ -25,14 +25,13 @@ for var in $ENVVARS
   export "$value"
 end
 
-set ZSH_PATH (cat ~/.zsh_env | grep "^PATH=" | awk -F= '{print $2}')
+# Will break on equal sign
+set ZSH_PATH (cat ~/.zsh_env | grep "^PATH=" | awk -F'=' '{print $2}')
 # Note reverse to make this apply older ones first (keeps useful order)
 for path in (string split ':' $ZSH_PATH | tail -r)
   set PATH $path $PATH
 end
 
-# Rust
-set PATH $HOME/.cargo/bin $PATH
 set PAGER (which bat)
 
 set EDITOR (which nvim)
@@ -65,10 +64,6 @@ function run_bundler_cmd
   end
 end
 
-# if test -x (command -v mmake)
-#   alias make='mmake'
-# end
-
 alias vim='nvim'
 # __bash_to_fish
 # if ! string split ',' (functions) | grep __bash_to_fish
@@ -84,9 +79,14 @@ source (brew --prefix asdf)/libexec/asdf.fish
 
 starship init fish | source
 
-set PATH $HOME/.local/bin $PATH
-set PATH $HOME/.hermit/bin $PATH
-set PATH (brew --prefix)/bin $PATH
+# https://fishshell.com/docs/current/cmds/fish_add_path.html
+# prepend, move if currently in path, -g is like export
+fish_add_path -g -m -p (brew --prefix)/bin
+fish_add_path -g -m -p '/usr/local/bin'
+fish_add_path -g -m -p $HOME/.cargo/bin
+fish_add_path -g -m -p $HOME/.local/bin
+fish_add_path -g -m -p $HOME/.hermit/bin
+fish_add_path -g -m -p $HOME/bin
 alias c='chezmoi'
 
 # https://docs.atuin.sh/configuration/key-binding/
