@@ -1,49 +1,53 @@
 live_config_reload = true
 
+import = [
+    "~/.config/alacritty/themes/themes/alabaster.toml"
+]
+
 [bell]
 animation = "EaseOutExpo"
 duration = 0
 
-[colors]
-draw_bold_text_with_bright_colors = true
-
-[colors.bright]
-black = "0x666666"
-blue = "0x7aa6da"
-cyan = "0x54ced6"
-green = "0x9ec400"
-magenta = "0xb77ee0"
-red = "0xff3334"
-white = "0xffffff"
-yellow = "0xe7c547"
-
-[colors.cursor]
-cursor = "0xff2600"
-text = "0xf1c1c1"
-
-[colors.dim]
-black = "0x333333"
-blue = "0x6699cc"
-cyan = "0x66cccc"
-green = "0x99cc99"
-magenta = "0xcc99cc"
-red = "0xf2777a"
-white = "0xdddddd"
-yellow = "0xffcc66"
-
-[colors.normal]
-black = "0x000000"
-blue = "0x7aa6da"
-cyan = "0x70c0ba"
-green = "0xb9ca4a"
-magenta = "0xc397d8"
-red = "0xd54e53"
-white = "0xffffff"
-yellow = "0xe6c547"
-
-[colors.primary]
-background = "0x000000"
-foreground = "0xeaeaea"
+# [colors]
+# draw_bold_text_with_bright_colors = true
+#
+# [colors.bright]
+# black = "0x666666"
+# blue = "0x7aa6da"
+# cyan = "0x54ced6"
+# green = "0x9ec400"
+# magenta = "0xb77ee0"
+# red = "0xff3334"
+# white = "0xffffff"
+# yellow = "0xe7c547"
+#
+# [colors.cursor]
+# cursor = "0xff2600"
+# text = "0xf1c1c1"
+#
+# [colors.dim]
+# black = "0x333333"
+# blue = "0x6699cc"
+# cyan = "0x66cccc"
+# green = "0x99cc99"
+# magenta = "0xcc99cc"
+# red = "0xf2777a"
+# white = "0xdddddd"
+# yellow = "0xffcc66"
+#
+# [colors.normal]
+# black = "0x000000"
+# blue = "0x7aa6da"
+# cyan = "0x70c0ba"
+# green = "0xb9ca4a"
+# magenta = "0xc397d8"
+# red = "0xd54e53"
+# white = "0xffffff"
+# yellow = "0xe6c547"
+#
+# [colors.primary]
+# background = "0x000000"
+# foreground = "0xeaeaea"
 
 [cursor]
 style = "Underline"

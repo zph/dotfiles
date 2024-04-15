@@ -86,7 +86,8 @@ else
   Plug 'zph/securemodelines'
 
   """"" Color
-  Plug 'rking/vim-detailed'
+  "Plug 'rking/vim-detailed'
+  Plug 'olimorris/onedarkpro.nvim', {'branch': 'main'}
 
   """"" Misc
 
@@ -205,7 +206,7 @@ else
 
   call plug#end()
 
-  " if has('nvim')
+
   "   " Terminal mode
   "   tnoremap <Esc> <C-\><C-n>
   "   tnoremap <M-[> <Esc>
@@ -1161,7 +1162,7 @@ else
   " Highlight VCS conflict markers
   match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
   " colorscheme Tomorrow-Night-Bright
-  colo detailed
+  "colo detailed
 
   " Create Parent Directories
   "-----------------------------------------------------------------------------
@@ -1231,3 +1232,6 @@ else
 
   nnoremap <Leader>f :PrettierAsync<CR>
 endif
+
+" somewhere in your config:
+colorscheme onelight

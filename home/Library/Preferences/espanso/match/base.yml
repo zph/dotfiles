@@ -14,12 +14,19 @@ matches:
         params:
           format: "%m/%d/%Y"
   - trigger: ":ds"
-    replace: "{{mydate}}"
+    replace: "{{ds}}"
     vars:
-      - name: mydate
+      - name: ds
         type: date
         params:
           format: "%Y%m%d"
+  - trigger: ":ts"
+    replace: "{{ts}}"
+    vars:
+      - name: ts
+        type: date
+        params:
+          format: "%Y%m%d%H%M%S"
   - trigger: ":shell"
     replace: "{{output}}"
     vars:
