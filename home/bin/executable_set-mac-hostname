@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+set -x
+readonly name="$1"
+# Type the following command to change the primary hostname of your Mac:
+# This is your fully qualified hostname, for example myMac.domain.com
+sudo scutil --set HostName "$name".gear.xargs.io
+
+# Type the following command to change the Bonjour hostname of your Mac:
+# This is the name usable on the local network, for example myMac.local.
+
+# TODO: fix this gives error for local
+# sudo scutil --set LocalHostName "${name}.local"
+# If you also want to change the computer name, type the following command:
+# This is the user-friendly computer name you see in Finder, for example myMac.
+
+sudo scutil --set ComputerName "${name}"
+# Flush the DNS cache by typing:
+
+dscacheutil -flushcache

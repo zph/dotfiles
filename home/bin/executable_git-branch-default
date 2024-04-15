@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# SUMMARY: get the default branch, ie master, main, dev etc
+# $NF is the Number of Fields aka last entry
+set -eou pipefail
+
+# TODO: improve efficiency by only calling once but it's working
+# if ! git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
+#   git remote set-head origin -a > /dev/null 2>&1
+# fi
+
+# git symbolic-ref refs/remotes/origin/HEAD | awk -F "/" '{print $NF}' | tr -d "\n"
+
+git branch | grep -o -E '(main|master|dev|staging|trunk)'

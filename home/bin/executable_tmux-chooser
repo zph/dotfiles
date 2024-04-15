@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2207
+# Credit: https://cedaei.com/posts/ideas-from-my-dev-setup-always-tmux/
+# aka
+
+# Doesn't let you press Ctrl-C
+function ctrl_c() {
+  echo -e "\renter nil to drop to normal prompt"
+}
+
+readonly TMUX_BIN="$(which tmux)"
+trap ctrl_c SIGINT
+
+no_of_terminals=$(tmux list-sessions | wc -l)
+IFS=$'\n'
+output=($("${TMUX_BIN}" list-sessions))
+output_names=($("${TMUX_BIN}" list-sessions -F\#S))
+k=1
+echo "Choose the terminal to attach: "
+for i in "${output[@]}"; do
+  echo "$k - $i"
+  ((k++))
+done
+echo
+echo "Create a new session by entering a name for it"
+read -r input
+if [[ $input == "" ]]; then
+  "${TMUX_BIN}" new-session
+elif [[ $input == 'nil' ]]; then
+  exit 1
+elif [[ $input =~ ^[0-9]+$ ]] && [[ $input -le $no_of_terminals ]]; then
+  terminal_name="${output_names[input - 1]}"
+  "${TMUX_BIN}" attach -t "$terminal_name"
+else
+  "${TMUX_BIN}" new-session -s "$input"
+fi
+exit 0

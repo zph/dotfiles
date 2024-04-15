@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+xattr -dr com.apple.quarantine "$1"
