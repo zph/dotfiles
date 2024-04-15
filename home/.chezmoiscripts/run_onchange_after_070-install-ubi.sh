@@ -14,7 +14,6 @@ declare -a BINARIES=(
   therootcompany/pathman
 )
 
-for
 for bin in "${BINARIES[@]}"; do
   ubi -p "$bin" --in ~/bin_local
 done
