@@ -42,7 +42,6 @@ else
   Plug 'hail2u/vim-css3-syntax'
   Plug 'jparise/vim-graphql'
   Plug 'leafgarland/typescript-vim'
-  Plug 'leafgarland/typescript-vim'
   Plug 'pangloss/vim-javascript'
   Plug 'peitalin/vim-jsx-typescript'
   Plug 'styled-components/vim-styled-components', { 'branch': 'main' }

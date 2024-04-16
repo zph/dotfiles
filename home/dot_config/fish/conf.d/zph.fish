@@ -82,7 +82,10 @@ starship init fish | source
 # https://fishshell.com/docs/current/cmds/fish_add_path.html
 # prepend, move if currently in path, -g is like export
 fish_add_path -g -m -p (brew --prefix)/bin
+fish_add_path -g -m -p /nix/var/nix/profiles/default/bin
+fish_add_path -g -m -p $HOME/.nix-profile/bin
 fish_add_path -g -m -p '/usr/local/bin'
+fish_add_path -g -m -p $HOME/.deno/bin
 fish_add_path -g -m -p $HOME/.cargo/bin
 fish_add_path -g -m -p $HOME/.local/bin
 fish_add_path -g -m -p $HOME/.hermit/bin

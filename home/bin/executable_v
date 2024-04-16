@@ -31,6 +31,6 @@ main(){
   result="$(rg -il "${QUERY}" | fzf -0 -1 --ansi --preview "cat {} | rg ${QUERY} --context 3")"
 
   if [[ ! -z ${result} ]];then
-    vim "+/\v${QUERY}" "${result}"
+    $(which nvim) "+/\v${QUERY}" "${result}"
   fi
 }

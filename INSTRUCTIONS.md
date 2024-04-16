@@ -22,13 +22,9 @@ tart run ventura-base
   - Set full disk access in “Security & Privacy”, click “Full Disk Access” and “+” and “Terminal”
       - In order to run tmutil settings
 
-- Install omf
-    - curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-- Move to fish shell
-    - https://hackercodex.com/guide/install-fish-shell-mac-ubuntu/
 - On m1, symlink /opt/local/bin/nvim into /usr/local/bin/nvim for viscode compatibility
-[ ] Install setapp for many apps
 
+(The following may be handled now via improvements to .osx)
 - Change dock preferences to small, autohide and no animation
 - Setup 3 finger drag in Accessibility > Pointer Control > Trackpad Options
 
@@ -36,6 +32,8 @@ tart run ventura-base
 - Select in finder
 - Cmd-click > "Open"
 - Approve non-signed binary
+
+OR find it in terminal and run `osx-unquarantine $BINARY`
 
 ## References
 - https://github.com/geerlingguy/mac-dev-playbook/blob/master/full-mac-setup.md
