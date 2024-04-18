@@ -75,16 +75,16 @@ alias vim='nvim'
 # mkdir /usr/local/Cellar/bash/5.0.7/share/bashdb
 # touch /usr/local/Cellar/bash/5.0.7/share/bashdb/bashdb-main.inc
 # set -g fish_user_paths "/usr/local/opt/ruby/bin" $fish_user_paths
-source (brew --prefix asdf)/libexec/asdf.fish
+# source (brew --prefix asdf)/libexec/asdf.fish
 
 starship init fish | source
 
 # https://fishshell.com/docs/current/cmds/fish_add_path.html
 # prepend, move if currently in path, -g is like export
 fish_add_path -g -m -p (brew --prefix)/bin
+fish_add_path -g -m -p '/usr/local/bin'
 fish_add_path -g -m -p /nix/var/nix/profiles/default/bin
 fish_add_path -g -m -p $HOME/.nix-profile/bin
-fish_add_path -g -m -p '/usr/local/bin'
 fish_add_path -g -m -p $HOME/.deno/bin
 fish_add_path -g -m -p $HOME/.cargo/bin
 fish_add_path -g -m -p $HOME/.local/bin
@@ -101,3 +101,5 @@ bind \cr _atuin_search
 bind -M insert \cr _atuin_search
 
 bind \cv edit_command_buffer
+
+~/.local/bin/mise activate fish | source

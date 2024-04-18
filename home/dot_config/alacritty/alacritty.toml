@@ -54,7 +54,7 @@ style = "Underline"
 unfocused_hollow = false
 
 [font]
-size = 12.0
+size = 16.0
 
 [font.bold]
 family = "Fira Code"
@@ -68,7 +68,7 @@ y = 0
 family = "Fira Code"
 
 [font.normal]
-family = "Fira Code"
+family = "Inconsolata Nerd Font"
 style = "Regular"
 
 [font.offset]

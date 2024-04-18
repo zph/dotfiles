@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-ver=$(cat VERSION)
-git tag -a $ver -m "Initial public release $ver"

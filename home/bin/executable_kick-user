@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-# shell=( $2 || "bash" )
-
-sudo pkill -KILL -u $1

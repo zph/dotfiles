@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -eou pipefail
-
-export GEM_HOME="$HOME/.ruby/vendor/bundle"
-
-git-smart.rb "$@"

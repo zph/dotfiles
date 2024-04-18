@@ -1,0 +1,14 @@
+[tools]
+node = "latest"
+deno = "latest"
+go = "latest"
+"go:github.com/DarthSim/overmind" = "latest"
+"go:github.com/zph/polylint" = "latest"
+"cargo:eza" = "latest"
+"cargo:cargo-binstall" = "latest"
+"npm:pagerduty-cli" = "latest"
+"ubi:zph/polylint" = "0.0.3"
+"ubi:zph/msh" = "latest"
+
+[settings]
+experimental = true
