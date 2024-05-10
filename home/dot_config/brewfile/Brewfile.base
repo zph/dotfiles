@@ -1,0 +1,85 @@
+module BrewfileMinimal
+  TAPS = %w[
+    zph/zph
+    espanso/espanso
+    homebrew/bundle
+    homebrew/cask
+    homebrew/cask-fonts
+    homebrew/core
+    homebrew/services
+    microsoft/git
+    neovim/neovim
+  ]
+
+  BREWS = %w[
+    asdf
+    awscli
+    bash
+    bat
+    cask
+    direnv
+    earthly/earthly/earthly
+    fish
+    fzf
+    gh
+    git
+    git-delta
+    git-extras
+    go
+    goreleaser
+    jq
+    just
+    mise
+    mosh
+    neovim
+    openssh
+    openssl@3
+    python@3.10
+    reattach-to-user-namespace
+    ripgrep
+    rsync
+    shellcheck
+    shfmt
+    ssh-copy-id
+    starship
+    stow
+    terraform
+    tmux
+    watch
+    watchexec
+    wdiff
+    wget
+    yarn
+    zoxide
+    zsh
+].concat([
+ {name: "sqlite", args: {link: true}},
+ {name: "curl", args: {link: true}},
+])
+
+  CASKS = %w[
+    1password
+    1password-cli
+    alacritty
+    alfred
+    docker
+    espanso
+    font-fira-code
+    karabiner-elements
+    rectangle
+    visual-studio-code
+    zph/zph/dash
+    zph/zph/datagrip
+  ]
+end
+
+BrewfileMinimal::TAPS.each { |c| tap c }
+BrewfileMinimal::CASKS.each { |c| cask c }
+BrewfileMinimal::BREWS.each do |c|
+  case c
+  when Hash
+    brew c[:name], c[:args]
+  else
+   brew c
+  end
+end

@@ -1,0 +1,61 @@
+module BrewfileFull
+  TAPS = %w[
+    earthly/earthly
+    rcmdnk/file
+  ]
+
+  BREWS = %w[
+    # antigen
+    aspell
+    chamber
+    cmake
+    direnv
+    dos2unix
+    earthly/earthly/earthly
+    htop
+    hugo
+    jpeg
+    mas
+    mise
+    mosh
+    neovim
+    overmind
+    rlwrap
+    zstd
+  ]
+
+  CASKS = %w[
+    aws-vault
+    dropbox
+    espanso
+    font-fira-code
+    google-chrome
+    karabiner-elements
+    raindropio
+    rectangle
+    telegram
+    the-unarchiver
+    visual-studio-code
+    vlc
+    zph/zph/dash
+    zph/zph/datagrip
+  ]
+
+  MAS = [
+    ["GrandPerspective", 1111570163],
+    ["iA Writer", 775737590],
+    ["Keynote", 409183694],
+    ["Kindle", 405399194],
+    ["Numbers", 409203825],
+    ["Pages", 409201541],
+    # ["Pixelmator", 407963104],
+    ["rcmd", 1596283165],
+    ["Slack", 803453959],
+  ]
+end
+
+
+BrewfileFull::TAPS.each { |c| tap c }
+BrewfileFull::CASKS.each { |c| cask c }
+BrewfileFull::BREWS.each { |c| brew c }
+BrewfileFull::MAS.each {|name, id| mas name, id: id }

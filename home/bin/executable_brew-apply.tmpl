@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
-{{ if eq .is_minimal_install "true" }}
-brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.minimal"
-{{ else if eq .is_minimal_install "false" }}
-brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.minimal"
-brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.full"
+set -eou pipefail
+
+brew_apply() {
+  local ext="$1"
+  brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.${ext}"
+}
+
+brew_apply "base"
+{{ if eq .is_minimal_install "false" }}
+brew_apply "extras"
 {{ end }}
