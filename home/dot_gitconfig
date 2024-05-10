@@ -29,7 +29,7 @@
   cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
   cos = "!git switch"
-  co = checkout
+  co = checkout --track
   cof = "!git checkout `git status -s | awk '{print $2}' | fzf`"
   dc = diff --cached
   dh = diff HEAD~1
@@ -53,10 +53,10 @@
   la = !git l --all
   noff = merge --no-ff
   nope = "!sh -c 'git checkout .; git checkout -'"
-  pbo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
-  bpo = "!git push origin \"$(git rev-parse --abbrev-ref HEAD)\""
-  ub = "!git update-branch"
-  # up = "!git pull --rebase origin \"$(git rev-parse --abbrev-ref HEAD)\""
+  pbo = push origin HEAD
+  bpo = push origin HEAD
+  ub = update
+  up = update
   #pr = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/pull/new/$(git rev-parse --abbrev-ref HEAD)\""
   gh = "!open \"$(git remote -v | grep origin | grep push | cut -f 2 | cut -d \" \" -f 1 | sed -e \"s|git@\\(.*\\):\\(.*\\).git|https://\\1/\\2|\")/tree/$(git rev-parse --abbrev-ref HEAD)\""
   pr  = "!f() { git fetch -fu ${2:-origin} refs/pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
@@ -209,27 +209,9 @@
   required = true
   clean = git-lfs clean -- %f
   smudge = git-lfs smudge -- %f
-# Standardization https://coolaj86.com/articles/vanilla-devops-git-credentials-cheatsheet/
-# Relys on setting GIT_ASKPASS ENV variable
-[url "https://ssh@github.com/"]
-  insteadOf = ssh://git@github.com/
-[url "git@github.com:"]
-  insteadOf = https://github.com/
-
-# Disable the git->https to flip back to keys not PAT
-; [url "https://git@github.com/"]
-;   insteadOf = git@github.com:
-; [url "https://api@github.com/"]
-;   insteadOf = https://github.com/
-; [url "https://api@github.com/"]
-;   insteadOf = https://github.com/
 [include]
   # Include is used to load private configurations
   path = "~/.config/git/config.local"
-  # Content
-  # [github]
-  #   token = <TOKEN>
-  #   oauth-token = <TOKEN>
 [includeif "gitdir:~/src/work/**"]
   path = ~/.gitconfig-work
 [gpg "ssh"]

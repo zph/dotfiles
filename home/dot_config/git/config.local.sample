@@ -1,0 +1,14 @@
+# Standardization https://coolaj86.com/articles/vanilla-devops-git-credentials-cheatsheet/
+# Relys on setting GIT_ASKPASS ENV variable
+[url "https://ssh@github.com/"]
+  insteadOf = ssh://git@github.com/
+[url "git@github.com:"]
+  insteadOf = https://github.com/
+
+# Disable the git->https to flip back to keys not PAT
+[url "https://git@github.com/"]
+  insteadOf = git@github.com:
+[url "https://api@github.com/"]
+  insteadOf = https://github.com/
+[url "https://api@github.com/"]
+  insteadOf = https://github.com/
