@@ -117,3 +117,8 @@ deploy.log
 
 # Kubernetes
 kubeconfig.yml
+
+# mise
+.mise.toml
+.mise.local.toml
+.mise.*.local.toml
