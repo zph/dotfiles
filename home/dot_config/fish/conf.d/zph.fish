@@ -102,4 +102,4 @@ bind -M insert \cr _atuin_search
 
 bind \cv edit_command_buffer
 
-~/.local/bin/mise activate fish | source
+mise activate fish | source

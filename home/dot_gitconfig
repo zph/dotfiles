@@ -29,7 +29,7 @@
   cp = cherry-pick
     #clcd = "!git clone $1 && cd !$"
   cos = "!git switch"
-  co = checkout --track
+  co = checkout
   cof = "!git checkout `git status -s | awk '{print $2}' | fzf`"
   dc = diff --cached
   dh = diff HEAD~1
