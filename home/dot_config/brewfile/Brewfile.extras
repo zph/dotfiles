@@ -27,18 +27,11 @@ module BrewfileFull
   CASKS = %w[
     aws-vault
     dropbox
-    espanso
-    font-fira-code
     google-chrome
-    karabiner-elements
     raindropio
-    rectangle
     telegram
     the-unarchiver
-    visual-studio-code
     vlc
-    zph/zph/dash
-    zph/zph/datagrip
   ]
 
   MAS = [
