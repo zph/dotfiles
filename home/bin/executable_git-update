@@ -28,4 +28,4 @@ remote_sha=$(git rev-parse "$upstream_branch")
 
 header "Changes applied"
 git_update_prettyprint_log
-warn "Yikes"
+success "✅ Complete"
