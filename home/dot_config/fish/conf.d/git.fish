@@ -33,3 +33,8 @@ alias gmv 'git mv'
 alias grm 'git rm'
 alias gcop 'git commit && git push'
 alias gitrm "git add -u"
+
+function gd
+  set preview "git diff $argv --color=always -- {-1}"
+  git diff $argv --name-only | fzf -m --ansi --preview $preview
+end
