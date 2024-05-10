@@ -154,7 +154,7 @@
   # https://stackoverflow.com/questions/957928/is-there-a-way-to-get-the-git-root-directory-in-one-command#comment9747528_957978
   # so it's possible to do `git exec make` which switches it to top of git repo
   exec = "!exec "
-	new = !git init && git symbolic-ref HEAD refs/heads/main
+  new = !git init && git symbolic-ref HEAD refs/heads/main
 
 [merge]
   tool = vimdiff
@@ -167,14 +167,9 @@
   pager = diff-so-fancy | less --tabs=4 -RFX
 [credential]
 	helper = cache --timeout=3600
-[difftool "sourcetree"]
-  cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-  path =
-[mergetool "sourcetree"]
-  cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-  trustExitCode = true
 [push]
   default = current
+  autoSetupRemote = true
 [web]
   browser = chrome
 [branch]
