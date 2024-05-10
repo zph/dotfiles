@@ -25,3 +25,35 @@ header(){
 warn(){
   echo -e "${red}${*}${coloroff}"
 }
+
+success(){
+  echo -e "${green}${*}${coloroff}"
+}
+
+# Credit LunarVim install script
+function msg() {
+  local text="$1"
+  local div_width="80"
+  printf "%${div_width}s\n" ' ' | tr ' ' -
+  printf "%s\n" "$text"
+}
+
+# Credit LunarVim install script
+function confirm() {
+  local question="$1"
+  while true; do
+    msg "$question"
+    read -p "[y]es or [n]o (default: no) : " -r answer
+    case "$answer" in
+      y | Y | yes | YES | Yes)
+        return 0
+        ;;
+      n | N | no | NO | No | *[[:blank:]]* | "")
+        return 1
+        ;;
+      *)
+        msg "Please answer [y]es or [n]o."
+        ;;
+    esac
+  done
+}
