@@ -10,4 +10,4 @@ set -eou pipefail
 
 # git symbolic-ref refs/remotes/origin/HEAD | awk -F "/" '{print $NF}' | tr -d "\n"
 
-git branch | grep -o -E '(main|master|dev|staging|trunk)'
+git branch -r -l 'origin/*' | awk '{print $1}' | grep -E -o '(main|master)'
