@@ -21,6 +21,9 @@ git_update_prettyprint_log () {
 header "Fetching remotes"
 git fetch --all --prune | indent
 
+header "Making sure we're tracking remote"
+git branch -u "origin/$(branch-name)" | indent
+
 header "Getting latest from remote on current branch"
 git pull --rebase=merges --autostash | indent
 
@@ -29,3 +32,23 @@ remote_sha=$(git rev-parse "$upstream_branch")
 header "Changes applied"
 git_update_prettyprint_log
 success "✅ Complete"
+
+readonly default_branch="$(git branch-default)"
+
+# Check the trunk branch
+hash1=$(git show-ref --heads -s $default_branch)
+# Check the trunk branch vs the current
+hash2=$(git merge-base $default_branch origin/HEAD)
+
+if [ "${hash1}" = "${hash2}" ];then
+  # No rebase/update needed
+  success "✅ No rebase needed to get current"
+else
+  echo "🆘 Rebase is required"
+  read -r -p "Continue? (Y/N): " confirm
+  if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
+    git rebase "origin/${default_branch}"
+  else
+    warn "Branch not current with ${default_branch}"
+  fi
+fi
