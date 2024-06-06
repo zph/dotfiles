@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# SUMMARY: task $TASKNAME
+# Uses mise for task running but without as much typing
+
+set -eou pipefail
+
+if [ $# -eq 0 ]; then
+  mise task
+else
+  mise task run "$@"
+fi
