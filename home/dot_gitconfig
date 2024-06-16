@@ -108,9 +108,7 @@
   hp = "!. ~/.githelpers && show_git_head"
   l = "!. ~/.githelpers && pretty_git_log"
   la = !git l --all
-  # ll = !git r --all
-  ll = !git smart log
-  lo = !git log --oneline
+  ll = !git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
   r = !git l -30
   ra = !git r --all
   unstage = reset HEAD
@@ -156,15 +154,13 @@
   exec = "!exec "
   new = !git init && git symbolic-ref HEAD refs/heads/main
 
-[merge]
-  tool = vimdiff
 [github]
   user = zph
 [core]
   autocrlf = input
   safecrlf = true
   excludesfile = ~/.gitignore_global
-  pager = diff-so-fancy | less --tabs=4 -RFX
+  pager = delta
 [credential]
 	helper = cache --timeout=3600
 [push]
@@ -192,13 +188,6 @@
   oldHighlight = red bold 52
   newNormal = green bold
   newHighlight = green bold 22
-[color "diff"]
-  meta = yellow
-  frag = magenta bold
-  commit = yellow bold
-  old = red bold
-  new = green bold
-  whitespace = red reverse
 [filter "lfs"]
   process = git-lfs filter-process
   required = true
@@ -211,3 +200,14 @@
   path = ~/.gitconfig-work
 [gpg "ssh"]
   allowedSignersFile = ~/.ssh/allowed_signers
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true    # use n and N to move between diff sections
+# delta detects terminal colors automatically; set one of these to disable auto-detection
+# dark = true
+# light = true
+[merge]
+  conflictstyle = diff3
+[diff]
+  colorMoved = default
