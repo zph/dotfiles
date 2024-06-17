@@ -122,3 +122,10 @@ kubeconfig.yml
 .mise.toml
 .mise.local.toml
 .mise.*.local.toml
+
+# for .env tracking of config data in repos
+.env/*
+# On second thought use a name that won't possibly conflict
+.__env/*
+# Or better yet namespace it like it's 1990
+.com.xargs.io/*

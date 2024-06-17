@@ -6,6 +6,8 @@
 import { $ } from "jsr:@david/dax"
 import { parseArgs } from "jsr:@std/cli";
 
+const ENV_FOLDER = ".com.xargs.io/env"
+
 const args = parseArgs(Deno.args, {
   boolean: ["help"],
 })
@@ -60,16 +62,18 @@ const main = async () => {
     } else {
       throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
     }
+  } else if (gitFile.existsSync() && gitFile.isDirSync()) {
+    // We're in a normal git repo
   } else {
     throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
   }
 
   // By this point we've either found the true git-root or we've thrown an error.
 
-  const env = $.path(".env")
+  const env = $.path(ENV_FOLDER)
 
   if (!env.isDirSync()) {
-    await Deno.mkdir(".env")
+    await Deno.mkdir(ENV_FOLDER, {recursive: true})
   }
 
   // We're established a sane default and can do the real work
