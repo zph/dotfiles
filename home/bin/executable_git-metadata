@@ -1,0 +1,97 @@
+#!/usr/bin/env -S deno run -A --ext ts
+// SUMMARY: git metadata [set|get] KEY [VALUE]
+// git metadata get VAR_NAME
+// git metadata set VAR_NAME VALUE
+
+import { $ } from "jsr:@david/dax"
+import { parseArgs } from "jsr:@std/cli";
+
+const args = parseArgs(Deno.args, {
+  boolean: ["help"],
+})
+
+if(args._.length === 0) {
+  console.log($.dedent`Usage:
+   git metadata set key value
+   git metadata get key
+   `)
+   Deno.exit(1)
+} else if (args._.length < 2) {
+  throw new Error(`Too few args ${args}`)
+}
+
+enum Action {
+  Get = "get",
+  Set = "set",
+}
+const action = args._[0] as Action
+if(action === Action.Set) {
+  if(args._.length !== 3) {
+    throw new Error(`Missing argument for value`)
+  }
+} else if (action === Action.Get) {
+  if(args._.length !== 2) {
+    throw new Error(`Missing argument for value`)
+  }
+}
+const keyName = args._[1] as string
+
+const main = async () => {
+  const gitRoot = await $`git root`.noThrow().quiet()
+  if (gitRoot.code === 0) {
+    $.cd(gitRoot.stdout.trim())
+  }
+
+  const gitFile = $.path(".git")
+  if (gitFile.existsSync() && gitFile.isFileSync()) {
+    // We're in subfolder of a workdir
+    const content = await Deno.readTextFile(gitFile.toString())
+    const p = content.match(/gitdir: (.*)/i)
+    if (p && p[1]?.length > 0) {
+      let basePath: string
+      if (p[1].includes("/worktrees")) {
+        // We're in a subfolder of a worktree
+        basePath = p[1].split("/worktrees")[0]
+      } else {
+        basePath = p[1]
+      }
+      const root = $.path(basePath).parentOrThrow()
+      $.cd(root)
+    } else {
+      throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
+    }
+  } else {
+    throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
+  }
+
+  // By this point we've either found the true git-root or we've thrown an error.
+
+  const env = $.path(".env")
+
+  if (!env.isDirSync()) {
+    await Deno.mkdir(".env")
+  }
+
+  // We're established a sane default and can do the real work
+  const set = async (key: string, value: string) => {
+    await Deno.writeTextFile(env.join(key).toString(), value)
+  }
+
+  const get = async (key: string) => {
+    const keyPath = env.join(key)
+    if (keyPath.isFileSync()) {
+      console.log(await Deno.readTextFile(keyPath.toString()))
+    } else {
+      throw new Error(`Unable to find ${key} at ${keyPath}`)
+    }
+  }
+
+  if(action === Action.Get) {
+    await get(keyName)
+  } else if(action === Action.Set) {
+    const value = args._[2] as string
+    await set(keyName, value)
+  }
+}
+
+await main()

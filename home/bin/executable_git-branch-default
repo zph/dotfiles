@@ -1,8 +1,33 @@
 #!/usr/bin/env bash
 # SUMMARY: get the default branch, ie master, main, dev etc
-# $NF is the Number of Fields aka last entry
 set -eou pipefail
 
+# CURRENT ATTEMPT:
+# Handle the following
+# - worktrees with a bare root
+# - worktrees where we call script from a branch folder
+# - standard repo clones
+#
+# HACKS the usage of git local aliases to store arbitrary metadata
+# Superior to storing in .env folder because this will work in subfolder or in worktree root
+readonly KEY="GIT_DEFAULT_BRANCH"
+
+set +e
+default_branch="$(git metadata get "$KEY" 2>/dev/null)"
+set -e
+
+if [ $? -eq 0 ];then
+  echo "$default_branch"
+else
+  # Cache the value because it's a slow API call
+  default_branch="$(git remote show origin | grep -E -o 'HEAD branch: (.*)' | awk -F: '{print $2}' | tr -d " ")"
+  git metadata set "$KEY" "$default_branch"
+  echo "$default_branch"
+fi
+
+############################################################################
+# FORMER ATTEMPTS:
+# $NF is the Number of Fields aka last entry
 # TODO: improve efficiency by only calling once but it's working
 # if ! git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
 #   git remote set-head origin -a > /dev/null 2>&1
@@ -10,4 +35,5 @@ set -eou pipefail
 
 # git symbolic-ref refs/remotes/origin/HEAD | awk -F "/" '{print $NF}' | tr -d "\n"
 
-git branch -r -l 'origin/*' | awk '{print $1}' | grep -E -o '(main|master)'
+# git branch -r -l 'origin/*' | awk '{print $1}' | grep -E -o '(main|master)'
+#
