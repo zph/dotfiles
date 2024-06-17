@@ -12,15 +12,19 @@ set -eou pipefail
 # Superior to storing in .env folder because this will work in subfolder or in worktree root
 readonly KEY="GIT_DEFAULT_BRANCH"
 
+set -x
 set +e
 default_branch="$(git metadata get "$KEY" 2>/dev/null)"
-set -e
-
 if [ $? -eq 0 ];then
+set -e
   echo "$default_branch"
 else
   # Cache the value because it's a slow API call
   default_branch="$(git remote show origin | grep -E -o 'HEAD branch: (.*)' | awk -F: '{print $2}' | tr -d " ")"
+  if [[ "$default_branch" == "" ]]; then
+    # We need to infer the branch name :-/
+    default_branch="$(git branch -r -l 'origin/*' | awk '{print $1}' | grep -E -o 'origin/(main|master)' | head -1 | awk -F'/' '{print $2}')"
+  fi
   git metadata set "$KEY" "$default_branch"
   echo "$default_branch"
 fi
