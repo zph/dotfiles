@@ -102,4 +102,11 @@ bind -M insert \cr _atuin_search
 
 bind \cv edit_command_buffer
 
+# Git worktree add + cd
+function gwa -d "Git worktree add and then cd into folder"
+  git worktree-add $argv
+  # Expecting the folder name to be first, may be brittle
+  cd $argv[1]
+end
+
 mise activate fish | source
