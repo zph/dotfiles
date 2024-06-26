@@ -10,13 +10,7 @@ export GIT_ASKPASS=~/bin/git-askpass
 
 alias __git-checkout_main=_git_checkout
 
-__hub_path="$(which hub)"
-if [[ -x "$__hub_path" ]]; then
-  alias g="$__hub_path";
-else
-  alias g='git'
-fi
-unset __hub_path
+alias g='git'
 
 compdef g=git
 alias gcl='git clone'
