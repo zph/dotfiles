@@ -10,12 +10,13 @@ else
     sedf() { command sed -u "$@"; }
 fi
 
+# Thanks AWS for using \r instead of the canonical linux/macism of \n!
 indent() {
-  sedf "s/^/       /"
+  tr "\r" "\n" | sedf "s/^/       /"
 }
 
 tolower() {
-    echo "$@" | tr "[:upper:]" "[:lower:]"
+  echo "$@" | tr "[:upper:]" "[:lower:]"
 }
 
 header(){
