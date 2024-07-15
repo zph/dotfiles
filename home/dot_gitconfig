@@ -170,6 +170,9 @@
   browser = chrome
 [branch]
   autosetuprebase = always
+[rebase]
+  # https://andrewlock.net/working-with-stacked-branches-in-git-is-easier-with-update-refs/
+  updateRefs = true
 [rerere]
   enabled = 1
 [heroku]
