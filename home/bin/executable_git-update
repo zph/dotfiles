@@ -6,6 +6,7 @@ set -eou pipefail
 source $HOME/bin/lib/common.sh
 
 readonly upstream_branch=$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}")
+readonly default_branch="$(git branch-default)"
 
 readonly head_sha=$(git rev-parse HEAD)
 
@@ -18,8 +19,8 @@ git_update_prettyprint_log () {
   git log --format="$format" --graph "$merge_base_sha".."$remote_sha"
 }
 
-header "Fetching remotes"
-git fetch --all --prune | indent
+header "Fetching origin $default_branch"
+git fetch origin $default_branch:$default_branch --prune | indent
 
 header "Making sure we're tracking remote"
 git branch -u "origin/$(branch-name)" | indent
@@ -32,8 +33,6 @@ remote_sha=$(git rev-parse "$upstream_branch")
 header "Changes applied"
 git_update_prettyprint_log
 success "✅ Complete"
-
-readonly default_branch="$(git branch-default)"
 
 # Check the trunk branch
 hash1=$(git show-ref --heads -s origin/$default_branch)
