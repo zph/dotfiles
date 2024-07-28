@@ -19,8 +19,10 @@ git_update_prettyprint_log () {
   git log --format="$format" --graph "$merge_base_sha".."$remote_sha"
 }
 
-header "Fetching origin $default_branch"
-git fetch origin $default_branch:$default_branch --prune | indent
+if [[ $(branch-name) != $default_branch ]]; then
+  header "Fetching origin $default_branch"
+  git fetch origin $default_branch:$default_branch --prune | indent
+fi
 
 header "Making sure we're tracking remote"
 git branch -u "origin/$(branch-name)" | indent
