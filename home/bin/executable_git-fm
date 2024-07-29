@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+source "$HOME/bin/lib/common.sh"
+
+readonly primary_branch="$(git default-branch)"
+readonly current_branch="$(git rev-parse --abbrev-ref HEAD)"
+header "Fetching primary branch: (${primary_branch})"
+
+if [[ $current_branch == $primary_branch ]];then
+  git pull | indent
+else
+  git fetch ${primary_branch}:${primary_branch} | indent
+fi
