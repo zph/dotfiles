@@ -28,27 +28,31 @@ interface Platform {
 type Pattern = string[]
 const containsAny = (patterns: Pattern) => (name: string) => patterns.some(pattern => name.toLowerCase().includes(pattern))
 const containsAll = (patterns: Pattern[]) => (name: string) => patterns.every(p => containsAny(p)(name))
+const X86 = ["x64", "amd64", "x86_64"]
+const Apple = ["apple", "darwin", "macos"]
+const ARM = ["arm64", "aarch64"]
+const Linux = ["linux"]
 
 const PLATFORMS: Platform[] = [
   {
     arch: "aarch64",
     os: "linux",
-    pattern: containsAll([["linux"], ["arm64", "aarch64"]])
+    pattern: containsAll([Linux, ARM])
   },
   {
     arch: "x86_64",
     os: "linux",
-    pattern: containsAll([["linux"], ["x64", "amd64", "x86_64"]])
+    pattern: containsAll([Linux, X86])
   },
   {
     arch: "aarch64",
     os: "macos",
-    pattern: containsAll([["darwin", "macos"], ["arm64", "aarch64"]])
+    pattern: containsAll([Apple, ARM])
   },
   {
     arch: "x86_64",
     os: "macos",
-    pattern: containsAll([["darwin", "macos"], ["x64", "amd64", "x86_64"]])
+    pattern: containsAll([Apple, X86])
   },
 ];
 
