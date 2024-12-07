@@ -22,29 +22,33 @@ interface GithubRelease {
 interface Platform {
   arch: string;
   os: string;
-  pattern: RegExp;
+  pattern: (name: string) => boolean;
 }
+
+type Pattern = string[]
+const containsAny = (patterns: Pattern) => (name: string) => patterns.some(pattern => name.toLowerCase().includes(pattern))
+const containsAll = (patterns: Pattern[]) => (name: string) => patterns.every(p => containsAny(p)(name))
 
 const PLATFORMS: Platform[] = [
   {
     arch: "aarch64",
     os: "linux",
-    pattern: /linux[._-](arm64|aarch64)/i
+    pattern: containsAll([["linux"], ["arm64", "aarch64"]])
   },
   {
     arch: "x86_64",
     os: "linux",
-    pattern: /linux[._-](x64|amd64|]x86_64)/i
+    pattern: containsAll([["linux"], ["x64", "amd64", "x86_64"]])
   },
   {
     arch: "aarch64",
     os: "macos",
-    pattern: /(darwin|macos)[._-](arm64|aarch64)/i
+    pattern: containsAll([["darwin", "macos"], ["arm64", "aarch64"]])
   },
   {
     arch: "x86_64",
     os: "macos",
-    pattern: /(darwin|macos)[._-](x64|amd64|x86_64)/i
+    pattern: containsAll([["darwin", "macos"], ["x64", "amd64", "x86_64"]])
   },
 ];
 
@@ -113,7 +117,7 @@ async function generateDotSlashManifest(
 
   for (const platform of PLATFORMS) {
     const asset = release.assets.find(a =>
-      a.name.match(assetPattern) && a.name.match(platform.pattern)
+      a.name.match(assetPattern) && platform.pattern(a.name)
     );
 
     if (asset) {
