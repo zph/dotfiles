@@ -26,11 +26,13 @@ interface Platform {
 }
 
 type Pattern = string[]
-const containsAny = (patterns: Pattern) => (name: string) => patterns.some(pattern => name.toLowerCase().includes(pattern))
+const containsAny = (patterns: Pattern) => (name: string) => patterns.some(pattern => name.includes(pattern))
 const containsAll = (patterns: Pattern[]) => (name: string) => patterns.every(p => containsAny(p)(name))
+
 const X86 = ["x64", "amd64", "x86_64"]
-const Apple = ["apple", "darwin", "macos"]
 const ARM = ["arm64", "aarch64"]
+
+const Apple = ["apple", "darwin", "macos"]
 const Linux = ["linux"]
 
 const PLATFORMS: Platform[] = [
@@ -121,7 +123,7 @@ async function generateDotSlashManifest(
 
   for (const platform of PLATFORMS) {
     const asset = release.assets.find(a =>
-      a.name.match(assetPattern) && platform.pattern(a.name)
+      a.name.match(assetPattern) && platform.pattern(a.name.toLowerCase())
     );
 
     if (asset) {
@@ -162,7 +164,9 @@ async function generateDotSlashManifest(
   ${JSON.stringify(manifest, null, 2)}
   `
 
+  // TODO: allow specifying the output location including stdout
   await Deno.writeTextFile(`${repo}`, output);
+  await Deno.chmod(`${repo}`, 0o755);
 }
 
 // Parse command line arguments
@@ -181,6 +185,7 @@ if (!owner || !repoName) {
   Deno.exit(1);
 }
 
+// TODO: add debug mode w/ verbose output to stderr
 // TODO: handle enterprise GH
 generateDotSlashManifest(owner, repoName, tag.toString(), pattern.toString())
   .catch(console.error);
