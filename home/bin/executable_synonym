@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-# Signup for thesaurus api key here: http://words.bighugelabs.com/
-# Add $THESAURUS_KEY to your dotfiles (preferably don't upload to Github) like this:
-# export $THESAURUS_KEY="LONGALPHANUMKEY"
-curl -s http://words.bighugelabs.com/api/2/$THESAURUS_KEY/$1/ | grep \|syn\| | cut -d "|" -f 3

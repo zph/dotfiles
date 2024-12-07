@@ -14,13 +14,15 @@ shift
 GOFILE_GLOB="${*:-*.go}"
 
 export CGO_ENABLED=0
-export GOARCH=amd64
+export GOARCH=(amd64 arm64)
 PLATFORMS=(linux darwin freebsd)
 
 main(){
   for platform in "${PLATFORMS[@]}";do
-    echo "Building $platform/$GOARCH"
-    GOOS=${platform} go build -a -ldflags '-w' -o "${OUTPUT_NAME}-${platform}-${GOARCH}" $GOFILE_GLOB
+    for arch in "${GOARCH[@]}";do
+      echo "Building $platform/$arch"
+      GOOS=${platform} go build -a -ldflags '-w' -o "${OUTPUT_NAME}-${platform}-${arch}" $GOFILE_GLOB
+    done
   done
 }
 
