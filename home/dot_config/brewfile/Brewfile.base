@@ -43,7 +43,6 @@ module BrewfileMinimal
     shfmt
     ssh-copy-id
     starship
-    stow
     terraform
     tmux
     watch

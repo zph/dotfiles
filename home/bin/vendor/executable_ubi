@@ -71,8 +71,8 @@
   "metadata": {
     "build_info": {
       "created_at": "2024-12-08T02:18:57.862Z",
-      "build_tool": "dotslash-manifest",
-      "command": "dotslash-manifest create 'houseabsolute/ubi' latest ubi",
+      "build_tool": "dotslash-pkg",
+      "command": "dotslash-pkg create 'houseabsolute/ubi' latest ubi",
       "tag": "latest"
     }
   }

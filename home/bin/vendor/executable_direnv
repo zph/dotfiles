@@ -67,8 +67,8 @@
   "metadata": {
     "build_info": {
       "created_at": "2024-12-07T22:39:39.430Z",
-      "build_tool": "dotslash-manifest",
-      "command": "dotslash-manifest create 'direnv/direnv' 'v2.31.0 - v2.35.0' direnv",
+      "build_tool": "dotslash-pkg",
+      "command": "dotslash-pkg create 'direnv/direnv' 'v2.31.0 - v2.35.0' direnv",
       "tag": "v2.31.0 - v2.35.0"
     }
   }

@@ -439,7 +439,7 @@ const main = async () => {
       const [_, url, name] = args._;
       const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout("piped").printCommand();
       const baseManifest = JSON.parse(output.stdout);
-      await writeManifest({ ...baseManifest, metadata: { build_info: buildInfo("") } }, name.toString());
+      await writeManifest({ ...baseManifest, metadata: { build_info: buildInfo("") }, name: name.toString() }, name.toString());
       return;
     }
     const [_command, repo, tag, pattern] = args._;
