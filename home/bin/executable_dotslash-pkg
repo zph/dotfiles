@@ -212,9 +212,7 @@ async function create(
     metadata: {} as Record<string, any>,
   };
 
-  const buildScript = Deno.mainModule.split("/").pop();
-
-  for (const platform of PLATFORMS) {
+  await Promise.all(PLATFORMS.map(async (platform) => {
     const asset = release.assets.find(a =>
       a.name.match(assetPattern) && platform.pattern(a.name.toLowerCase())
     );
@@ -240,7 +238,7 @@ async function create(
         readonly: true
       };
     }
-  }
+  }));
   manifest.metadata = {
     build_info: buildInfo(tag)
   }
@@ -370,7 +368,7 @@ const update = async (manifests: string[]) => {
     const manifestText = await Deno.readTextFile(manifestFile);
     // Skip the first line of the file
     const jsonStart = manifestText.indexOf('\n') + 1;
-    const manifest: Manifest = parse(manifestText.substring(jsonStart));
+    const manifest: Manifest = parse(manifestText.substring(jsonStart)) as unknown as Manifest;
     logger.info(`Updating`, manifest.metadata.build_info.command);
     const cmd = manifest.metadata.build_info.command;
     if (cmd?.includes("create")) {
@@ -392,7 +390,6 @@ const runCommand = () => `${Deno.mainModule.split("/").pop()} ${Deno.args.map($.
 const check = async (manifests: string[]) => {
   for (const manifestFile of manifests) {
     const manifestText = await Deno.readTextFile(manifestFile);
-    const manifest: Manifest = parse(manifestText);
     if (manifestText.includes("TODO:")) {
       logger.warn(`${manifestFile} has TODOs`);
       logger.warn(manifestText.split("TODO:").map(l => l.trim()).join("\n"));
@@ -400,11 +397,17 @@ const check = async (manifests: string[]) => {
   }
 }
 
-
+// TODO:
+// - enable using a registry for installing tools which is really just a repo, like homebrew-zph repo.
+// - then it can be dotslash-pkg install zph/dotslash-packages/jq
 const main = async () => {
   // Parse command line arguments
   const args = parseArgs(Deno.args, {
     boolean: ["verbose"],
+    string: ["output"],
+    default: {
+      output: null,
+    }
   });
 
   if (args.verbose) {
@@ -417,13 +420,14 @@ const main = async () => {
     logger.error("  create    Generate a new manifest file");
     logger.error("  update    Update an existing manifest file");
     logger.error("  check     Verify if updates are available");
+    logger.error("  install   Install a tool from a manifest");
     Deno.exit(1);
   }
 
   // Validate command
   const command = args._[0].toString();
-  if (!["create", "update", "check"].includes(command)) {
-    logger.error("Invalid command. Must be one of: create, update, check");
+  if (!["create", "update", "check", "install"].includes(command)) {
+    logger.error("Invalid command. Must be one of: create, update, check, install");
     Deno.exit(1);
   }
 
@@ -450,14 +454,93 @@ const main = async () => {
       .catch(err => logger.error(err));
   } else if (command === "update") {
     const [_command, ...maybeManifests] = args._;
-    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString()));
+    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString())).then(m => m.filter(m => m != null)) as string[];
     update(manifests).catch(err => logger.error(err));
   } else if (command === "check") {
     const [_command, ...maybeManifests] = args._;
-    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString()));
+    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString())).then(m => m.filter(m => m != null)) as string[];
     check(manifests).catch(err => logger.error(err));
+  } else if (command === "install") {
+    const [_command, ...maybeRefs] = args._;
+    for await (const ref of maybeRefs) {
+      install(ref.toString(), args).catch(err => logger.error(err));
+    }
+  }
+}
+
+// TODO: setup mechanism to specify output file and default to manifest name
+async function install(ref: string, args: typeof parseArgs) {
+  const refType = determineRefType(ref);
+  if (refType === "http") {
+    installHttp(ref, args);
+  } else if (refType === "github") {
+    installGithub(ref, args);
+  }
+}
+
+async function installHttp(ref: string, args: typeof parseArgs) {
+  const output = await fetch(ref).then(r => r.text());
+  await Deno.writeTextFile(args.output || ref, output);
+  await Deno.chmod(args.output || ref, 0o755);
+  console.log(`Installed ${args.output || ref}`);
+}
+
+function ensurePrefix(str: string, prefix: string): string {
+  if (!str.startsWith(prefix)) {
+    return prefix + str;
+  }
+  return str;
+}
+
+// TODO: support branch/ref/commit as fragment
+async function installGithub(refRaw: string, args: typeof parseArgs) {
+  const uri = new URL(ensurePrefix(refRaw, "github://"));
+  const owner = uri.host
+  const [repo, _] = uri.pathname.split("/").slice(1);
+  const path = uri.pathname.split("/").slice(2).join("/");
+  const tag = uri.hash ? uri.hash.slice(1) : "latest"; // Get fragment without # prefix, default to latest
+  if (!path) {
+    throw new Error("Path is required for github:// URLs");
+  }
+  let ref = tag;
+
+  if (tag == "latest") {
+    // Get default branch if tag not specified
+    ref = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`)
+      .then(r => {
+        if (!r.ok) {
+        throw new Error(`Failed to fetch repo info: ${r.statusText}`);
+      }
+      return r.json();
+    })
+    .then(data => data.default_branch);
   }
 
+  const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}`;
+  const response = await fetch(rawUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${rawUrl}: ${response.statusText}`);
+  }
+
+  const content = await response.text();
+  const outputPath = args.output as string || path.split("/").pop() || "";
+  await Deno.writeTextFile(outputPath, content);
+  await Deno.chmod(outputPath, 0o755);
+  console.log(`Installed ${outputPath}`);
+}
+
+type RefType = "http" | "github"
+
+function determineRefType(ref: string): RefType {
+  if (ref.startsWith("http")) {
+    return "http"
+  }
+  if (ref.startsWith("github://")) {
+    return "github"
+  }
+  // TODO: support S3, GCS, and git://
+  // Otherwise, assume it's a github reference
+  return "github"
 }
 
 if (import.meta.main) {

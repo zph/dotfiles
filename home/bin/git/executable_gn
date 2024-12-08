@@ -28,4 +28,3 @@ if __name__ == '__main__':
     print '%i lines added' % len(added_lines)
     print '%i lines removed' % len(removed_lines)
     print '%+i lines net change' % (len(added_lines) - len(removed_lines))
-

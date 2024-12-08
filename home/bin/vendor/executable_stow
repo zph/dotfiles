@@ -190,7 +190,7 @@ sub parent {
     my $path = join '/', @_;
     my @elts = split m{/+}, $path;
     pop @elts;
-    return join '/', @elts; 
+    return join '/', @elts;
 }
 
 #===== METHOD ===============================================================
@@ -1118,7 +1118,7 @@ sub path_owned_by_package {
 #           : to the stow directory, and $package is the name of the package.
 #           : or ('', '', '') if link is not owned by stow
 # Throws    : n/a
-# Comments  : Needs 
+# Comments  : Needs
 #           : Allow for stow dir not being under target dir.
 #           : We could put more logic under here for multiple stow dirs.
 #============================================================================
@@ -1167,7 +1167,7 @@ sub find_stowed_path {
     }
 
     my $package = shift @path;
-    
+
     debug(4, "    yes - by $package in " . join_paths(@path));
     return ($path, $self->{stow_path}, $package);
 }

@@ -1,0 +1,75 @@
+#!/usr/bin/env dotslash
+
+{
+  "name": "direnv",
+  "platforms": {
+    "linux-aarch64": {
+      "size": 6684672,
+      "hash": "blake3",
+      "digest": "a25f9d90ed9dc590db278a88be099f7b90d8c9d08a2b76ada093a81a3b8bd161",
+      "path": "direnv",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "direnv/direnv",
+          "tag": "v2.35.0",
+          "name": "direnv.linux-arm64"
+        }
+      ],
+      "readonly": true
+    },
+    "linux-x86_64": {
+      "size": 6934528,
+      "hash": "blake3",
+      "digest": "a7f6a66a47b6c82511e498a8dd147b002dc1c34fe1f9d5e6688f1a0bacde715a",
+      "path": "direnv",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "direnv/direnv",
+          "tag": "v2.35.0",
+          "name": "direnv.linux-amd64"
+        }
+      ],
+      "readonly": true
+    },
+    "macos-aarch64": {
+      "size": 7350242,
+      "hash": "blake3",
+      "digest": "336a31fefd8940cab60c5e97b8a64a93996ed2b8c80082c6045c829b8630d4b6",
+      "path": "direnv",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "direnv/direnv",
+          "tag": "v2.35.0",
+          "name": "direnv.darwin-arm64"
+        }
+      ],
+      "readonly": true
+    },
+    "macos-x86_64": {
+      "size": 7498176,
+      "hash": "blake3",
+      "digest": "57422ab4664b232352463147171587a05f3e578c3258440b5a9d6995f1bddc9e",
+      "path": "direnv",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "direnv/direnv",
+          "tag": "v2.35.0",
+          "name": "direnv.darwin-amd64"
+        }
+      ],
+      "readonly": true
+    }
+  },
+  "metadata": {
+    "build_info": {
+      "created_at": "2024-12-07T22:39:39.430Z",
+      "build_tool": "dotslash-manifest",
+      "command": "dotslash-manifest create 'direnv/direnv' 'v2.31.0 - v2.35.0' direnv",
+      "tag": "v2.31.0 - v2.35.0"
+    }
+  }
+}

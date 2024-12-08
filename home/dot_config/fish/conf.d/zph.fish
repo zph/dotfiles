@@ -90,6 +90,8 @@ fish_add_path -g -m -p $HOME/.cargo/bin
 fish_add_path -g -m -p $HOME/.local/bin
 fish_add_path -g -m -p $HOME/.hermit/bin
 fish_add_path -g -m -p $HOME/bin
+fish_add_path -g -m -p $HOME/bin/git
+fish_add_path -g -m -p $HOME/bin/vendor
 alias c='chezmoi'
 
 # https://docs.atuin.sh/configuration/key-binding/

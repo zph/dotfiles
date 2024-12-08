@@ -2,4 +2,3 @@
 # http://osdir.com/ml/emacs-orgmode-gnu/2009-06/msg00538.html
 # timesheet = "!git log --reverse --format="** %s%n CLOSED: [%ai]%n :LOGBOOK:%n :CLOCK: [%P]--[%ai]%n :END:%n :PROPERTIES:%n :commit: %H%n :END:%n%b"
 git log --format="** %s%n CLOSED: [%ai]%n :LOGBOOK:%n :CLOCK: [%P]--[%ai]%n :END:%n :PROPERTIES:%n :commit: %H%n :END:%n%b"
-

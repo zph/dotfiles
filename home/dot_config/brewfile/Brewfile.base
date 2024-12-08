@@ -18,6 +18,7 @@ module BrewfileMinimal
     bat
     cask
     direnv
+    dotslash
     earthly/earthly/earthly
     fish
     fzf

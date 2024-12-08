@@ -1,0 +1,79 @@
+#!/usr/bin/env dotslash
+
+{
+  "name": "ubi",
+  "platforms": {
+    "macos-aarch64": {
+      "size": 3099725,
+      "hash": "blake3",
+      "digest": "49a038582a64305e2a858d1a849e643628026d77ba3305f8f944f259e173ca99",
+      "path": "ubi",
+      "format": "tar.gz",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "houseabsolute/ubi",
+          "tag": "v0.2.4",
+          "name": "ubi-macOS-arm64.tar.gz"
+        }
+      ],
+      "readonly": true
+    },
+    "macos-x86_64": {
+      "size": 3334469,
+      "hash": "blake3",
+      "digest": "a372b73cad74f48a8cbb37f2404b4e5a1f5bb8b7e5ca64748ad6112dc0b274d3",
+      "path": "ubi",
+      "format": "tar.gz",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "houseabsolute/ubi",
+          "tag": "v0.2.4",
+          "name": "ubi-macOS-x86_64.tar.gz"
+        }
+      ],
+      "readonly": true
+    },
+    "linux-aarch64": {
+      "size": 3478319,
+      "hash": "blake3",
+      "digest": "de7765fb734c17fc2344ac27992999ecd28d3c6e4142c3b3cba1a01417662af7",
+      "path": "ubi",
+      "format": "tar.gz",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "houseabsolute/ubi",
+          "tag": "v0.2.4",
+          "name": "ubi-Linux-musl-arm64.tar.gz"
+        }
+      ],
+      "readonly": true
+    },
+    "linux-x86_64": {
+      "size": 3686293,
+      "hash": "blake3",
+      "digest": "27f0559102920dbe6d96e52eeb238bb4affbdccfbc422dca395f7130e2b14d79",
+      "path": "ubi",
+      "format": "tar.gz",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "houseabsolute/ubi",
+          "tag": "v0.2.4",
+          "name": "ubi-Linux-musl-x86_64.tar.gz"
+        }
+      ],
+      "readonly": true
+    }
+  },
+  "metadata": {
+    "build_info": {
+      "created_at": "2024-12-08T02:18:57.862Z",
+      "build_tool": "dotslash-manifest",
+      "command": "dotslash-manifest create 'houseabsolute/ubi' latest ubi",
+      "tag": "latest"
+    }
+  }
+}

@@ -44,4 +44,3 @@ class WhoDoneIt
 end
 
 WhoDoneIt.new.print
-

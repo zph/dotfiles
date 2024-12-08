@@ -99,4 +99,3 @@ if ARGV.first == 'test'
 else
   main
 end
-
