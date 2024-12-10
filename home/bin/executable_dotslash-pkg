@@ -40,6 +40,7 @@ import $ from "jsr:@david/dax";
 const { dedent } = $;
 import * as semver from "npm:semver";
 import { parse } from "jsr:@std/jsonc";
+import { Select, Confirm, Input } from "jsr:@cliffy/prompt@1.0.0-rc.7"
 
 interface GithubRelease {
   tag_name: string;
@@ -202,7 +203,10 @@ async function create(
   owner: string,
   repo: string,
   tag: string,
-  assetPattern: string
+  assetPattern: string,
+  options?: {
+    commandOverride?: string[]
+  }
 ): Promise<void> {
   const release = await getReleaseBestMatch(owner, repo, tag);
 
@@ -240,17 +244,17 @@ async function create(
     }
   }));
   manifest.metadata = {
-    build_info: buildInfo(tag)
+    build_info: buildInfo(tag, options?.commandOverride)
   }
   // Write the manifest with the required shebang
   await writeManifest(manifest, repo);
 }
 
-function buildInfo(tag: string) {
+function buildInfo(tag: string, commandOverride?: string[]) {
   return {
     created_at: new Date().toISOString(),
     build_tool: Deno.mainModule.split("/").pop(),
-    command: runCommand(),
+    command: runCommand(commandOverride),
     tag: tag,
   }
 }
@@ -383,23 +387,41 @@ const update = async (manifests: string[]) => {
 
 let logger = new Logger(Deno.env.get("LOG_LEVEL") as LogLevel || "INFO");
 const GITHUB_API_URL = Deno.env.get("GITHUB_API_URL") || "https://api.github.com";
-const runCommand = () => `${Deno.mainModule.split("/").pop()} ${Deno.args.map($.escapeArg).join(" ")}`
+const runCommand = (commandOverride?: string[]) => {
+  if (commandOverride) {
+    return `${Deno.mainModule.split("/").pop()} ${commandOverride?.map($.escapeArg).join(" ")}`
+  }
+  return `${Deno.mainModule.split("/").pop()} ${Deno.args.map($.escapeArg).join(" ")}`
+}
 
 // TODO: barebones check right now
 // longer term setup this command to check for link-rot
 const check = async (manifests: string[]) => {
   for (const manifestFile of manifests) {
+    // TODO: check for presence of file
     const manifestText = await Deno.readTextFile(manifestFile);
     if (manifestText.includes("TODO:")) {
       logger.warn(`${manifestFile} has TODOs`);
       logger.warn(manifestText.split("TODO:").map(l => l.trim()).join("\n"));
     }
+    logger.info(`Checking ${manifestFile} by running`);
+    const successfulRun = ["--version", "-v", "version"].find(async (v) => {
+      const output = await $`${manifestFile} ${v}`.stdout("piped").printCommand().noThrow();
+      return output.code === 0;
+    });
+    if (!successfulRun) {
+      logger.error(`${manifestFile} supports none of --version, -v, or version OR is invalid manifest`);
+      continue;
+    }
   }
 }
 
-// TODO:
-// - enable using a registry for installing tools which is really just a repo, like homebrew-zph repo.
-// - then it can be dotslash-pkg install zph/dotslash-packages/jq
+async function createByHTTP(url: string, name: string) {
+  const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout("piped").printCommand();
+  const baseManifest = JSON.parse(output.stdout);
+  await writeManifest({ ...baseManifest, metadata: { build_info: buildInfo("") } }, name);
+}
+
 const main = async () => {
   // Parse command line arguments
   const args = parseArgs(Deno.args, {
@@ -421,13 +443,14 @@ const main = async () => {
     logger.error("  update    Update an existing manifest file");
     logger.error("  check     Verify if updates are available");
     logger.error("  install   Install a tool from a manifest");
+    logger.error("  search    Search GitHub for most popular matching projects");
     Deno.exit(1);
   }
 
   // Validate command
   const command = args._[0].toString();
-  if (!["create", "update", "check", "install"].includes(command)) {
-    logger.error("Invalid command. Must be one of: create, update, check, install");
+  if (!["create", "update", "check", "install", "search"].includes(command)) {
+    logger.error("Invalid command. Must be one of: create, update, check, install, search");
     Deno.exit(1);
   }
 
@@ -437,9 +460,7 @@ const main = async () => {
     // 2. http/https url pattern
     if (args._[1]?.toString().toLowerCase().startsWith("http")) {
       const [_, url, name] = args._;
-      const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout("piped").printCommand();
-      const baseManifest = JSON.parse(output.stdout);
-      await writeManifest({ ...baseManifest, metadata: { build_info: buildInfo("") }, name: name.toString() }, name.toString());
+      await createByHTTP(url.toString(), name.toString());
       return;
     }
     const [_command, repo, tag, pattern] = args._;
@@ -465,7 +486,106 @@ const main = async () => {
     for await (const ref of maybeRefs) {
       install(ref.toString(), args).catch(err => logger.error(err));
     }
+  } else if (command === "search") {
+    const [_command, ...maybeRefs] = args._;
+    for await (const ref of maybeRefs) {
+      search(ref.toString(), args).catch(err => logger.error(err));
+    }
   }
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+
+  for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+  for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+  for (let j = 1; j <= b.length; j++) {
+    for (let i = 1; i <= a.length; i++) {
+      const substitutionCost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1, // deletion
+        matrix[j - 1][i] + 1, // insertion
+        matrix[j - 1][i - 1] + substitutionCost // substitution
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+}
+
+async function search(ref: string, args: typeof parseArgs) {
+  const searchUrl = `${GITHUB_API_URL}/search/repositories?q=${encodeURIComponent(ref)}&sort=stars&order=desc`;
+  const response = await fetch(searchUrl);
+  if (!response.ok) {
+    throw new Error(`Failed to search GitHub: ${response.statusText}`);
+  }
+
+  const results = await response.json();
+  if (results.items.length === 0) {
+    logger.info(`No results found for "${ref}"`);
+    return;
+  }
+
+  // Display top 5 results
+  logger.info(`Top results for "${ref}":`);
+  const choices = results.items
+    .slice(0, 20) // Get more initial results to sort
+    .map((repo: any) => ({
+      name: `${repo.full_name.padEnd(30)} - ${repo.stargazers_count}⭐ - ${repo.description?.substring(0, 50) || 'No description'}`,
+      value: repo,
+      search: true,
+      distance: levenshteinDistance(ref.toLowerCase(), repo.name.toLowerCase())
+    }))
+    .sort((a, b) => a.distance - b.distance) // Sort by Levenshtein distance
+    .slice(0, 10); // Take top 10 after sorting
+
+  const selected: typeof choices[0] = await Select.prompt({
+    message: "Select a repository:",
+    options: choices,
+  });
+
+  if(selected) {
+    const proceed = await Confirm.prompt({
+      message: `Install ${selected.name}?`,
+      default: false
+    });
+
+    if (!proceed) {
+      logger.info("Installation cancelled");
+      return;
+    }
+    // choose tag and name constraint
+    // Get all release tags
+    const tagsUrl = `${GITHUB_API_URL}/repos/${selected.owner.login}/${selected.name}/releases`;
+    const tagsResponse = await fetch(tagsUrl);
+    if (!tagsResponse.ok) {
+      throw new Error(`Failed to fetch tags: ${tagsResponse.statusText}`);
+    }
+    const tags = await tagsResponse.json();
+    const tagChoices = tags.map((release: any) => ({
+      name: `${release.tag_name} - ${release.name || 'No name'} ${release.prerelease ? '(prerelease)' : ''}`,
+      value: release
+    }));
+    // Add "latest" option at the top
+    tagChoices.unshift({
+      name: "latest - Always use latest release",
+      value: "latest"
+    });
+    const tag: typeof tags[0] = await Select.prompt({
+      message: "Select a release tag:",
+      options: tagChoices,
+    });
+    const name = await Input.prompt({
+      message: "Output file:",
+      default: `${selected.name}`,
+    });
+    // Used to override the command registered in `command` key in manifest
+    // because a command key of `search` is not valid
+    const commandOverride = ["create", `${selected.owner.login}/${selected.name}`, tag.tag_name, name];
+    create(selected.owner.login, selected.name, tag.tag_name, name, {commandOverride});
+    logger.info(`Installed ${name} to ${args.output || name}`);
+  }
+  return;
 }
 
 // TODO: setup mechanism to specify output file and default to manifest name
@@ -475,6 +595,9 @@ async function install(ref: string, args: typeof parseArgs) {
     installHttp(ref, args);
   } else if (refType === "github") {
     installGithub(ref, args);
+  } else if (refType === "search") {
+    // no matching arg provided, we will search
+    search(ref, args);
   }
 }
 
@@ -500,7 +623,7 @@ async function installGithub(refRaw: string, args: typeof parseArgs) {
   const path = uri.pathname.split("/").slice(2).join("/");
   const tag = uri.hash ? uri.hash.slice(1) : "latest"; // Get fragment without # prefix, default to latest
   if (!path) {
-    throw new Error("Path is required for github:// URLs");
+    throw new Error(`Path is required for github:// URLs ${path}`);
   }
   let ref = tag;
 
@@ -529,7 +652,7 @@ async function installGithub(refRaw: string, args: typeof parseArgs) {
   console.log(`Installed ${outputPath}`);
 }
 
-type RefType = "http" | "github"
+type RefType = "http" | "github" | "search"
 
 function determineRefType(ref: string): RefType {
   if (ref.startsWith("http")) {
@@ -537,6 +660,14 @@ function determineRefType(ref: string): RefType {
   }
   if (ref.startsWith("github://")) {
     return "github"
+  }
+  // if no slash, we will search
+  if(!ref.includes("/")) {
+    return "search"
+  }
+  // if there is only one slash, we will search
+  if(ref.split('/').length === 2) {
+    return "search"
   }
   // TODO: support S3, GCS, and git://
   // Otherwise, assume it's a github reference

@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 1908 - 2021 Zander Hill
+Copyright (c) 1908 - 2025 Zander Hill
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

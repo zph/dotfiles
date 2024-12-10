@@ -1,0 +1,30 @@
+#!/usr/bin/env dotslash
+
+{
+  "name": "pather",
+  "platforms": {
+    "macos-aarch64": {
+      "size": 2116306,
+      "hash": "blake3",
+      "digest": "9bd646cf5337061a2e3fcefd7179651f6384a5b8797de3bbafb00e5175d7f94e",
+      "path": "pather",
+      "providers": [
+        {
+          "type": "github-release",
+          "repo": "zph/pather",
+          "tag": "v0.2.0",
+          "name": "darwin-arm64-pather"
+        }
+      ],
+      "readonly": true
+    }
+  },
+  "metadata": {
+    "build_info": {
+      "created_at": "2024-12-08T07:35:30.008Z",
+      "build_tool": "dotslash-pkg",
+      "command": "dotslash-pkg create 'zph/pather' latest pather",
+      "tag": "latest"
+    }
+  }
+}

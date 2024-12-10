@@ -1,6 +1,0 @@
-$('.sunken-menu-group').eq(1).hide()
-$('.top-nav').hide()
-$('li.subscription').hide()
-$('.octofication.js-notice').hide()
-$('.news').detach()
-$('.container .site-footer').parent().detach()

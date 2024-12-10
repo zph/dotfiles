@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -eou pipefail
-
-GITHUB_ORG="$1"
-
-curl -s "https://$GITHUB_TOKEN:@api.github.com/orgs/$GITHUB_ORG/repos?per_page=200&private=true" | jq .[].ssh_url | xargs -n 1 git clone
