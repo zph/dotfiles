@@ -2,36 +2,49 @@
 
 // Script to manage DotSlash manifests for GitHub releases
 // Usage: $0 <command> <extra_args>
-//
-// Commands:
-//   create    Generate a new manifest file
-//   update    Update an existing manifest(s) file
-//   check     Verify if updates are available
-//
-// Create command:
-//   $0 create owner/repo tag_name asset_pattern
-//
-// The tag_name parameter supports semver constraints:
-//   - Exact versions: 1.2.3
-//   - Caret ranges: ^1.2.3 (matches 1.2.3 to <2.0.0)
-//   - Tilde ranges: ~1.2.3 (matches 1.2.3 to <1.3.0)
-//   - Greater than: >1.2.3
-//   - Greater/equal: >=1.2.3
-//   - Less than: <2.0.0
-//   - Less/equal: <=2.0.0
-//   - Hyphen ranges: 1.2.3 - 2.0.0
-//   - Combined ranges: >=1.2.3 <2.0.0
-//   - 'v' prefix is optional: v1.2.3 is the same as 1.2.3
-//
-// Examples:
-//   $0 create owner/repo 1.2.3 "*.tar.gz"          # Create manifest for version 1.2.3
-//   $0 update owner/repo ^1.2.3 "release-*.zip"    # Update manifest to latest 1.x.x
-//   $0 check owner/repo ">=1.0.0 <2" "*-linux-*"   # Check for updates
-//
-// Update command:
-//   $0 update                      # Update all manifests in the current directory
-//   $0 update manifest1 manifest2  # Update specific manifests
-//   $0 update $PWD                 # Update all manifests in the current directory
+// Help: $0 --help
+
+const HELP_TEXT = `
+Usage: dotslash-pkg <command> [options]
+
+Commands:
+  create    Generate a new manifest file
+  update    Update an existing manifest(s) file
+  check     Verify if manifest is valid
+  install   Install a tool from a manifest
+  search    Search GitHub for most popular matching projects
+
+Create command:
+  dotslash-pkg create owner/repo tag_name asset_pattern
+
+The tag_name parameter supports semver constraints:
+  - Exact versions: 1.2.3
+  - Caret ranges: ^1.2.3 (matches 1.2.3 to <2.0.0)
+  - Tilde ranges: ~1.2.3 (matches 1.2.3 to <1.3.0)
+  - Greater than: >1.2.3
+  - Greater/equal: >=1.2.3
+  - Less than: <2.0.0
+  - Less/equal: <=2.0.0
+  - Hyphen ranges: 1.2.3 - 2.0.0
+  - Combined ranges: >=1.2.3 <2.0.0
+  - 'v' prefix is optional: v1.2.3 is the same as 1.2.3
+
+Examples:
+  dotslash-pkg create owner/repo 1.2.3 "*.tar.gz"          # Create manifest for version 1.2.3
+  dotslash-pkg update owner/repo ^1.2.3 "release-*.zip"    # Update manifest to latest 1.x.x
+  dotslash-pkg check owner/repo ">=1.0.0 <2" "*-linux-*"   # Check for updates
+
+Update command:
+  dotslash-pkg update                      # Update all manifests in current directory
+  dotslash-pkg update manifest1 manifest2  # Update specific manifests
+  dotslash-pkg update $PWD                 # Update all manifests in current directory
+  dotslash-pkg create BurntSushi/ripgrep latest '*/rg'
+
+Options:
+  --help     Show this help message
+  --verbose  Enable verbose logging
+  --output   Specify output file path
+`;
 
 import { blake3 } from "npm:@noble/hashes/blake3";
 import { bytesToHex } from "npm:@noble/hashes/utils";
@@ -366,7 +379,8 @@ async function create(
     build_info: buildInfo(tag, options?.commandOverride),
   };
   // Write the manifest with the required shebang
-  await writeManifest(manifest, assetPattern);
+  // TODO: allow output path to be specified
+  await writeManifest(manifest, assetPattern.split("/").pop() || "unknown-pkg");
 }
 
 function buildInfo(tag: string, commandOverride?: string[]) {
@@ -573,15 +587,21 @@ interface Args {
   _: (string | number)[];
 }
 
+
 export const main = async () => {
   // Parse command line arguments
   const args: Args = parseArgs(Deno.args, {
-    boolean: ["verbose"],
+    boolean: ["verbose", "help"],
     string: ["output"],
     default: {
       output: null,
     },
   });
+
+  if (args.help || args._.length < 1) {
+    console.log(HELP_TEXT);
+    Deno.exit(0);
+  }
 
   if (args.verbose) {
     logger = new Logger("DEBUG");
