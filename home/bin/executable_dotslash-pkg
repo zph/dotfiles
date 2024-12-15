@@ -40,7 +40,10 @@ import $ from "jsr:@david/dax";
 const { dedent } = $;
 import * as semver from "npm:semver";
 import { parse } from "jsr:@std/jsonc";
-import { Select, Confirm, Input } from "jsr:@cliffy/prompt@1.0.0-rc.7"
+import { Confirm, Input, Select } from "jsr:@cliffy/prompt@1.0.0-rc.7";
+import { join } from "jsr:@std/path";
+import { walk } from "jsr:@std/fs";
+import { globToRegExp } from "jsr:@std/path";
 
 interface GithubRelease {
   tag_name: string;
@@ -51,42 +54,78 @@ interface GithubRelease {
   }>;
 }
 
+async function decompress(source: string, destination: string): Promise<void> {
+  const format = source.split(".").slice(1).join(".");
+
+  switch (format) {
+    case "tar.gz":
+    case "tgz":
+      await $`tar xzf ${source} -C ${destination}`;
+      break;
+    case "tar.xz":
+      await $`tar xJf ${source} -C ${destination}`;
+      break;
+    case "tar.zst":
+      await $`tar --zstd -xf ${source} -C ${destination}`;
+      break;
+    case "tar":
+      await $`tar xf ${source} -C ${destination}`;
+      break;
+    case "zip":
+      await $`unzip ${source} -d ${destination}`;
+      break;
+    case "gz":
+      await $`gunzip -c ${source} > ${destination}`;
+      break;
+    case "xz":
+      await $`xz -dc ${source} > ${destination}`;
+      break;
+    case "zst":
+      await $`zstd -dc ${source} > ${destination}`;
+      break;
+    default:
+      throw new Error(`Unsupported archive format: ${format}`);
+  }
+}
+
 interface Platform {
   arch: string;
   os: string;
   pattern: (name: string) => boolean;
 }
 
-type Pattern = string[]
-const containsAny = (patterns: Pattern) => (name: string) => patterns.some(pattern => name.includes(pattern))
-const containsAll = (patterns: Pattern[]) => (name: string) => patterns.every(p => containsAny(p)(name))
+type Pattern = string[];
+const containsAny = (patterns: Pattern) => (name: string) =>
+  patterns.some((pattern) => name.includes(pattern));
+const containsAll = (patterns: Pattern[]) => (name: string) =>
+  patterns.every((p) => containsAny(p)(name));
 
-const X86 = ["x64", "amd64", "x86_64"]
-const ARM = ["arm64", "aarch64"]
+const X86 = ["x64", "amd64", "x86_64"];
+const ARM = ["arm64", "aarch64"];
 
-const Apple = ["apple", "darwin", "macos"]
-const Linux = ["linux"]
+const Apple = ["apple", "darwin", "macos"];
+const Linux = ["linux"];
 
 const PLATFORMS: Platform[] = [
   {
     arch: "aarch64",
     os: "linux",
-    pattern: containsAll([Linux, ARM])
+    pattern: containsAll([Linux, ARM]),
   },
   {
     arch: "x86_64",
     os: "linux",
-    pattern: containsAll([Linux, X86])
+    pattern: containsAll([Linux, X86]),
   },
   {
     arch: "aarch64",
     os: "macos",
-    pattern: containsAll([Apple, ARM])
+    pattern: containsAll([Apple, ARM]),
   },
   {
     arch: "x86_64",
     os: "macos",
-    pattern: containsAll([Apple, X86])
+    pattern: containsAll([Apple, X86]),
   },
 ];
 
@@ -98,7 +137,68 @@ async function getBlake3Hash(url: string): Promise<string> {
   return bytesToHex(hash);
 }
 
-type DotSlashFormat = "tar.gz" | "tar.xz" | "tar.zst" | "tar" | "zip" | "gz" | "xz" | "zst" | undefined;
+async function findBinaryInArchive(
+  url: string,
+  format: DotSlashFormat,
+  pattern: string,
+): Promise<string | null> {
+  const tempDir = await Deno.makeTempDir();
+  try {
+    // Download the asset
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to download asset: ${response.statusText}`);
+    }
+
+    const assetPath = join(tempDir, "download." + format);
+    const file = await Deno.create(assetPath);
+    await response.body?.pipeTo(file.writable);
+
+    // Extract the archive using our decompress helper
+    const extractDir = join(tempDir, "extract");
+    await Deno.mkdir(extractDir);
+    await decompress(assetPath, extractDir);
+
+    // Convert glob pattern to RegExp
+    const regex = globToRegExp(pattern, {
+      extended: true,
+      globstar: true,
+      caseInsensitive: true,
+    });
+
+    // Walk the extracted directory looking for executables
+    for await (const entry of walk(extractDir)) {
+      if (!entry.isFile) continue;
+
+      try {
+        const relativePath = entry.path.substring(extractDir.length + 1);
+        const matchesPattern = regex.test(relativePath);
+
+        if (matchesPattern) {
+          return relativePath;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    return null;
+  } finally {
+    // Clean up temp directory
+    await Deno.remove(tempDir, { recursive: true });
+  }
+}
+
+type DotSlashFormat =
+  | "tar.gz"
+  | "tar.xz"
+  | "tar.zst"
+  | "tar"
+  | "zip"
+  | "gz"
+  | "xz"
+  | "zst"
+  | undefined;
 
 // Check for officially supported formats
 const supportedFormats: DotSlashFormat[] = [
@@ -109,7 +209,7 @@ const supportedFormats: DotSlashFormat[] = [
   "zip",
   "gz",
   "xz",
-  "zst"
+  "zst",
 ];
 
 function getAssetFormat(filename: string): DotSlashFormat {
@@ -117,7 +217,6 @@ function getAssetFormat(filename: string): DotSlashFormat {
   if (filename.endsWith(".tgz")) {
     return "tar.gz";
   }
-
 
   for (const format of supportedFormats) {
     if (filename.endsWith(`.${format}`)) {
@@ -127,42 +226,50 @@ function getAssetFormat(filename: string): DotSlashFormat {
 
   // If no format is detected, return undefined
   // This will cause the format field to be omitted
-  return undefined;
+  throw new Error(`Unsupported file format for filename: ${filename}`);
 }
 
-async function determineLookupType(tag: string) {
+enum LookupType {
+  Range = "range",
+  Latest = "latest",
+  Version = "version",
+}
+
+async function determineLookupType(tag: string): Promise<LookupType> {
   if (tag.split(" ").length > 1) {
-    return "range"
+    return LookupType.Range;
   }
-  if (tag === 'latest') {
-    return "latest"
+  if (tag === "latest") {
+    return LookupType.Latest;
   }
   if (/^[~><=]/.test(tag)) {
-    return "range"
+    return LookupType.Range;
   }
-  return "exact"
+  return LookupType.Version;
 }
 
 async function getReleaseBestMatch(
   owner: string,
   repo: string,
-  tag: string
+  tag: string,
 ): Promise<GithubRelease> {
   const lookupType = await determineLookupType(tag);
-  if (["exact", "latest"].includes(lookupType)) {
+  if (lookupType === LookupType.Version || lookupType === LookupType.Latest) {
     // Check if tag matches a release tag directly first
     // Used as safe fallback and for non-semver tags including 'latest'
     // could use `gh release view --repo dprint/dprint --json tagName`
-    const releaseUrl = tag === 'latest'
+    const releaseUrl = lookupType === LookupType.Latest
       ? `${GITHUB_API_URL}/repos/${owner}/${repo}/releases/latest`
       : `${GITHUB_API_URL}/repos/${owner}/${repo}/releases/tags/${tag}`;
     const response = await fetch(releaseUrl);
     if (!response.ok) {
-      throw new Error(`Failed to fetch release ${releaseUrl}: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch release ${releaseUrl}: ${response.statusText}`,
+      );
     }
 
     const release: GithubRelease = await response.json();
-    return release
+    return release;
   }
 
   // Otherwise, we need to search for the constraint matching tag
@@ -177,10 +284,10 @@ async function getReleaseBestMatch(
 
   // Find best matching version
   const versions = releases
-    .map(r => r.tag_name.replace(/^v/, ''))
-    .filter(v => semver.valid(v));
+    .map((r) => r.tag_name.replace(/^v/, ""))
+    .filter((v) => semver.valid(v));
 
-  const targetVersion = tag.replace(/^v/, '');
+  const targetVersion = tag.replace(/^v/, "");
 
   const bestMatch = semver.maxSatisfying(versions, targetVersion);
 
@@ -188,7 +295,7 @@ async function getReleaseBestMatch(
     throw new Error(`No matching version found for ${tag}`);
   }
 
-  const release = releases.find(r =>
+  const release = releases.find((r) =>
     r.tag_name === `v${bestMatch}` || r.tag_name === bestMatch
   );
 
@@ -205,11 +312,10 @@ async function create(
   tag: string,
   assetPattern: string,
   options?: {
-    commandOverride?: string[]
-  }
+    commandOverride?: string[];
+  },
 ): Promise<void> {
   const release = await getReleaseBestMatch(owner, repo, tag);
-
   const manifest = {
     name: repo,
     platforms: {} as Record<string, any>,
@@ -217,37 +323,50 @@ async function create(
   };
 
   await Promise.all(PLATFORMS.map(async (platform) => {
-    const asset = release.assets.find(a =>
-      a.name.match(assetPattern) && platform.pattern(a.name.toLowerCase())
+    // Do not use more strict pattern because it may not match the binary path in the archive name
+    // eg ripgrep-1.0.0-x86_64-apple-darwin.tar.gz mismatches if the pattern is just rg
+    const asset = release.assets.find((a) =>
+      platform.pattern(a.name.toLowerCase())
     );
 
     if (asset) {
       const platformKey = `${platform.os}-${platform.arch}`;
-      const hash = await getBlake3Hash(asset.browser_download_url);
+
+      // Try to find the binary path in the archive
+      const binaryPath = await findBinaryInArchive(
+        asset.browser_download_url,
+        getAssetFormat(asset.name),
+        assetPattern,
+      );
+
+      if (!binaryPath) {
+        logger.warn(`No binary path found for ${asset.name}`);
+        return;
+      }
 
       manifest.platforms[platformKey] = {
         size: asset.size,
         hash: "blake3",
-        digest: hash,
-        path: `${repo}`, // TODO: allow specifying the path
+        digest: await getBlake3Hash(asset.browser_download_url),
+        path: binaryPath,
         format: getAssetFormat(asset.name),
         providers: [
           {
             type: "github-release",
             repo: `${owner}/${repo}`,
             tag: release.tag_name,
-            name: asset.name
-          }
+            name: asset.name,
+          },
         ],
-        readonly: true
+        readonly: true,
       };
     }
   }));
   manifest.metadata = {
-    build_info: buildInfo(tag, options?.commandOverride)
-  }
+    build_info: buildInfo(tag, options?.commandOverride),
+  };
   // Write the manifest with the required shebang
-  await writeManifest(manifest, repo);
+  await writeManifest(manifest, assetPattern);
 }
 
 function buildInfo(tag: string, commandOverride?: string[]) {
@@ -256,7 +375,7 @@ function buildInfo(tag: string, commandOverride?: string[]) {
     build_tool: Deno.mainModule.split("/").pop(),
     command: runCommand(commandOverride),
     tag: tag,
-  }
+  };
 }
 
 async function writeManifest(manifest: Manifest, path: string) {
@@ -264,7 +383,7 @@ async function writeManifest(manifest: Manifest, path: string) {
   #!/usr/bin/env dotslash
 
   ${JSON.stringify(manifest, null, 2)}
-  `
+  `;
   await Deno.writeTextFile(path, output);
   await Deno.chmod(path, 0o755);
 }
@@ -275,7 +394,7 @@ const safeStat = async (arg: string) => {
   } catch {
     return null;
   }
-}
+};
 
 // Add logger implementation
 const LogLevels = {
@@ -345,21 +464,21 @@ const standardizeManifestArgs = async (args: string[]) => {
     }
   }
   // Filter out files that don't have the dotslash shebang
-  const manifests = await Promise.all(files.map(async f => {
+  const manifests = await Promise.all(files.map(async (f) => {
     const file = await Deno.open(f);
     const buf = new Uint8Array(512 * 1); // 1 byte per character
     await file.read(buf);
     file.close();
-    const firstLine = new TextDecoder().decode(buf).split('\n')[0];
+    const firstLine = new TextDecoder().decode(buf).split("\n")[0];
     logger.debug(`First line of ${f}: ${firstLine}`);
-    const isShebang = firstLine.startsWith('#!')
-    const isDotslash = firstLine.trim().endsWith('dotslash')
+    const isShebang = firstLine.startsWith("#!");
+    const isDotslash = firstLine.trim().endsWith("dotslash");
     logger.debug(`isShebang: ${isShebang}, isDotslash: ${isDotslash}`);
     return (isShebang && isDotslash) ? f : null;
   }));
   logger.debug(`Found ${manifests.length} manifests`, manifests);
-  return manifests.filter(m => m !== null);
-}
+  return manifests.filter((m) => m !== null);
+};
 
 interface Manifest {
   name: string;
@@ -371,28 +490,37 @@ const update = async (manifests: string[]) => {
   for (const manifestFile of manifests) {
     const manifestText = await Deno.readTextFile(manifestFile);
     // Skip the first line of the file
-    const jsonStart = manifestText.indexOf('\n') + 1;
-    const manifest: Manifest = parse(manifestText.substring(jsonStart)) as unknown as Manifest;
+    const jsonStart = manifestText.indexOf("\n") + 1;
+    const manifest: Manifest = parse(
+      manifestText.substring(jsonStart),
+    ) as unknown as Manifest;
     logger.info(`Updating`, manifest.metadata.build_info.command);
     const cmd = manifest.metadata.build_info.command;
     if (cmd?.includes("create")) {
       // Do not re-quote the string
       await $.raw`${cmd}`.printCommand();
     } else {
-      logger.error(`Unsupported command: ${manifest.metadata.build_info.command}`);
+      logger.error(
+        `Unsupported command: ${manifest.metadata.build_info.command}`,
+      );
       logger.error(`Create it manually first`);
     }
   }
-}
+};
 
 let logger = new Logger(Deno.env.get("LOG_LEVEL") as LogLevel || "INFO");
-const GITHUB_API_URL = Deno.env.get("GITHUB_API_URL") || "https://api.github.com";
+const GITHUB_API_URL = Deno.env.get("GITHUB_API_URL") ||
+  "https://api.github.com";
 const runCommand = (commandOverride?: string[]) => {
+  const bin = Deno.mainModule.split("/").pop();
+  const sanitizeArgs = (args: string[]) => {
+    return args.map($.escapeArg).join(" ");
+  };
   if (commandOverride) {
-    return `${Deno.mainModule.split("/").pop()} ${commandOverride?.map($.escapeArg).join(" ")}`
+    return `${bin} ${sanitizeArgs(commandOverride)}`;
   }
-  return `${Deno.mainModule.split("/").pop()} ${Deno.args.map($.escapeArg).join(" ")}`
-}
+  return `${bin} ${sanitizeArgs(Deno.args)}`;
+};
 
 // TODO: barebones check right now
 // longer term setup this command to check for link-rot
@@ -402,34 +530,57 @@ const check = async (manifests: string[]) => {
     const manifestText = await Deno.readTextFile(manifestFile);
     if (manifestText.includes("TODO:")) {
       logger.warn(`${manifestFile} has TODOs`);
-      logger.warn(manifestText.split("TODO:").map(l => l.trim()).join("\n"));
+      logger.warn(manifestText.split("TODO:").map((l) => l.trim()).join("\n"));
     }
     logger.info(`Checking ${manifestFile} by running`);
     const successfulRun = ["--version", "-v", "version"].find(async (v) => {
-      const output = await $`${manifestFile} ${v}`.stdout("piped").printCommand().noThrow();
+      const output = await $`${manifestFile} ${v}`.stdout("piped")
+        .printCommand().noThrow();
       return output.code === 0;
     });
     if (!successfulRun) {
-      logger.error(`${manifestFile} supports none of --version, -v, or version OR is invalid manifest`);
+      logger.error(
+        `${manifestFile} supports none of --version, -v, or version OR is invalid manifest`,
+      );
       continue;
     }
   }
-}
+};
 
+// TODO: insufficient manifest generation because it lacks the platforms block
 async function createByHTTP(url: string, name: string) {
-  const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout("piped").printCommand();
+  const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout(
+    "piped",
+  ).printCommand();
   const baseManifest = JSON.parse(output.stdout);
-  await writeManifest({ ...baseManifest, metadata: { build_info: buildInfo("") } }, name);
+  await writeManifest({
+    ...baseManifest,
+    metadata: { build_info: buildInfo("") },
+  }, name);
 }
 
-const main = async () => {
+enum Command {
+  Create = "create",
+  Update = "update",
+  Check = "check",
+  Install = "install",
+  Search = "search",
+}
+
+interface Args {
+  verbose: boolean;
+  output: string | null;
+  _: (string | number)[];
+}
+
+export const main = async () => {
   // Parse command line arguments
-  const args = parseArgs(Deno.args, {
+  const args: Args = parseArgs(Deno.args, {
     boolean: ["verbose"],
     string: ["output"],
     default: {
       output: null,
-    }
+    },
   });
 
   if (args.verbose) {
@@ -439,63 +590,84 @@ const main = async () => {
   if (args._.length < 1) {
     logger.error("Usage: $0 <command> <command_args>");
     logger.error("\nCommands:");
-    logger.error("  create    Generate a new manifest file");
-    logger.error("  update    Update an existing manifest file");
-    logger.error("  check     Verify if updates are available");
-    logger.error("  install   Install a tool from a manifest");
-    logger.error("  search    Search GitHub for most popular matching projects");
+    logger.error(`  ${Command.Create}    Generate a new manifest file`);
+    logger.error(`  ${Command.Update}    Update an existing manifest file`);
+    logger.error(`  ${Command.Check}     Verify if updates are available`);
+    logger.error(`  ${Command.Install}   Install a tool from a manifest`);
+    logger.error(
+      `  ${Command.Search}    Search GitHub for most popular matching projects`,
+    );
     Deno.exit(1);
   }
 
   // Validate command
-  const command = args._[0].toString();
-  if (!["create", "update", "check", "install", "search"].includes(command)) {
-    logger.error("Invalid command. Must be one of: create, update, check, install, search");
+  const command = args._[0].toString() as Command;
+  if (!Object.values(Command).includes(command)) {
+    logger.error(
+      `Invalid command. Must be one of: ${Object.values(Command).join(", ")}`,
+    );
     Deno.exit(1);
   }
 
-  if (command === "create") {
-    // Create can handle two forms:
-    // 1. github release pattern: owner/repo tag pattern
-    // 2. http/https url pattern
-    if (args._[1]?.toString().toLowerCase().startsWith("http")) {
-      const [_, url, name] = args._;
-      await createByHTTP(url.toString(), name.toString());
-      return;
-    }
-    const [_command, repo, tag, pattern] = args._;
-    const [owner, repoName] = repo.toString().split("/");
+  switch (command) {
+    case Command.Create: {
+      // Create can handle two forms:
+      // 1. github release pattern: owner/repo tag pattern
+      // 2. http/https url pattern
+      if (args._[1]?.toString().toLowerCase().startsWith("http")) {
+        const [_, url, name] = args._;
+        await createByHTTP(url.toString(), name.toString());
+        return;
+      }
+      const [_command, repo, tag, pattern] = args._;
+      const [owner, repoName] = repo.toString().split("/");
 
-    if (!owner || !repoName) {
-      logger.error("Repository must be in format owner/repo");
-      Deno.exit(1);
-    }
+      if (!owner || !repoName) {
+        logger.error("Repository must be in format owner/repo");
+        Deno.exit(1);
+      }
 
-    create(owner, repoName, tag.toString(), pattern.toString())
-      .catch(err => logger.error(err));
-  } else if (command === "update") {
-    const [_command, ...maybeManifests] = args._;
-    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString())).then(m => m.filter(m => m != null)) as string[];
-    update(manifests).catch(err => logger.error(err));
-  } else if (command === "check") {
-    const [_command, ...maybeManifests] = args._;
-    const manifests = await standardizeManifestArgs(maybeManifests.map(m => m.toString())).then(m => m.filter(m => m != null)) as string[];
-    check(manifests).catch(err => logger.error(err));
-  } else if (command === "install") {
-    const [_command, ...maybeRefs] = args._;
-    for await (const ref of maybeRefs) {
-      install(ref.toString(), args).catch(err => logger.error(err));
+      await create(owner, repoName, tag.toString(), pattern.toString())
+        .catch((err) => logger.error(err));
+      break;
     }
-  } else if (command === "search") {
-    const [_command, ...maybeRefs] = args._;
-    for await (const ref of maybeRefs) {
-      search(ref.toString(), args).catch(err => logger.error(err));
+    case Command.Update: {
+      const [_command, ...maybeManifests] = args._;
+      const manifests = await standardizeManifestArgs(
+        maybeManifests.map((m) => m.toString()),
+      ).then((m) => m.filter((m) => m != null)) as string[];
+      await update(manifests).catch((err) => logger.error(err));
+      break;
+    }
+    case Command.Check: {
+      const [_command, ...maybeManifests] = args._;
+      const manifests = await standardizeManifestArgs(
+        maybeManifests.map((m) => m.toString()),
+      ).then((m) => m.filter((m) => m != null)) as string[];
+      await check(manifests).catch((err) => logger.error(err));
+      break;
+    }
+    case Command.Install: {
+      const [_command, ...maybeRefs] = args._;
+      for await (const ref of maybeRefs) {
+        await install(ref.toString(), args).catch((err) => logger.error(err));
+      }
+      break;
+    }
+    case Command.Search: {
+      const [_command, ...maybeRefs] = args._;
+      for await (const ref of maybeRefs) {
+        await search(ref.toString(), args).catch((err) => logger.error(err));
+      }
+      break;
     }
   }
-}
+};
 
 function levenshteinDistance(a: string, b: string): number {
-  const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+  const matrix = Array(b.length + 1).fill(null).map(() =>
+    Array(a.length + 1).fill(null)
+  );
 
   for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
   for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
@@ -506,15 +678,17 @@ function levenshteinDistance(a: string, b: string): number {
       matrix[j][i] = Math.min(
         matrix[j][i - 1] + 1, // deletion
         matrix[j - 1][i] + 1, // insertion
-        matrix[j - 1][i - 1] + substitutionCost // substitution
+        matrix[j - 1][i - 1] + substitutionCost, // substitution
       );
     }
   }
   return matrix[b.length][a.length];
 }
 
-async function search(ref: string, args: typeof parseArgs) {
-  const searchUrl = `${GITHUB_API_URL}/search/repositories?q=${encodeURIComponent(ref)}&sort=stars&order=desc`;
+async function search(ref: string, args: Args) {
+  const searchUrl = `${GITHUB_API_URL}/search/repositories?q=${
+    encodeURIComponent(ref)
+  }&sort=stars&order=desc`;
   const response = await fetch(searchUrl);
   if (!response.ok) {
     throw new Error(`Failed to search GitHub: ${response.statusText}`);
@@ -526,17 +700,28 @@ async function search(ref: string, args: typeof parseArgs) {
     return;
   }
 
+  type SearchResult = {
+    name: string;
+    value: any;
+    search: boolean;
+    distance: number;
+  };
   // Display top 5 results
   logger.info(`Top results for "${ref}":`);
   const choices = results.items
     .slice(0, 20) // Get more initial results to sort
-    .map((repo: any) => ({
-      name: `${repo.full_name.padEnd(30)} - ${repo.stargazers_count}⭐ - ${repo.description?.substring(0, 50) || 'No description'}`,
+    .map((repo: any): SearchResult => ({
+      name: `${repo.full_name.padEnd(30)} - ${repo.stargazers_count}⭐ - ${
+        repo.description?.substring(0, 50) || "No description"
+      }`,
       value: repo,
       search: true,
-      distance: levenshteinDistance(ref.toLowerCase(), repo.name.toLowerCase())
+      distance: levenshteinDistance(
+        ref.toLowerCase(),
+        repo.name.toLowerCase(),
+      ) as number,
     }))
-    .sort((a, b) => a.distance - b.distance) // Sort by Levenshtein distance
+    .sort((a: SearchResult, b: SearchResult) => a.distance - b.distance) // Sort by Levenshtein distance
     .slice(0, 10); // Take top 10 after sorting
 
   const selected: typeof choices[0] = await Select.prompt({
@@ -544,10 +729,10 @@ async function search(ref: string, args: typeof parseArgs) {
     options: choices,
   });
 
-  if(selected) {
+  if (selected) {
     const proceed = await Confirm.prompt({
       message: `Install ${selected.name}?`,
-      default: false
+      default: false,
     });
 
     if (!proceed) {
@@ -556,20 +741,23 @@ async function search(ref: string, args: typeof parseArgs) {
     }
     // choose tag and name constraint
     // Get all release tags
-    const tagsUrl = `${GITHUB_API_URL}/repos/${selected.owner.login}/${selected.name}/releases`;
+    const tagsUrl =
+      `${GITHUB_API_URL}/repos/${selected.owner.login}/${selected.name}/releases`;
     const tagsResponse = await fetch(tagsUrl);
     if (!tagsResponse.ok) {
       throw new Error(`Failed to fetch tags: ${tagsResponse.statusText}`);
     }
     const tags = await tagsResponse.json();
     const tagChoices = tags.map((release: any) => ({
-      name: `${release.tag_name} - ${release.name || 'No name'} ${release.prerelease ? '(prerelease)' : ''}`,
-      value: release
+      name: `${release.tag_name} - ${release.name || "No name"} ${
+        release.prerelease ? "(prerelease)" : ""
+      }`,
+      value: release,
     }));
     // Add "latest" option at the top
     tagChoices.unshift({
       name: "latest - Always use latest release",
-      value: "latest"
+      value: "latest",
     });
     const tag: typeof tags[0] = await Select.prompt({
       message: "Select a release tag:",
@@ -581,28 +769,35 @@ async function search(ref: string, args: typeof parseArgs) {
     });
     // Used to override the command registered in `command` key in manifest
     // because a command key of `search` is not valid
-    const commandOverride = ["create", `${selected.owner.login}/${selected.name}`, tag.tag_name, name];
-    create(selected.owner.login, selected.name, tag.tag_name, name, {commandOverride});
+    const commandOverride = [
+      "create",
+      `${selected.owner.login}/${selected.name}`,
+      tag.tag_name,
+      name,
+    ];
+    create(selected.owner.login, selected.name, tag.tag_name, name, {
+      commandOverride,
+    });
     logger.info(`Installed ${name} to ${args.output || name}`);
   }
   return;
 }
 
 // TODO: setup mechanism to specify output file and default to manifest name
-async function install(ref: string, args: typeof parseArgs) {
+async function install(ref: string, args: Args) {
   const refType = determineRefType(ref);
   if (refType === "http") {
     installHttp(ref, args);
-  } else if (refType === "github") {
-    installGithub(ref, args);
+  } else if (refType === "registry") {
+    installGithubRegistry(ref, args);
   } else if (refType === "search") {
     // no matching arg provided, we will search
     search(ref, args);
   }
 }
 
-async function installHttp(ref: string, args: typeof parseArgs) {
-  const output = await fetch(ref).then(r => r.text());
+async function installHttp(ref: string, args: Args) {
+  const output = await fetch(ref).then((r) => r.text());
   await Deno.writeTextFile(args.output || ref, output);
   await Deno.chmod(args.output || ref, 0o755);
   console.log(`Installed ${args.output || ref}`);
@@ -615,10 +810,9 @@ function ensurePrefix(str: string, prefix: string): string {
   return str;
 }
 
-// TODO: support branch/ref/commit as fragment
-async function installGithub(refRaw: string, args: typeof parseArgs) {
-  const uri = new URL(ensurePrefix(refRaw, "github://"));
-  const owner = uri.host
+async function installGithubRegistry(refRaw: string, args: Args) {
+  const uri = new URL(ensurePrefix(refRaw, "registry://"));
+  const owner = uri.host;
   const [repo, _] = uri.pathname.split("/").slice(1);
   const path = uri.pathname.split("/").slice(2).join("/");
   const tag = uri.hash ? uri.hash.slice(1) : "latest"; // Get fragment without # prefix, default to latest
@@ -630,16 +824,19 @@ async function installGithub(refRaw: string, args: typeof parseArgs) {
   if (tag == "latest") {
     // Get default branch if tag not specified
     ref = await fetch(`${GITHUB_API_URL}/repos/${owner}/${repo}`)
-      .then(r => {
+      .then((r) => {
         if (!r.ok) {
-        throw new Error(`Failed to fetch repo info: ${r.statusText}`);
-      }
-      return r.json();
-    })
-    .then(data => data.default_branch);
+          throw new Error(`Failed to fetch repo info: ${r.statusText}`);
+        }
+        return r.json();
+      })
+      .then((data) => data.default_branch);
   }
 
-  const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}`;
+  // TODO: conflates path in repo with path in local filesystem
+  const rawUrl =
+    `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}`;
+  logger.debug({ rawUrl });
   const response = await fetch(rawUrl);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${rawUrl}: ${response.statusText}`);
@@ -652,28 +849,33 @@ async function installGithub(refRaw: string, args: typeof parseArgs) {
   console.log(`Installed ${outputPath}`);
 }
 
-type RefType = "http" | "github" | "search"
+type RefType = "http" | "github" | "search" | "registry";
 
 function determineRefType(ref: string): RefType {
   if (ref.startsWith("http")) {
-    return "http"
+    return "http";
   }
   if (ref.startsWith("github://")) {
-    return "github"
+    return "github";
   }
   // if no slash, we will search
-  if(!ref.includes("/")) {
-    return "search"
+  if (!ref.includes("/")) {
+    return "search";
   }
   // if there is only one slash, we will search
-  if(ref.split('/').length === 2) {
-    return "search"
+  if (ref.split("/").length === 2) {
+    return "search";
+  }
+
+  // org/repo/path
+  if (ref.split("/").length >= 3) {
+    return "registry";
   }
   // TODO: support S3, GCS, and git://
   // Otherwise, assume it's a github reference
-  return "github"
+  return "github";
 }
 
 if (import.meta.main) {
-  main().catch(err => logger.error(err));
+  await main().catch((err) => logger.error(err));
 }
