@@ -1,1 +1,5 @@
 .hermit
+home/dot_vim/*
+!home/dot_vim/init.vim
+!home/dot_vim/autoload
+!home/dot_vim/autoload/plug.vim
