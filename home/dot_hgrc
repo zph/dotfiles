@@ -1,5 +1,5 @@
 [ui]
-username = ZPH <zander@civet.ws>
+username = ZPH <zander@xargs.io>
 ssh = ssh -C
 
 [defaults]
@@ -34,4 +34,3 @@ bookmarks=
 record=
 extdiff=
 pager=
-

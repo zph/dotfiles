@@ -37,12 +37,12 @@ module BrewfileMinimal
     openssl@3
     python@3.10
     reattach-to-user-namespace
-    ripgrep
     rsync
     shellcheck
     shfmt
     ssh-copy-id
     starship
+    stow
     terraform
     tmux
     watch

@@ -84,11 +84,12 @@ def expand_history(history, shell_aliases, git_aliases)
   end
 end
 
-def get_history_aliases!(shell)
+def get_history!(shell)
   [
     %x(cat ~/.#{shell}_history),
     %x(#{shell} -i -c 'alias'),
     %x(git config --get-regexp alias*),
+    %x`atuin history list --format '{command}'`,
   ].map { |i| i.remove_non_ascii.chomp.split("\n") }
 end
 
@@ -98,13 +99,15 @@ def retrieve_aliases!(shell = ENV['SHELL'])
           'zsh'
         when /bash/i
           'bash'
+        when /fish/i
+          'fish'
         else
           warn "YOLO: Unknown shell"
           shell.split("/").last
           exit if shell.empty?
         end
 
-  get_history_aliases!(bin)
+  get_history!(bin)
 end
 
 def print_history!(history, io = STDOUT)
