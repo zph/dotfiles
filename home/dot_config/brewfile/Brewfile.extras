@@ -9,16 +9,11 @@ module BrewfileFull
     aspell
     chamber
     cmake
-    direnv
     dos2unix
-    earthly/earthly/earthly
     htop
     hugo
     jpeg
     mas
-    mise
-    mosh
-    neovim
     overmind
     rlwrap
     zstd
