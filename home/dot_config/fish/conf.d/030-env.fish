@@ -29,6 +29,18 @@ for path in (string split ':' $ZSH_PATH | tail -r)
   set PATH $path $PATH
 end
 
-set PAGER (which bat)
+set -l env_file "$HOME/.config/fish/conf.d/env.sh"
+set -l cache_file "$HOME/tmp/env_cache"
+set -l cache_file_sha "$HOME/tmp/env_cache.sha"
+set -l current_sha (sha256sum $env_file | cut -d' ' -f1)
 
-set EDITOR (which nvim)
+if test ! -f $cache_file_sha; or test (cat $cache_file_sha | head -n1) != $current_sha
+  echo $current_sha > $cache_file_sha
+  diff-env "source $env_file" > $cache_file
+end
+
+# Load cached env vars
+tail -n +2 $cache_file | while read -l line
+  set -l kv (string split -m 1 = $line)
+  set -gx $kv[1] $kv[2]
+end

@@ -14,19 +14,6 @@ end
 $HOME/bin/sack init_fish | source
 direnv hook fish | source
 
-# Requires chruby-fish from brew
-# source  /usr/local/opt/chruby-fish/share/chruby/chruby.fish
-# source  /usr/local/opt/chruby-fish/share/chruby/auto.fish
-# Ruby
-
-function run_bundler_cmd
-  if test -e ./Gemfile
-    bundle exec $argv;
-  else
-    $argv;
-  end
-end
-
 alias vim='nvim'
 
 starship init fish | source

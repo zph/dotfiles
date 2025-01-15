@@ -9,6 +9,8 @@
 
 # Too useful and want it to not be lazyloaded
 eval "$(direnv hook zsh)"
+# Used to allow for executing 1password integration inside direnv
+export DIRENV_WARN_TIMEOUT=1m
 
 ##
 ## Aliases

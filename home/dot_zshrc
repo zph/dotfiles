@@ -12,6 +12,11 @@
 #   at email listed above.  I've pieced together this zshrc over time and it has
 #   undergone significant revisions.
 #############
+# DEBUGGING
+# normally this should be commented out
+# Usage: uncomment following line and then run zprof after loading clean shell
+zmodload zsh/zprof
+#############
 # Private Functions
 _zshrc_pre_init(){
   # TODO
@@ -435,7 +440,6 @@ zph/remove_from_path(){
 
 zph/add_to_path(){
   local item="$1"
-  zph/remove_from_path "$item"
   export PATH="${item}":$PATH
 }
 
@@ -446,14 +450,6 @@ zph/prepend_to_path(){
 
 zph/remove_blank_path_entries(){
   export PATH=$(echo $PATH | sed 's/::*/:/g')
-}
-
-zph/sanitize_path(){
-  # Remove duplicates and expand to absolute path, resolving symlinks for better dedup.
-  # The first instance of a path is treated as the rightful ultimate position in PATH array
-  # Due to compatibility issues with readlink (gnu and bsd) this is now a
-  # simple ruby script. If portability becomes an issue I'll rewrite it to python or perl.
-  export PATH="$(sanitize_path "$PATH")"
 }
 
 _set_zsh_hooks(){
@@ -481,7 +477,8 @@ _zshrc_main(){
   _set_colors
   _add_homebin_to_dir
   _source_zshd_modules
-  _set_prompt
+  # Avoid setting prompt because of slow shell execution
+  # _set_prompt
 
   PROMPT="$PROMPT"'$([ -n "$TMUX" ] && tmux setenv TMUXPWD_$(tmux display -p "#D" | tr -d %) "$PWD")'
   _set_zsh_hooks
@@ -494,9 +491,3 @@ _zshrc_main(){
 _zshrc_main
 
 lazyload_initialize "${(ok)functions}"
-
-zph/sanitize_path
-
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-
