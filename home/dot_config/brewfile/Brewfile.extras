@@ -5,11 +5,9 @@ module BrewfileFull
   ]
 
   BREWS = %w[
-    # antigen
     aspell
     chamber
     cmake
-    dos2unix
     htop
     hugo
     jpeg

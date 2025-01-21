@@ -12,7 +12,6 @@ module BrewfileMinimal
   ]
 
   BREWS = %w[
-    asdf
     awscli
     bash
     bat
@@ -39,7 +38,6 @@ module BrewfileMinimal
     reattach-to-user-namespace
     rsync
     shellcheck
-    shfmt
     ssh-copy-id
     starship
     stow
@@ -47,7 +45,6 @@ module BrewfileMinimal
     tmux
     watch
     watchexec
-    wdiff
     wget
     yarn
     zoxide
