@@ -2,19 +2,19 @@
 
 set -eou pipefail
 
-{{ if eq .chezmoi.os "darwin" -}}
-  brew install asdf
-  . $(brew --prefix asdf)/libexec/asdf.sh
-{{ else if eq .chezmoi.os "linux" -}}
-  git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
-  . $HOME/.asdf/asdf.sh
-{{ end -}}
-
-set +e
-asdf plugin-add python
-asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
-asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git
-set -e
+# {{ if eq .chezmoi.os "darwin" -}}
+#   brew install asdf
+#   . $(brew --prefix asdf)/libexec/asdf.sh
+# {{ else if eq .chezmoi.os "linux" -}}
+#   git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+#   . $HOME/.asdf/asdf.sh
+# {{ end -}}
+#
+# set +e
+# asdf plugin-add python
+# asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+# asdf plugin-add terraform https://github.com/Banno/asdf-hashicorp.git
+# set -e
 
 
 # For neovim location
