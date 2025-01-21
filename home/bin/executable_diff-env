@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+readonly CMD="$@"
+readonly before_env="$(mktemp)"
+readonly after_env="$(mktemp)"
+env > "$before_env"
+
+$CMD || true
+
+env > "$after_env"
+
+diff "$before_env" "$after_env" | grep '^>' | sed 's/^> //'
