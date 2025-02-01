@@ -357,6 +357,8 @@ async function create(
         return;
       }
 
+      // NOTE: we include the url in the manifest so that it can be used to download the asset
+      // in the case where gh provider is failing due to authentication issues
       manifest.platforms[platformKey] = {
         size: asset.size,
         hash: "blake3",
@@ -364,6 +366,9 @@ async function create(
         path: binaryPath,
         format: getAssetFormat(asset.name),
         providers: [
+          {
+            url: asset.browser_download_url,
+          },
           {
             type: "github-release",
             repo: `${owner}/${repo}`,
