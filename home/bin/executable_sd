@@ -1,0 +1,267 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+function help () {
+    echo "usage: $0 [command] [args]
+
+Create PR:
+    sd branch change-1
+    [commit]
+    sd pr
+
+Create stacked PR:
+    git checkout change-1
+    sd branch change-2
+    [commit]
+    sd pr
+
+Change original PR and update second:
+    git checkout change-1
+    [commit]
+    sd update
+    git checkout change-2
+    sd rebase change-1
+    [resolve conflicts]
+    sd update
+
+Merge first PR and rebase second:
+    [merge change-1 in GH]
+    git checkout change-2
+    sd rebase
+    sd update
+
+Commands:
+
+branch [branch_name]
+    Create a new branch with the given name, based off the current branch.
+rebase [target_branch]
+    Rebase the curent branch onto the target branch. This will only rebase the
+    commits since the branch's base, and will update the base.
+    target_branch defaults to the first present primary branch (master or main)
+    if target_branch is is a primary branch, updates it before running.
+pr
+    Force push the current branch and opens a browser window to create a PR
+    for this branch.
+update
+    Force push the current branch and update the existing PR's base branch.
+    This can be useful after rebasing onto a different branch.
+diff [args...]
+    Shows a git diff of the current branch from its base. This is the diff that
+    should show up for reviewers.
+    Any arguments are forwarded to the git diff command.
+squash
+    Squashes all commits for this PR into a single commit down to the base. Opens
+    an editor to edit the new commit message.
+    This is useful for simplifying a complicated rebase.
+parent [branch]
+    Prints the parent branch to the given branch.
+    Argument defaults to the current branch if not given.
+deps [branch]
+    Prints the given branch and a link to its PR (if one exists), and then
+    repeats for each branch it depends on.
+    Argument defaults to the current branch if not given.
+set-base [branch]
+    Sets the base of the current branch to the given branch. This is useful if
+    you didn't create the branch using the 'branch' command or if you messed up
+    your git state.
+
+Dependencies:
+- jq
+- gh
+"
+}
+
+declare -a common_branches=(master main)
+
+function run_and_log () {
+    local yellow='\033[0;33m'
+    local no_color="\033[0m"
+    printf "$yellow%s$no_color\n" "$*" 1>&2
+    "$@"
+}
+
+function get_current_branch () {
+    git branch --show-current
+}
+
+function get_base_commit () {
+    git rev-parse "stackbase-$1"^{}
+}
+
+function get_base_branch () {
+    git tag -l "stackbase-$1" --format='%(contents:lines=1)'
+}
+
+function get_current_repo () {
+    git config --get remote.origin.url | cut -f2 -d: | cut -f1 -d.
+}
+
+function get_pr_number () {
+    local branch="$1"
+    gh pr list -H "$branch" --json url --jq '.[0].url' | awk -F/ '{print $NF}'
+}
+
+function host () {
+    # Handle git@github.com:... urls as well as https://github.com/org/repo.git
+    local h="$(git config --get remote.origin.url | cut -f1 -d/ | cut -f1 -d: | sed 's/git@//')"
+    echo "https://${h}"
+}
+
+function get_pr_link () {
+    local repo="$1"
+    local pr_number="$2"
+    echo "$(host)/$repo/pull/$pr_number"
+}
+
+function branch () {
+    local new_branch="$1"
+    local cur_branch="$(get_current_branch)"
+    run_and_log git checkout -b "$new_branch"
+    run_and_log git tag -f -a "stackbase-$new_branch" -m "$cur_branch"
+}
+
+function branch-exists () {
+    local branch="$1"
+    git show-ref --quiet --heads "$branch"
+}
+
+function rebase () {
+    if branch-exists "${1:-master}"; then
+        local target_branch="$1"
+    else
+        local target_branch="main"
+    fi
+    local new_base_commit="$(git rev-parse "$target_branch")"
+    local cur_branch="$(get_current_branch)"
+    local base_commit="$(get_base_commit "$cur_branch")"
+
+    # Check array.contains(value) in bash
+    # Credit: https://stackoverflow.com/a/15394738
+    if [[ " ${common_branches[*]} " == " ${target_branch} " ]]; then
+        # update for convenience
+        if branch-exists "${target_branch}"; then
+            run_and_log git fetch origin "${target_branch}:${target_branch}"
+        fi
+    fi
+
+    # we want to update the base tag only after the rebase has completed.
+    # this is a trick to get git to do that
+    # see https://stackoverflow.com/questions/62985544/how-do-i-run-a-command-when-an-interactive-git-rebase-is-finished
+    run_and_log export GIT_SEQUENCE_EDITOR="function f () { echo 'exec git tag -f -a \"stackbase-$cur_branch\" \"$new_base_commit\" -m \"$target_branch\"' >> \$1;}; f"
+    run_and_log git rebase --empty=drop --interactive --onto "$target_branch" "$base_commit" "$cur_branch"
+}
+
+function pr () {
+    local cur_branch="$(get_current_branch)"
+    local base_branch="$(get_base_branch "$cur_branch")"
+    local cur_repo="$(get_current_repo)"
+    run_and_log git push --force -u origin "$cur_branch"
+    run_and_log gh pr create --base "$base_branch" --head "$cur_branch" --fill --web
+}
+
+function update () {
+    local cur_branch="$(get_current_branch)"
+    local base_branch="$(get_base_branch "$cur_branch")"
+    local cur_repo="$(get_current_repo)"
+    run_and_log git push --force -u origin "$cur_branch"
+
+    local pr_number="$(get_pr_number "$cur_branch")"
+    if [ -z "$pr_number" ]; then
+        echo "Could not find PR for current branch. Exiting..."
+        exit 1
+    fi
+    echo "Found PR #$pr_number; updating base branch"
+    gh pr edit "$pr_number" --base "$base_branch"
+    echo "Updated! View your PR at:"
+    get_pr_link "$cur_repo" "$pr_number"
+}
+
+function diff () {
+    local cur_branch="$(get_current_branch)"
+    run_and_log git diff "stackbase-$cur_branch...$cur_branch" "$@"
+}
+
+function squash () {
+    local cur_branch="$(get_current_branch)"
+    local base_commit="$(get_base_commit "$cur_branch")"
+    git reset --soft "$base_commit"
+    git commit --edit -m"$(git log --format=%B --reverse 'HEAD..HEAD@{1}')"
+}
+
+function parent () {
+    local cur_branch="$(get_current_branch)"
+    local query_branch="${1:-$cur_branch}"
+    get_base_branch "$query_branch"
+}
+
+function deps () {
+    local cur_repo="$(get_current_repo)"
+    local cur_branch="$(get_current_branch)"
+    local query_branch="${1:-$cur_branch}"
+
+    while [ -n "$query_branch" ]; do
+        pr_number="$(get_pr_number "$query_branch")"
+        if [ -z "$pr_number" ]; then
+            printf '%s\n' "$query_branch"
+        else
+            printf '%s %s\n' "$query_branch" "$(get_pr_link "$cur_repo" "$pr_number")"
+        fi
+        query_branch="$(get_base_branch "$query_branch")"
+    done
+}
+
+function set-base () {
+    local target_branch="$1"
+    local cur_branch="$(get_current_branch)"
+    run_and_log git tag -f -a "stackbase-$cur_branch" -m "$target_branch" "$target_branch"
+}
+
+
+main() {
+  if [ $# -lt 1 ]; then
+      help
+      echo 'not enough arguments'
+      exit 1
+  fi
+
+  declare -a binaries=(jq gh)
+  for binary in "${binaries[@]}"; do
+      if ! command -v "$binary" &> /dev/null; then
+          echo "Error: requires $binary but it is not installed"
+          exit 1
+      fi
+  done
+
+  readonly cmd="$1"
+  case "$cmd" in
+      branch|rebase|pr|update|diff|squash|parent|deps|set-base)
+          # Drop the command from the argument list
+          shift
+          "$cmd" "$@"
+          ;;
+      r)
+          shift
+          "rebase" "$@"
+        ;;
+      b)
+          shift
+          "branch" "$@"
+        ;;
+      u)
+          shift
+          "update" "$@"
+        ;;
+      p)
+          shift
+          "pr" "$@"
+        ;;
+      *)
+          help
+          echo "Unrecognized command $cmd"
+          exit 1
+          ;;
+  esac
+}
+
+main "$@"
