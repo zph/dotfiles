@@ -2,11 +2,7 @@ module BrewfileMinimal
   TAPS = %w[
     zph/zph
     espanso/espanso
-    homebrew/bundle
-    homebrew/cask
-    homebrew/cask-fonts
-    homebrew/core
-    homebrew/services
+    # homebrew/cask-fonts
     microsoft/git
     neovim/neovim
   ]
@@ -59,14 +55,11 @@ module BrewfileMinimal
     1password-cli
     alacritty
     alfred
-    docker
     espanso
     font-fira-code
     karabiner-elements
     rectangle
     visual-studio-code
-    zph/zph/dash
-    zph/zph/datagrip
   ]
 end
 
