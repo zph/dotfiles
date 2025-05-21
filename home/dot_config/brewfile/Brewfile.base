@@ -56,7 +56,6 @@ module BrewfileMinimal
     alfred
     espanso
     font-fira-code
-    karabiner-elements
     rectangle
     visual-studio-code
   ]
