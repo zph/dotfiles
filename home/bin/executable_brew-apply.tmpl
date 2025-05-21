@@ -4,7 +4,7 @@ set -eou pipefail
 
 brew_apply() {
   local ext="$1"
-  brew bundle --no-lock --file "$HOME/.config/brewfile/Brewfile.${ext}"
+  brew bundle --file "$HOME/.config/brewfile/Brewfile.${ext}"
 }
 
 brew_apply "base"
