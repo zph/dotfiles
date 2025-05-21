@@ -2,7 +2,6 @@ module BrewfileMinimal
   TAPS = %w[
     zph/zph
     espanso/espanso
-    # homebrew/cask-fonts
     microsoft/git
     neovim/neovim
   ]
