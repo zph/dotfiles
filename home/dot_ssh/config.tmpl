@@ -1,11 +1,12 @@
 Include config.d/*
 
 Host *
+{{ if eq .chezmoi.os "darwin" }}
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+{{ else if eq .chezmoi.os "linux" }}
+{{ end }}
   ControlPath ~/.ssh/cm-%r@%h:%p
   ControlMaster auto
   ControlPersist 10m
   # ForwardAgent yes
-{{ if eq .chezmoi.os "darwin" -}}
-  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-{{ else if eq .chezmoi.os "linux" -}}
-{{ end -}}
+  SetEnv TERM=xterm-256color

@@ -4,7 +4,7 @@
 set -eou pipefail
 set -x
 
-readonly GS_BIN="${GS_BIN:-/usr/local/bin/gs}"
+readonly GS_BIN="${GS_BIN:-/opt/homebrew/bin/gs}"
 
 if [[ ! -d "output" ]];then
   mkdir "./output"
@@ -15,5 +15,7 @@ for f in "$@";do
     -dCompatibilityLevel=1.4 \
     -dPDFSETTINGS=/ebook \
     -dNOPAUSE -dQUIET -dBATCH \
+    -sColorConversionStrategy=Gray \
+    -dProcessColorModel=/DeviceGray \
     -sOutputFile="output/$(basename "$f" '.pdf')_small.pdf" "$f"
 done
