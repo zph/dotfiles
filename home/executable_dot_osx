@@ -443,6 +443,10 @@ defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
 # Ensure vscode with neovim allows repeating keys when held
 defaults write com.microsoft.VSCode ApplePressAndHoldEnabled -bool false
 
+# Set screenshots directory to Desktop/screenshots
+mkdir -p ~/Desktop/screenshots
+defaults write com.apple.screencapture location ~/Desktop/screenshots
+
 
 for app in Finder Dock Mail Safari iTunes iCal Address\ Book SystemUIServer Twitter; do
 	killall "$app" > /dev/null 2>&1
