@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+# Context: https://github.com/orgs/community/discussions/6874
+
+gh api /notifications -X GET | jq -r '.[].id' | xargs -I {} gh api /notifications/threads/{} -X PATCH
