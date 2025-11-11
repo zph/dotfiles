@@ -162,6 +162,48 @@ func confirm(question string) bool {
 	return response == "y" || response == "yes"
 }
 
+// Create a symbolic reference from the alternate trunk name to the actual trunk branch
+// If the trunk is "main", creates master -> main symlink (and vice versa)
+func createTrunkSymlink(trunkBranch string) error {
+	var alternateName string
+	if trunkBranch == "main" {
+		alternateName = "master"
+	} else if trunkBranch == "master" {
+		alternateName = "main"
+	} else {
+		// Not a standard trunk branch, skip
+		return nil
+	}
+
+	// Check if the alternate already exists as a regular branch
+	_, err := execCommand("git", "rev-parse", "--verify", fmt.Sprintf("refs/heads/%s", alternateName))
+	if err == nil {
+		// Alternate branch already exists as a regular branch, don't overwrite
+		return nil
+	}
+
+	// Check if it's already a symbolic ref pointing to the right place
+	existingTarget, err := execCommand("git", "symbolic-ref", fmt.Sprintf("refs/heads/%s", alternateName))
+	if err == nil {
+		existingTarget = strings.TrimSpace(existingTarget)
+		expectedTarget := fmt.Sprintf("refs/heads/%s", trunkBranch)
+		if existingTarget == expectedTarget {
+			// Already set up correctly
+			return nil
+		}
+	}
+
+	// Create the symbolic reference
+	_, err = execCommand("git", "symbolic-ref", fmt.Sprintf("refs/heads/%s", alternateName), fmt.Sprintf("refs/heads/%s", trunkBranch))
+	if err != nil {
+		return fmt.Errorf("failed to create symbolic reference: %w", err)
+	}
+
+	fmt.Printf("%sℹ️  Created symbolic reference: %s -> %s (use either name locally)%s\n",
+		colorYellow, alternateName, trunkBranch, colorReset)
+	return nil
+}
+
 func main() {
 	// Get the upstream branch
 	upstreamBranch, err := getUpstreamBranch()
@@ -175,6 +217,13 @@ func main() {
 	if err != nil {
 		fmt.Printf("Error getting default branch: %v\n", err)
 		os.Exit(1)
+	}
+
+	// Create symbolic reference from alternate trunk name (main <-> master)
+	// This allows using either name locally for convenience
+	if err := createTrunkSymlink(defaultBranch); err != nil {
+		// Non-fatal error, just warn
+		fmt.Printf("%sWarning: Could not create trunk symlink: %v%s\n", colorYellow, err, colorReset)
 	}
 
 	// Get the HEAD SHA
