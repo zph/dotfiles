@@ -1,0 +1,8 @@
+{
+  "includeCoAuthoredBy": false,
+  "alwaysThinkingEnabled": true,
+  "gitAttribution": false,
+  "enabledPlugins": {
+    "document-skills@anthropic-agent-skills": true
+  }
+}

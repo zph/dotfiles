@@ -1,0 +1,225 @@
+#!/bin/bash
+# Symlink Claude configuration from ~/.config/claude to ~/.claude
+#
+# This script only runs when files in ~/.config/claude change
+# File hashes (triggers re-run on change):
+{{- $configDir := joinPath .chezmoi.homeDir ".config/claude" }}
+{{- range glob (printf "%s/**/*" $configDir) }}
+{{- $info := stat . }}
+{{- if eq $info.type "file" }}
+# {{ . }}: {{ include . | sha256sum }}
+{{- end }}
+{{- end }}
+
+set -eou pipefail
+
+CONFIG_DIR="$HOME/.config/claude"
+TARGET_DIR="$HOME/.claude"
+
+echo "Symlinking Claude configuration from $CONFIG_DIR to $TARGET_DIR..."
+
+# Ensure target directory exists
+mkdir -p "$TARGET_DIR"
+
+# Function to handle settings.json with merge prompt
+handle_settings_json() {
+    local source="$1"
+    local target="$2"
+
+    # If target doesn't exist or is already a symlink, just symlink
+    if [ ! -e "$target" ] || [ -L "$target" ]; then
+        rm -f "$target"
+        ln -sf "$source" "$target"
+        echo "  Symlinked: settings.json"
+        return
+    fi
+
+    # If files are identical, just symlink
+    if diff -q "$source" "$target" > /dev/null 2>&1; then
+        rm -f "$target"
+        ln -sf "$source" "$target"
+        echo "  Symlinked: settings.json (no changes)"
+        return
+    fi
+
+    # Files differ - show diff and prompt
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "settings.json differs between source and target"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "Diff (- existing, + new):"
+    diff -u "$target" "$source" || true
+    echo ""
+    echo "Choose an action:"
+    echo "  1) Keep NEW (from ~/.config/claude - will symlink)"
+    echo "  2) Keep EXISTING (from ~/.claude - will backup and keep)"
+    echo "  3) Merge (open in editor to merge manually)"
+    echo "  4) Skip (do nothing)"
+    echo ""
+    read -p "Choice [1-4]: " choice
+
+    case "$choice" in
+        1)
+            rm -f "$target"
+            ln -sf "$source" "$target"
+            echo "  ✓ Symlinked to new settings.json"
+            ;;
+        2)
+            # Backup the source file and keep existing
+            cp "$target" "$source.backup"
+            echo "  ✓ Kept existing settings.json (backed up new to settings.json.backup)"
+            ;;
+        3)
+            # Create a temporary merged file
+            TEMP_MERGED=$(mktemp)
+            cp "$target" "$TEMP_MERGED"
+
+            # Open in editor
+            ${EDITOR:-vim} "$TEMP_MERGED"
+
+            # Ask if they want to use the merged version
+            echo ""
+            read -p "Use merged version? [y/N]: " use_merged
+            if [[ "$use_merged" =~ ^[Yy]$ ]]; then
+                mv "$TEMP_MERGED" "$source"
+                rm -f "$target"
+                ln -sf "$source" "$target"
+                echo "  ✓ Applied merged settings.json"
+            else
+                rm -f "$TEMP_MERGED"
+                echo "  ✗ Merge cancelled, keeping existing"
+            fi
+            ;;
+        4)
+            echo "  ⊘ Skipped settings.json"
+            ;;
+        *)
+            echo "  ⊘ Invalid choice, skipped settings.json"
+            ;;
+    esac
+}
+
+# Function to check if directory has content
+dir_has_content() {
+    local dir="$1"
+    [ -d "$dir" ] && [ -n "$(ls -A "$dir" 2>/dev/null)" ]
+}
+
+# Function to handle directory removal with warning
+handle_directory_removal() {
+    local source="$1"
+    local target="$2"
+    local basename=$(basename "$target")
+
+    # If target is already a symlink, just replace it
+    if [ -L "$target" ]; then
+        rm -f "$target"
+        ln -sf "$source" "$target"
+        echo "  Symlinked: $basename (replaced symlink)"
+        return
+    fi
+
+    # If target doesn't exist, just symlink
+    if [ ! -e "$target" ]; then
+        ln -sf "$source" "$target"
+        echo "  Symlinked: $basename"
+        return
+    fi
+
+    # If target is a directory with content, warn and prompt
+    if dir_has_content "$target"; then
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "⚠️  Directory '$basename' exists with content"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "Existing content in $target:"
+        ls -lah "$target" | tail -n +4
+        echo ""
+        echo "New content in $source:"
+        ls -lah "$source" | tail -n +4
+        echo ""
+        echo "Choose an action:"
+        echo "  1) REPLACE with symlink (DESTRUCTIVE - will remove existing)"
+        echo "  2) BACKUP existing, then symlink (saves to $basename.backup)"
+        echo "  3) MERGE content, then symlink"
+        echo "  4) Skip (keep existing, do not symlink)"
+        echo ""
+        read -p "Choice [1-4]: " choice
+
+        case "$choice" in
+            1)
+                rm -rf "$target"
+                ln -sf "$source" "$target"
+                echo "  ✓ Replaced with symlink to $basename"
+                ;;
+            2)
+                local backup="${target}.backup.$(date +%Y%m%d_%H%M%S)"
+                mv "$target" "$backup"
+                ln -sf "$source" "$target"
+                echo "  ✓ Backed up to $backup and symlinked"
+                ;;
+            3)
+                # Copy any files from target that don't exist in source
+                echo "  Merging content from existing into new..."
+                cp -rn "$target"/* "$source"/ 2>/dev/null || true
+                rm -rf "$target"
+                ln -sf "$source" "$target"
+                echo "  ✓ Merged and symlinked"
+                ;;
+            4)
+                echo "  ⊘ Skipped $basename"
+                ;;
+            *)
+                echo "  ⊘ Invalid choice, skipped $basename"
+                ;;
+        esac
+    else
+        # Empty directory or file - safe to replace
+        rm -rf "$target"
+        ln -sf "$source" "$target"
+        echo "  Symlinked: $basename"
+    fi
+}
+
+# Function to symlink files/directories
+symlink_item() {
+    local item="$1"
+    local basename=$(basename "$item")
+    local target="$TARGET_DIR/$basename"
+
+    # Special handling for settings.json
+    if [ "$basename" = "settings.json" ]; then
+        handle_settings_json "$item" "$target"
+        return
+    fi
+
+    # Special handling for directories
+    if [ -d "$item" ]; then
+        handle_directory_removal "$item" "$target"
+        return
+    fi
+
+    # For regular files, just remove and symlink
+    if [ -e "$target" ] || [ -L "$target" ]; then
+        rm -f "$target"
+    fi
+
+    ln -sf "$item" "$target"
+    echo "  Symlinked: $basename"
+}
+
+# Symlink all items from config directory
+if [ -d "$CONFIG_DIR" ]; then
+    for item in "$CONFIG_DIR"/*; do
+        if [ -e "$item" ]; then
+            symlink_item "$item"
+        fi
+    done
+    echo ""
+    echo "✓ Claude configuration symlinked successfully"
+else
+    echo "Warning: $CONFIG_DIR does not exist"
+    exit 0
+fi
