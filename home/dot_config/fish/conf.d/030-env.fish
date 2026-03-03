@@ -1,75 +1,39 @@
-# Manual export and generation of zsh settings via env var
-# To refresh, delete $HOME/.zsh_env
-function update_zsh_vars
-  zsh -c 'source ~/.zshrc && env > ~/.zsh_env'
-end
-
 # Disable fish greeting
 set fish_greeting
 
-if test ! -f $HOME/.zsh_env
-  update_zsh_vars
+# Environment variables - optimized to avoid external command overhead
+# Replaces zsh dependency and diff-env caching with direct definitions
+
+## Editor and pager
+if type -q nvim
+  set -gx EDITOR (which nvim)
+else if type -q vim
+  set -gx EDITOR (which vim)
 end
 
-# Use zsh for declaring some env vars
-# it's messy and confusing but I want fish to inherit some settings from zsh
-# for consistency over the two shells
-
-# Read ~/.zsh_env ONCE for performance (was 111ms, now ~10ms)
-set -l zsh_env_content (cat ~/.zsh_env)
-
-# Extract vars matching patterns using pure fish string matching
-set ENVVARS EDITOR "DIRENV_" "HOMEBREW_" "DENO_"
-set MANPATH ""
-
-for var in $ENVVARS
-  # Use string match instead of grep, parse in fish instead of xargs
-  for line in (string match -r "^$var.*" -- $zsh_env_content)
-    set -l kv (string split -m 1 = $line)
-    if test (count $kv) -eq 2
-      set -gx $kv[1] $kv[2]
-    end
-  end
+if type -q bat
+  set -gx PAGER (which bat)
 end
 
-# Extract PATH using string match instead of cat|grep|awk
-set -l zsh_path_line (string match -r "^PATH=.*" -- $zsh_env_content)
-if test -n "$zsh_path_line"
-  set -l ZSH_PATH (string sub -s 6 -- $zsh_path_line[1])  # Skip "PATH="
-  # Note reverse to make this apply older ones first (keeps useful order)
-  for path in (string split ':' $ZSH_PATH)[-1..1]
-    set PATH $path $PATH
-  end
-end
+## Homebrew
+set -gx HOMEBREW_BUNDLE_NO_LOCK 1
+set -gx HOMEBREW_MAKE_JOBS 1
+set -gx HOMEBREW_NO_ANALYTICS 1
+set -gx HOMEBREW_NO_AUTO_UPDATE 1
+set -gx HOMEBREW_CASK_OPTS "--appdir=~/Applications"
 
-set -l env_file "$HOME/.config/fish/conf.d/env.sh"
-set -l cache_file "$HOME/tmp/env_cache"
-set -l cache_file_sha "$HOME/tmp/env_cache.sha"
-set -l current_sha (string split ' ' (sha256sum $env_file))[1]
+## Elixir
+set -gx ELIXIR_ERL_OPTS "+P 5000000"
+set -gx ERL_AFLAGS "-kernel shell_history enabled"
 
-# Check cache validity (optimized: avoid unnecessary subprocesses)
-set -l needs_refresh 1
-if test -f $cache_file_sha
-  set -l cached_sha (head -n1 $cache_file_sha)
-  if test "$cached_sha" = "$current_sha"
-    set needs_refresh 0
-  end
-end
+## FZF
+set -gx FZF_DEFAULT_COMMAND 'rg --files --no-ignore --hidden --follow -g "!{_build,.git,node_modules}/*" 2> /dev/null'
 
-if test $needs_refresh -eq 1
-  echo $current_sha > $cache_file_sha
-  diff-env "source $env_file" > $cache_file
-end
+## Python
+set -gx PYTHONSTARTUP "$HOME/.pythonrc"
 
-# Load cached env vars (optimized: read once, parse in fish)
-if test -f $cache_file
-  set -l cache_lines (cat $cache_file)
-  for line in $cache_lines[2..-1]  # Skip first line
-    if test -n "$line"
-      set -l kv (string split -m 1 = $line)
-      if test (count $kv) -eq 2
-        set -gx $kv[1] $kv[2]
-      end
-    end
-  end
-end
+## Deno
+set -gx DENO_NO_UPDATE_CHECK 1
+
+## Direnv - for 1p integration
+set -gx DIRENV_WARN_TIMEOUT 1m
