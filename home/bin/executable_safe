@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+set -eou pipefail
+
+# Ensure safehouse is on path (hermit, homebrew, or $PATH)
+if ! command -v safehouse &>/dev/null; then
+  echo "safe: safehouse not found. Install agent-safehouse or add it to PATH." >&2
+  exit 1
+fi
+
+# Optional: extra dirs from env (colon-separated). Merged into SAFEHOUSE_ADD_DIRS for the run.
+# Example: SAFEHOUSE_WORK_DIRS="$HOME/src/foo:$HOME/src/bar"
+if [[ -n "${SAFEHOUSE_WORK_DIRS:-}" ]]; then
+  export SAFEHOUSE_ADD_DIRS="${SAFEHOUSE_ADD_DIRS:-}${SAFEHOUSE_ADD_DIRS:+:}${SAFEHOUSE_WORK_DIRS}"
+fi
+
+# Append local override profile if it exists; then glob optional append.d/*.sb
+APPEND_PROFILES=()
+LOCAL_OVERRIDES="$HOME/.config/agent-safehouse/local.sb"
+if [[ -f "$LOCAL_OVERRIDES" ]]; then
+  export SAFEHOUSE_APPEND_PROFILE="$LOCAL_OVERRIDES"
+  APPEND_PROFILES+=("$LOCAL_OVERRIDES")
+fi
+
+APPEND_D="$HOME/.config/agent-safehouse/config.d"
+if [[ -d "$APPEND_D" ]]; then
+  for f in "$APPEND_D"/*.sb; do
+    [[ -f "$f" ]] && APPEND_PROFILES+=("$f")
+  done
+fi
+
+if [[ -f "$HOME/src/work/safehouse.sb" ]]; then
+  APPEND_PROFILES+=("$HOME/src/work/safehouse.sb")
+fi
+
+# Build safehouse argv: base flags, then --append-profile for each, then --
+BASE_ARGS=(
+  --add-dirs="$HOME/Library/Caches"
+  --add-dirs="$HOME/.cache"
+  --add-dirs="$HOME/.config/containers/"
+  --add-dirs-ro="$HOME/.local/share/containers"
+)
+for p in "${APPEND_PROFILES[@]}"; do
+  BASE_ARGS+=(--append-profile="$p")
+done
+BASE_ARGS+=(--)
+
+case $1 in
+  claude)
+    exec safehouse "${BASE_ARGS[@]}" claude --dangerously-skip-permissions "$@"
+    ;;
+  *)
+    exec safehouse "${BASE_ARGS[@]}" "$@"
+    ;;
+esac
