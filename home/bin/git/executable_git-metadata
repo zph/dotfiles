@@ -41,7 +41,7 @@ const keyName = args._[1] as string
 const main = async () => {
   const gitRoot = await $`git root`.noThrow().quiet()
   if (gitRoot.code === 0) {
-    $.cd(gitRoot.stdout.trim())
+    Deno.chdir(gitRoot.stdout.trim())
   }
 
   const gitFile = $.path(".git")
@@ -58,7 +58,7 @@ const main = async () => {
         basePath = p[1]
       }
       const root = $.path(basePath).parentOrThrow()
-      $.cd(root)
+      Deno.chdir(root.toString())
     } else {
       throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
     }
