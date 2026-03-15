@@ -1,5 +1,6 @@
 module BrewfileMinimal
   TAPS = %w[
+    cirruslabs/cli
     zph/zph
     espanso/espanso
     microsoft/git
@@ -37,6 +38,7 @@ module BrewfileMinimal
     ssh-copy-id
     starship
     stow
+    tart
     terraform
     tmux
     watch

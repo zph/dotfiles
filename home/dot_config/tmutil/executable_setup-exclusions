@@ -20,6 +20,7 @@ EXCLUSIONS=(
   ~/Library/Containers/com.docker.docker/Data/vms
   ~/Library/Logs
   ~/tmp
+  ~/.tart
   ~/"VirtualBox VMs"
 )
 

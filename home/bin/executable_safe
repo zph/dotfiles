@@ -39,6 +39,7 @@ EXTRA_DIRS=(
   "--add-dirs|$HOME/Library/Caches"
   "--add-dirs|$HOME/.cache"
   "--add-dirs|$HOME/.config/containers"
+  "--add-dirs|$HOME/.tart"
   "--add-dirs-ro|$HOME/.local/share/containers"
 )
 

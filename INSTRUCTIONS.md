@@ -7,7 +7,7 @@
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply zph
 ```
 
-[ ] Install virtualization
+[ ] Clone a base VM image (tart is installed automatically via Brewfile)
 ```
 tart clone ghcr.io/cirruslabs/macos-ventura-base:latest ventura-base
 tart run ventura-base
