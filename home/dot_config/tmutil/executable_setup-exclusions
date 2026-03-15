@@ -23,6 +23,16 @@ EXCLUSIONS=(
   ~/"VirtualBox VMs"
 )
 
+# Check if we have the necessary permissions
+if ! tmutil removeexclusion -p /dev/null 2>/dev/null && ! tmutil addexclusion -p /dev/null 2>/dev/null; then
+  echo ""
+  echo "==> Full Disk Access is required for tmutil exclusions."
+  echo "==> Opening System Settings > Privacy & Security > Full Disk Access..."
+  open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles"
+  echo "==> Add your terminal app, restart it, then re-run: chezmoi apply"
+  exit 0
+fi
+
 for path in "${EXCLUSIONS[@]}";do
   # remove then add provides a simple
   # way to avoid adding duplicate exclusions
