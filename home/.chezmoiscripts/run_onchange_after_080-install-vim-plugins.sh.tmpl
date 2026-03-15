@@ -1,0 +1,13 @@
+#!/bin/bash
+# Install/update vim-plug plugins whenever init.vim changes
+# init.vim hash: {{ include "dot_vim/init.vim" | sha256sum }}
+set -euo pipefail
+
+if ! command -v nvim &>/dev/null; then
+  echo "# nvim not found, skipping plugin install"
+  exit 0
+fi
+
+echo "# Installing vim plugins..."
+nvim --headless +PlugInstall +qall 2>/dev/null
+echo "# Vim plugins installed"
