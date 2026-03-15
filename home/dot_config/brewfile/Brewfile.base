@@ -56,6 +56,7 @@ module BrewfileMinimal
     alfred
     espanso
     font-fira-code
+    ghostty
     rectangle
     visual-studio-code
   ]
