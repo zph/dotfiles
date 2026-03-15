@@ -168,7 +168,7 @@ _source_zshd_modules(){
     if [[ -f "$full_path" ]];then
       source "$full_path"
     else
-      (2> echo "Missing config for $full_path")
+      echo "Missing config for $full_path" >&2
     fi
   done
 }
