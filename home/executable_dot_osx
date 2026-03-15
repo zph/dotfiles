@@ -88,10 +88,16 @@ echo "# Enable tap to click for trackpad"
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
-# Set mouse and trackpad tracking speed
-echo "# Set mouse and trackpad tracking speed"
-defaults -currentHost write NSGlobalDomain com.apple.mouse.scaling -int 3
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.scaling -int 3
+# Set mouse and trackpad tracking speed to maximum
+echo "# Set mouse and trackpad tracking speed to maximum"
+defaults -currentHost write NSGlobalDomain com.apple.mouse.scaling -float 5.0
+defaults -currentHost write NSGlobalDomain com.apple.trackpad.scaling -float 3.0
+defaults write NSGlobalDomain com.apple.mouse.scaling -float 5.0
+defaults write NSGlobalDomain com.apple.trackpad.scaling -float 3.0
+
+# Disable mouse acceleration for linear, predictable movement
+echo "# Disable mouse acceleration"
+defaults write .GlobalPreferences com.apple.mouse.scaling -1
 
 # Enable tap to click globally
 echo "# Enable tap to click globally"
@@ -113,7 +119,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeF
 # Configure three-finger trackpad gestures (enable drag, disable tap and vertical swipe)
 echo "# Configure three-finger trackpad gestures"
 defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerDrag -int 1
-defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerHorizSwipeGesture -int 0
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerHorizSwipeGesture -int 1
 defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerTapGesture -int 0
 defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadThreeFingerVertSwipeGesture -int 0
 
@@ -123,6 +129,12 @@ defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThre
 defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerHorizSwipeGesture -int 1
 defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerTapGesture -int 0
 defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadThreeFingerVertSwipeGesture -int 0
+
+# Enable four-finger swipe down for App Exposé
+echo "# Enable four-finger swipe down for App Exposé"
+defaults write com.apple.dock showAppExposeGestureEnabled -bool true
+defaults write 'com.apple.AppleMultitouchTrackpad' TrackpadFourFingerVertSwipeGesture -int 2
+defaults write 'com.apple.driver.AppleBluetoothMultitouch.trackpad' TrackpadFourFingerVertSwipeGesture -int 2
 
 # Disable "natural" (Lion-style) scrolling
 # defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
@@ -313,6 +325,13 @@ defaults write com.apple.dock show-process-indicators -bool true
 # Don't animate opening applications from the Dock
 echo "# Disable application launch animation from the Dock"
 defaults write com.apple.dock launchanim -bool false
+
+# Use scale effect instead of genie when minimizing (faster, less flashy)
+echo "# Use scale effect for minimize and disable minimize animation"
+defaults write com.apple.dock mineffect -string "scale"
+
+# Disable the minimize animation entirely
+defaults write com.apple.dock minimize-to-application -bool true
 
 # Speed up Mission Control animations
 echo "# Speed up Mission Control animations"
