@@ -40,7 +40,8 @@ BASE_ARGS=(
   --add-dirs="$HOME/.config/containers/"
   --add-dirs-ro="$HOME/.local/share/containers"
 )
-for p in "${APPEND_PROFILES[@]}"; do
+# Safely iterate empty array under set -u (bash 4.x compat)
+for p in ${APPEND_PROFILES[@]+"${APPEND_PROFILES[@]}"}; do
   BASE_ARGS+=(--append-profile="$p")
 done
 BASE_ARGS+=(--)
