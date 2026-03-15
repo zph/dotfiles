@@ -25,3 +25,9 @@ repos:
     args:
     - re-add
     - --dry-run
+  - id: lint-brew-guard
+    name: Lint brew PATH guard in chezmoi scripts
+    language: script
+    entry: scripts/lint-brew-guard.sh
+    pass_filenames: false
+    files: \.chezmoiscripts/
