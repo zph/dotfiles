@@ -36,10 +36,12 @@ module BrewfileMinimal
     rsync
     shellcheck
     ssh-copy-id
+    hudochenkov/sshpass/sshpass
     starship
     stow
-    tart
+    cirruslabs/cli/tart
     terraform
+    uv
     tmux
     watch
     watchexec
