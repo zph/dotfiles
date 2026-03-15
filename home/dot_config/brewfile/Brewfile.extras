@@ -18,7 +18,7 @@ module BrewfileFull
   ]
 
   CASKS = %w[
-    aws-vault
+    aws-vault-binary
     dropbox
     google-chrome
     raindropio
