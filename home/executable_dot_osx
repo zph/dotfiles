@@ -422,9 +422,17 @@ defaults write com.twitter.twitter-mac HideInBackground -bool true
 # Kill spaces transitions
 defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
 
-# Clear all persistent Dock icons (apps and folders/trash side)
+# Strip the Dock down to only running apps.
+# On modern macOS (Sequoia+), clearing persistent-apps alone is not enough —
+# the OS will still show "suggested" and "recent" apps in the Dock.
+# We need all three settings:
+#   1. persistent-apps/others -array  → remove explicitly pinned icons
+#   2. show-recents false             → hide the "recent apps" section
+#   3. static-only true               → show ONLY running apps, nothing else
 defaults write com.apple.dock persistent-apps -array
 defaults write com.apple.dock persistent-others -array
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock static-only -bool true
 
 killall Dock
 ## to undo
