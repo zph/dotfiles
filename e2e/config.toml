@@ -1,0 +1,76 @@
+[vm]
+image = "ghcr.io/cirruslabs/macos-ventura-base:latest"
+name = "dotfiles-e2e"
+cpu = 4
+memory = 8192
+disk = 50
+user = "admin"
+password = "admin"
+
+[[vm.mounts]]
+name = "dotfiles"
+host_path = "."
+read_only = true
+
+[setup]
+[setup.chezmoi_data]
+email = "test@e2e.local"
+is_work = "false"
+github_username = "zph"
+is_minimal_install = "true"
+
+[[setup.steps]]
+name = "Run bootstrap"
+run = "bash /Volumes/My\\ Shared\\ Files/dotfiles/bootstrap.sh"
+
+[[tests]]
+name = "Homebrew installed"
+run = "brew --version"
+
+[[tests]]
+name = "Fish shell installed"
+run = "command -v fish"
+
+[[tests]]
+name = "Fish is default shell"
+run = "dscl . -read /Users/admin UserShell | grep fish"
+
+[[tests]]
+name = "Neovim installed"
+run = "nvim --version"
+
+[[tests]]
+name = "Git installed via brew"
+run = "brew list git"
+
+[[tests]]
+name = "Tart installed"
+run = "brew list tart"
+
+[[tests]]
+name = "Starship installed"
+run = "command -v starship"
+
+[[tests]]
+name = "Oh My Fish installed"
+run = "test -d ~/.local/share/omf"
+
+[[tests]]
+name = "Vim symlink exists"
+run = "test -L ~/.vim"
+
+[[tests]]
+name = "Dock autohide enabled"
+run = "defaults read com.apple.dock autohide | grep -q 1"
+
+[[tests]]
+name = "Finder show hidden files"
+run = "defaults read com.apple.finder AppleShowAllFiles | grep -qiE '1|true|yes'"
+
+[[tests]]
+name = "Fast key repeat"
+run = "defaults read NSGlobalDomain KeyRepeat | grep -q 3"
+
+[[tests]]
+name = "Screenshots directory exists"
+run = "test -d ~/Desktop/screenshots"
