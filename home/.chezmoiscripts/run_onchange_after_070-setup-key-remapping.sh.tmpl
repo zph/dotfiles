@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# run_onchange_after hash: {{ include "Library/LaunchAgents/com.user.remapkeys.plist" | sha256sum }}
+
+set -eou pipefail
+
+PLIST="$HOME/Library/LaunchAgents/com.user.remapkeys.plist"
+LABEL="com.user.remapkeys"
+
+# Unload if already loaded (ignore errors if not loaded)
+launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
+
+# Load the agent
+launchctl bootstrap "gui/$(id -u)" "$PLIST"
+
+# Also apply immediately for the current session
+/usr/bin/hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x7000000e0,"HIDKeyboardModifierMappingDst":0xff0000003},{"HIDKeyboardModifierMappingSrc":0xff0000003,"HIDKeyboardModifierMappingDst":0x7000000e0}]}'
+
+echo "Key remapping applied: Left Control <-> Fn/Globe"
