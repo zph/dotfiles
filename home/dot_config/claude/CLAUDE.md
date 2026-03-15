@@ -11,3 +11,15 @@
 - 📋 **Always update IMPLEMENTATION.md**
 - 🔄 Red-Green-Refactor loop is mandatory
 - Technical choices for algorithms and distributed systems behavior should focus on the tradeoffs involved and use research skill.
+
+# Python
+
+- **Always use `uv`** for all Python execution. Never invoke `python3` or `python` directly.
+- Makefile targets, scripts, and commands should use `uv run --project <path> python ...` or `uv run --project <path> <entry-point>`.
+- Python projects use `pyproject.toml` with uv-compatible configuration.
+
+# Makefile
+1. Makefiles should have a help target in them that automatically prints the targets and a bit of information.
+
+# Git Repo
+1. Every Git repo that has an origin, which is github.com/zph, should have a Makefile at the root of it.
