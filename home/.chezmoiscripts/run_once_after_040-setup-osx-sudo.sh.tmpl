@@ -6,6 +6,8 @@ set -eou pipefail
 
 {{ if eq .chezmoi.os "darwin" -}}
   sudo bash $HOME/.osx
+{{ if and (hasKey . "tmutil_exclusions") (eq .tmutil_exclusions "true") -}}
   sudo "${HOME}/.config/tmutil/setup-exclusions"
+{{ end -}}
 {{ else if eq .chezmoi.os "linux" -}}
 {{ end -}}
