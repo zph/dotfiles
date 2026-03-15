@@ -60,6 +60,7 @@ module BrewfileMinimal
     ghostty
     rectangle
     visual-studio-code
+    wispr-flow
   ]
 end
 
