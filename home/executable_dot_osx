@@ -421,6 +421,11 @@ defaults write com.twitter.twitter-mac HideInBackground -bool true
 ###################################
 # Kill spaces transitions
 defaults write com.apple.dock workspaces-swoosh-animation-off -bool YES
+
+# Clear all persistent Dock icons (apps and folders/trash side)
+defaults write com.apple.dock persistent-apps -array
+defaults write com.apple.dock persistent-others -array
+
 killall Dock
 ## to undo
 # defaults write com.apple.dock workspaces-swoosh-animation-off -bool NO
