@@ -34,12 +34,20 @@ if [[ -f "$HOME/src/work/safehouse.sb" ]]; then
 fi
 
 # Build safehouse argv: base flags, then --append-profile for each, then --
-BASE_ARGS=(
-  --add-dirs="$HOME/Library/Caches"
-  --add-dirs="$HOME/.cache"
-  --add-dirs="$HOME/.config/containers/"
-  --add-dirs-ro="$HOME/.local/share/containers"
+# Directories to expose: "flag|path"
+EXTRA_DIRS=(
+  "--add-dirs|$HOME/Library/Caches"
+  "--add-dirs|$HOME/.cache"
+  "--add-dirs|$HOME/.config/containers"
+  "--add-dirs-ro|$HOME/.local/share/containers"
 )
+
+BASE_ARGS=()
+for entry in "${EXTRA_DIRS[@]}"; do
+  flag="${entry%%|*}"  # everything before first |
+  dir="${entry#*|}"    # everything after first |
+  [[ -d "$dir" ]] && BASE_ARGS+=("${flag}=${dir}")
+done
 # Safely iterate empty array under set -u (bash 4.x compat)
 for p in ${APPEND_PROFILES[@]+"${APPEND_PROFILES[@]}"}; do
   BASE_ARGS+=(--append-profile="$p")
