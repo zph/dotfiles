@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+# chezmoi-review: Render chezmoi target state to a temp dir, interactively
+# diff each managed file against the real destination, resolve in Neovim,
+# then apply the resolution to both destination and chezmoi source.
+set -euo pipefail
+
+DEST_DIR="${CHEZMOI_REVIEW_DEST:-$HOME}"
+DIFF_TOOL="${CHEZMOI_REVIEW_EDITOR:-nvim}"
+
+usage() {
+  cat <<'EOF'
+Usage: chezmoi-review [OPTIONS] [FILE...]
+
+Render chezmoi's target state to a temp directory, diff each managed file
+against the real destination, and interactively resolve differences in Neovim.
+Resolved files are applied to both the destination and the chezmoi source.
+
+Options:
+  -n, --dry-run     Show diffs only, don't open editor or apply
+  -a, --auto-skip   Skip files that are identical (no pause)
+  -d, --dest DIR    Override destination directory (default: $HOME)
+  -h, --help        Show this help
+
+Environment:
+  CHEZMOI_REVIEW_DEST    Override destination directory
+  CHEZMOI_REVIEW_EDITOR  Override diff editor (default: nvim)
+
+If FILE arguments are given, only review those files (relative to dest).
+Otherwise, review all managed files.
+EOF
+  exit 0
+}
+
+DRY_RUN=false
+AUTO_SKIP=false
+FILTER_FILES=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n|--dry-run)  DRY_RUN=true; shift ;;
+    -a|--auto-skip) AUTO_SKIP=true; shift ;;
+    -d|--dest)     DEST_DIR="$2"; shift 2 ;;
+    -h|--help)     usage ;;
+    -*)            echo "Unknown option: $1" >&2; exit 1 ;;
+    *)             FILTER_FILES+=("$1"); shift ;;
+  esac
+done
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+info()  { printf "${CYAN}▶${RESET} %s\n" "$*"; }
+warn()  { printf "${YELLOW}▶${RESET} %s\n" "$*"; }
+ok()    { printf "${GREEN}✓${RESET} %s\n" "$*"; }
+err()   { printf "${RED}✗${RESET} %s\n" "$*" >&2; }
+
+# Verify chezmoi is available
+if ! command -v chezmoi &>/dev/null; then
+  err "chezmoi not found in PATH"
+  exit 1
+fi
+
+# Create temp directory for rendered target state
+TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$TMPDIR"' EXIT
+
+info "Rendering chezmoi target state to temp directory..."
+chezmoi archive --format=tar | tar xf - -C "$TMPDIR"
+
+# Get list of managed files (relative paths)
+mapfile -t MANAGED_FILES < <(chezmoi managed --include=files --path-style=relative)
+
+if [[ ${#MANAGED_FILES[@]} -eq 0 ]]; then
+  warn "No managed files found"
+  exit 0
+fi
+
+# Filter to requested files if specified
+if [[ ${#FILTER_FILES[@]} -gt 0 ]]; then
+  FILTERED=()
+  for mf in "${MANAGED_FILES[@]}"; do
+    for ff in "${FILTER_FILES[@]}"; do
+      # Match if the managed file path contains or equals the filter
+      if [[ "$mf" == "$ff" || "$mf" == *"$ff"* ]]; then
+        FILTERED+=("$mf")
+        break
+      fi
+    done
+  done
+  MANAGED_FILES=("${FILTERED[@]}")
+  if [[ ${#MANAGED_FILES[@]} -eq 0 ]]; then
+    warn "No managed files match the given filter(s)"
+    exit 0
+  fi
+fi
+
+CHANGED=0
+REVIEWED=0
+APPLIED=0
+SKIPPED=0
+
+for rel_path in "${MANAGED_FILES[@]}"; do
+  target_file="$TMPDIR/$rel_path"
+  dest_file="$DEST_DIR/$rel_path"
+
+  # Skip if target file wasn't rendered (e.g., template conditions excluded it)
+  if [[ ! -f "$target_file" ]]; then
+    continue
+  fi
+
+  # If destination doesn't exist yet, it's a new file
+  if [[ ! -f "$dest_file" ]]; then
+    printf "\n${BOLD}━━━ NEW FILE: %s ━━━${RESET}\n" "$rel_path"
+    diff --color=always /dev/null "$target_file" 2>/dev/null || true
+    CHANGED=$((CHANGED + 1))
+
+    if $DRY_RUN; then
+      SKIPPED=$((SKIPPED + 1))
+      continue
+    fi
+
+    printf "\n${YELLOW}[a]pply / [s]kip / [e]dit in nvim / [q]uit?${RESET} "
+    read -r -n1 choice
+    echo
+    case "$choice" in
+      a)
+        mkdir -p "$(dirname "$dest_file")"
+        cp "$target_file" "$dest_file"
+        chezmoi re-add "$dest_file" 2>/dev/null || true
+        ok "Applied new file: $rel_path"
+        APPLIED=$((APPLIED + 1))
+        ;;
+      e)
+        # Let user edit the target file, then apply
+        cp "$target_file" "$target_file.work"
+        $DIFF_TOOL "$target_file.work"
+        mkdir -p "$(dirname "$dest_file")"
+        cp "$target_file.work" "$dest_file"
+        chezmoi re-add "$dest_file" 2>/dev/null || true
+        ok "Applied edited file: $rel_path"
+        APPLIED=$((APPLIED + 1))
+        ;;
+      q) info "Quitting."; exit 0 ;;
+      *) SKIPPED=$((SKIPPED + 1)); warn "Skipped: $rel_path" ;;
+    esac
+    continue
+  fi
+
+  # Compare target vs destination
+  if diff -q "$target_file" "$dest_file" &>/dev/null; then
+    if ! $AUTO_SKIP; then
+      ok "Identical: $rel_path"
+    fi
+    continue
+  fi
+
+  # Files differ
+  CHANGED=$((CHANGED + 1))
+  printf "\n${BOLD}━━━ DIFFERS: %s ━━━${RESET}\n" "$rel_path"
+  printf "${RED}  left  = chezmoi target (what chezmoi wants)${RESET}\n"
+  printf "${GREEN}  right = destination    (what you have now)${RESET}\n\n"
+
+  diff --color=always "$target_file" "$dest_file" 2>/dev/null || true
+
+  if $DRY_RUN; then
+    SKIPPED=$((SKIPPED + 1))
+    continue
+  fi
+
+  printf "\n${YELLOW}[e]dit in nvim / [a]ccept chezmoi / [k]eep current / [s]kip / [q]uit?${RESET} "
+  read -r -n1 choice
+  echo
+  case "$choice" in
+    e)
+      REVIEWED=$((REVIEWED + 1))
+      # Open nvim in diff mode: left=chezmoi target (readonly), right=working copy
+      work_file="$TMPDIR/${rel_path}.resolved"
+      cp "$dest_file" "$work_file"
+      $DIFF_TOOL -d -R "$target_file" "$work_file" \
+        -c "wincmd l" \
+        -c "setlocal noreadonly"
+
+      # After nvim closes, apply the resolved working copy
+      if ! diff -q "$work_file" "$dest_file" &>/dev/null; then
+        cp "$work_file" "$dest_file"
+        chezmoi re-add "$dest_file" 2>/dev/null || true
+        ok "Applied resolved: $rel_path"
+        APPLIED=$((APPLIED + 1))
+      else
+        warn "No changes made: $rel_path"
+        SKIPPED=$((SKIPPED + 1))
+      fi
+      ;;
+    a)
+      # Accept chezmoi's version wholesale
+      cp "$target_file" "$dest_file"
+      chezmoi re-add "$dest_file" 2>/dev/null || true
+      ok "Applied chezmoi version: $rel_path"
+      APPLIED=$((APPLIED + 1))
+      ;;
+    k)
+      # Keep current destination, update chezmoi source to match
+      chezmoi re-add "$dest_file" 2>/dev/null || true
+      ok "Kept current, updated chezmoi source: $rel_path"
+      APPLIED=$((APPLIED + 1))
+      ;;
+    q)
+      info "Quitting."
+      exit 0
+      ;;
+    *)
+      SKIPPED=$((SKIPPED + 1))
+      warn "Skipped: $rel_path"
+      ;;
+  esac
+done
+
+# Summary
+printf "\n${BOLD}━━━ Summary ━━━${RESET}\n"
+printf "  Files scanned:  %d\n" "${#MANAGED_FILES[@]}"
+printf "  Changed:        %d\n" "$CHANGED"
+printf "  Reviewed:       %d\n" "$REVIEWED"
+printf "  Applied:        %d\n" "$APPLIED"
+printf "  Skipped:        %d\n" "$SKIPPED"
