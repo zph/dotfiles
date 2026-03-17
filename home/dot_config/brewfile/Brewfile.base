@@ -63,7 +63,6 @@ module BrewfileMinimal
     font-fira-code
     ghostty
     rectangle
-    visual-studio-code
     wispr-flow
   ]
 end

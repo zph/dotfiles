@@ -360,10 +360,8 @@ else
   set backspace=indent,eol,start
   set winwidth=100
   set nowrap  " Line wrapping off
-  " Preserve large pastes (pastetoggle removed in neovim, paste is automatic)
-  if !has('nvim')
-    set pastetoggle=<F2>
-  endif
+  " Preserve large pastes
+  set pastetoggle=<F2>
 
   nnoremap <leader>cl :close<CR>
   set smartindent
@@ -1234,5 +1232,5 @@ else
   nnoremap <Leader>f :PrettierAsync<CR>
 endif
 
-" Set colorscheme with silent fallback if plugins aren't installed yet
-silent! colorscheme onelight
+" somewhere in your config:
+colorscheme onedark_vivid
