@@ -594,6 +594,25 @@ mkdir -p ~/Desktop/screenshots
 defaults write com.apple.screencapture location ~/Desktop/screenshots
 
 ###############################################################################
+# Sets default view to List Mode and resets existing folder preferences.
+#
+
+echo "Setting Finder default view to List View..."
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+
+echo "Applying 'Browse in List View' globally..."
+defaults write com.apple.finder FXSettingsLSV2 -dict-add "PlaylistView" -bool true
+
+echo "Resetting existing folder preferences (requires sudo)... this may take a long time"
+# This removes .DS_Store files to force folders to inherit the new global default.
+sudo find "$HOME" -name ".DS_Store" -type f -delete 2>/dev/null
+
+echo "Restarting Finder..."
+killall Finder
+
+echo "Done. Finder is now set to List View by default."
+
+###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
 
