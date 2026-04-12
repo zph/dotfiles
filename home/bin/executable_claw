@@ -10,4 +10,10 @@ if ! command -v nono &>/dev/null; then
   exit 1
 fi
 
-nono run --profile claude-code --allow-cwd --network-profile claude-code -- claude --dangerously-skip-permissions $@
+nono run --profile claude-code --allow-cwd \
+  --network-profile claude-code \
+  --read-file ~/.config/git/config.local \
+  --allow ~/.cache \
+  --allow ~/Library/Caches \
+  --read ~/.hermit/bin \
+  -- claude --dangerously-skip-permissions $@
