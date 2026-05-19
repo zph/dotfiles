@@ -40,7 +40,10 @@ EXTRA_DIRS=(
   "--add-dirs|$HOME/.cache"
   "--add-dirs|$HOME/.config/containers"
   "--add-dirs|$HOME/.tart"
+  "--add-dirs|$HOME/.terraform.d"
   "--add-dirs-ro|$HOME/.local/share/containers"
+  "--add-dirs-ro|$HOME/.local/bin"
+  "--add-dirs-ro|/private/tmp"
 )
 
 BASE_ARGS=()
@@ -55,8 +58,9 @@ for p in ${APPEND_PROFILES[@]+"${APPEND_PROFILES[@]}"}; do
 done
 BASE_ARGS+=(--)
 
-case $1 in
+case ${1:-} in
   claude)
+    shift
     exec safehouse "${BASE_ARGS[@]}" claude --dangerously-skip-permissions "$@"
     ;;
   *)

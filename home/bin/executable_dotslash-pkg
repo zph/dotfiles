@@ -46,8 +46,8 @@ Options:
   --output   Specify output file path
 `;
 
-import { blake3 } from "npm:@noble/hashes/blake3";
-import { bytesToHex } from "npm:@noble/hashes/utils";
+import { blake3 } from "npm:@noble/hashes@1/blake3";
+import { bytesToHex } from "npm:@noble/hashes@1/utils";
 import { parseArgs } from "jsr:@std/cli";
 import $ from "jsr:@david/dax";
 const { dedent } = $;
