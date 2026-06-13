@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+exec codex \
+  --sandbox workspace-write \
+  -a on-request \
+  -c 'sandbox_workspace_write.network_access=false' \
+  -c 'service_tier="fast"' \
+  -c 'features.fast_mode=true' \
+  "$@"
