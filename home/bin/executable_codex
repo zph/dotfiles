@@ -2,7 +2,20 @@
 
 set -euo pipefail
 
-exec codex \
+codex_bin=""
+while IFS= read -r candidate; do
+  if [[ -x "$candidate" && ! "$candidate" -ef "${BASH_SOURCE[0]}" ]]; then
+    codex_bin="$candidate"
+    break
+  fi
+done < <(type -P -a codex)
+
+if [[ -z "$codex_bin" ]]; then
+  echo "codex: unable to find the underlying codex binary outside this wrapper" >&2
+  exit 127
+fi
+
+exec "$codex_bin" \
   --sandbox workspace-write \
   -a on-request \
   -c 'sandbox_workspace_write.network_access=false' \
