@@ -1,0 +1,1135 @@
+#!/usr/bin/env bash
+#
+# wk - safe Git worktree helper.
+#
+# This command is intentionally lowercase because it is meant to be a small,
+# common shell habit. It exists to make the safe path easy when multiple
+# terminals, editors, or automated tools are operating against the same
+# repository.
+#
+# Core policy
+# -----------
+#
+# 1. Never force a branch into two worktrees.
+#
+#    Git already protects checked-out branches: `git worktree add <path>
+#    <branch>` refuses when <branch> is checked out somewhere else unless
+#    `--force` is used. wk treats that refusal as a feature and never passes
+#    `--force`.
+#
+# 2. New writable work always gets a new branch.
+#
+#    `wk new foo` creates a branch like:
+#
+#      wk/zph/20260613-153000-foo
+#
+#    That keeps parallel work from fighting over `master`, `main`, `new`, or
+#    another shared branch.
+#
+# 3. New writable work starts from the repo's preferred base branch by default.
+#
+#    `wk new foo` runs:
+#
+#      git fetch origin +refs/heads/<base>:refs/remotes/origin/<base>
+#
+#    and then creates the work branch from `origin/<base>`. It does not update
+#    the local base branch, because local branches may be checked out in another
+#    worktree. The remote-tracking ref is enough for a fresh starting point and
+#    avoids mutating somebody else's current branch.
+#
+#    Base selection order:
+#
+#      1. Explicit `--base <ref>`
+#      2. `WK_BASE`
+#      3. Existing git default-branch cache, when present
+#      4. `main` or `master`, choosing the most recently updated if both exist
+#      5. `origin/HEAD`
+#      6. Remote HEAD from `git remote show origin`
+#
+#    Override this per call with:
+#
+#      wk new foo --base main
+#      wk new foo --base origin/release
+#      wk new foo --no-fetch
+#
+#    Or set a default:
+#
+#      WK_BASE=main wk new foo
+#
+# 4. Existing checked-out branches become detached update-only views.
+#
+#    `wk open some-branch` checks whether `some-branch` is already checked out
+#    in any worktree. If it is free, wk opens that branch normally. If it is in
+#    use, wk creates a detached HEAD worktree at that branch instead. Detached
+#    worktrees are good for reading, testing, comparing, and updating to the
+#    latest fetched commit without committing back onto the shared branch.
+#
+# 5. "Read-only" means Git-policy read-only, not filesystem read-only.
+#
+#    wk does not `chmod -R -w` a checkout. Build tools, language servers,
+#    package managers, and test runners often need to write caches or generated
+#    files. Detached HEAD plus clean-tree checks gives practical safety without
+#    making the directory unusable.
+#
+# 6. Updating an unchecked-out branch is a ref update, not a pull.
+#
+#    `git pull` means "fetch, then merge or rebase into the currently checked
+#    out branch." To update a branch that is not checked out, wk uses a fetch
+#    refspec:
+#
+#      git fetch origin master:refs/heads/new
+#
+#    The command for that is:
+#
+#      wk update-branch new --from main
+#
+#    wk refuses if the destination branch is checked out in any worktree.
+#
+# Storage layout
+# --------------
+#
+# Given a real repository at:
+#
+#   /src/example
+#
+# wk stores worktrees beside it by default:
+#
+#   /src/.wk/example-wk-zph-20260613-153000-foo
+#
+# The worktree directory name is the original repository basename, a hyphen,
+# and a filesystem-safe version of the branch or ref name. Branch slashes become
+# hyphens. The sibling `.wk` directory gets its own `.gitignore` so accidental
+# nested files do not matter if the parent directory is itself a repository. Use
+# `--inside` to store below the repository instead:
+#
+#   /src/example/.wk/example-wk-zph-20260613-153000-foo
+#
+# In inside mode, wk also adds `.wk/` to `.git/info/exclude` so the helper does
+# not modify the tracked `.gitignore`.
+#
+# Repo discovery
+# --------------
+#
+# If run inside a Git repository, wk uses that repository. If run outside a Git
+# repository, wk looks for exactly one immediate child directory that is a Git
+# repository and uses that. This supports standing in `/src` and running wk
+# against `/src/example` without cd'ing first. Use `--repo <path>` when the
+# choice would be ambiguous.
+#
+# Clone fallback
+# --------------
+#
+# Worktrees remain the default because they are fast, disk-efficient, and Git's
+# branch checkout guard is exactly the guard this workflow needs. For repositories with
+# awkward submodule behavior or other worktree caveats, use:
+#
+#   wk clone foo
+#
+# That creates an independent local clone under the same `.wk` layout. It costs
+# more disk and setup time, but it avoids shared worktree metadata.
+#
+# Commands
+# --------
+#
+#   wk new <name> [--base <ref>] [--branch <branch>] [--repo <path>]
+#       Create a new writable work branch from the preferred base by default.
+#
+#   wk open <branch> [--repo <path>]
+#       Open an existing branch if free; otherwise create a detached view.
+#
+#   wk ro <ref> [--repo <path>]
+#       Create a detached read/update-oriented worktree at a ref or commit.
+#
+#   wk update [path] [--base <ref>]
+#       Update a clean detached worktree to the latest fetched base ref.
+#
+#   wk update-branch <branch> [--from <remote-branch>]
+#       Fast-forward or create a local branch without checking it out.
+#
+#   wk clone <name> [--base <ref>] [--branch <branch>]
+#       Create an independent local clone and branch from the chosen base.
+#
+#   wk init fish
+#   wk init zsh
+#       Print shell completion code. Put `wk init fish | source` in fish, or
+#       `eval "$(wk init zsh)"` in zsh.
+#
+#   wk list [--repo <path>]
+#       List worktrees for the repository.
+#
+#   wk rm <path-or-name> [--repo <path>]
+#       Remove a clean worktree without force.
+#
+#   wk path <name> [--repo <path>] [--inside]
+#       Print the path wk would use for a name.
+#
+# Environment
+# -----------
+#
+#   WK_BASE=<ref>        Default base used by new/ro/update/clone.
+#   WK_REMOTE=origin     Remote fetched by new/update/update-branch/clone.
+#   WK_USER=<name>       Branch owner segment; otherwise ~/.initials or user id.
+#   WK_VERBOSE=1         Print Git commands before running them.
+#
+# Examples
+# --------
+#
+#   wk new parser-fix
+#   cd /src/.wk/example-wk-zph-20260613-153000-parser-fix
+#
+#   wk new parser-fix --base main
+#   wk open release-2026
+#   wk ro origin/main
+#   wk update
+#   wk update-branch new --from main
+#   wk clone submodule-repro
+#   wk init fish | source
+#
+
+set -euo pipefail
+
+program=${0##*/}
+default_remote=${WK_REMOTE:-origin}
+
+usage() {
+  cat <<'EOF'
+Usage:
+  wk new <name> [--base <ref>] [--branch <branch>] [--repo <path>] [--path <path>] [--inside] [--no-fetch]
+  wk open <branch> [--repo <path>] [--path <path>] [--inside] [--no-fetch]
+  wk ro <ref> [--repo <path>] [--path <path>] [--inside] [--no-fetch]
+  wk update [path] [--base <ref>] [--repo <path>] [--no-fetch]
+  wk update-branch <branch> [--from <remote-branch>] [--repo <path>] [--remote <remote>]
+  wk clone <name> [--base <ref>] [--branch <branch>] [--repo <path>] [--path <path>] [--inside] [--no-fetch]
+  wk init fish|zsh
+  wk list [--repo <path>]
+  wk rm <path-or-name> [--repo <path>]
+  wk path <name> [--repo <path>] [--inside]
+
+Defaults:
+  wk new starts from the repo's preferred base branch.
+  Worktrees are stored beside the repo under ../.wk/<repo>-<branch>.
+  Checked-out branches are opened as detached views instead of forced.
+
+Run `sed -n '1,180p' "$(command -v wk)"` for the full design notes.
+EOF
+}
+
+die() {
+  printf '%s: %s\n' "$program" "$*" >&2
+  exit 1
+}
+
+warn() {
+  printf '%s: warning: %s\n' "$program" "$*" >&2
+}
+
+run() {
+  if [[ "${WK_VERBOSE:-}" == 1 ]]; then
+    printf '+'
+    printf ' %q' "$@"
+    printf '\n'
+  fi
+  "$@"
+}
+
+need_arg() {
+  local option=$1
+  local value=${2:-}
+  [[ -n "$value" ]] || die "$option requires an argument"
+}
+
+resolve_repo() {
+  local requested=${1:-}
+  local root child found count
+
+  if [[ -n "$requested" ]]; then
+    root=$(git -C "$requested" rev-parse --show-toplevel 2>/dev/null) ||
+      die "not a Git repository: $requested"
+    printf '%s\n' "$root"
+    return
+  fi
+
+  if root=$(git rev-parse --show-toplevel 2>/dev/null); then
+    printf '%s\n' "$root"
+    return
+  fi
+
+  found=
+  count=0
+  for child in "$PWD"/*; do
+    [[ -d "$child" ]] || continue
+    if root=$(git -C "$child" rev-parse --show-toplevel 2>/dev/null); then
+      [[ "$root" == "$child" ]] || continue
+      if [[ "$root" != "$found" ]]; then
+        found=$root
+        count=$((count + 1))
+      fi
+    fi
+  done
+
+  case "$count" in
+    0) die "not inside a Git repository and no child Git repository found" ;;
+    1) printf '%s\n' "$found" ;;
+    *) die "more than one child Git repository found; use --repo <path>" ;;
+  esac
+}
+
+repo_name() {
+  basename "$1"
+}
+
+repo_parent() {
+  dirname "$1"
+}
+
+slugify() {
+  local input=$1
+  local slug
+  slug=$(
+    printf '%s' "$input" |
+      tr '[:upper:]' '[:lower:]' |
+      sed -E 's#[^a-z0-9._-]+#-#g; s#^-+##; s#-+$##'
+  )
+  [[ -n "$slug" ]] || slug=work
+  printf '%s\n' "$slug"
+}
+
+work_id() {
+  local value
+  if [[ -n "${WK_USER:-}" ]]; then
+    value=$WK_USER
+  elif [[ -r "$HOME/.initials" ]]; then
+    value=$(head -n 1 "$HOME/.initials" | tr -d '[:space:]')
+  else
+    value=$(id -un)
+  fi
+  slugify "$value"
+}
+
+storage_root() {
+  local repo=$1
+  local inside=$2
+  if [[ "$inside" == 1 ]]; then
+    printf '%s/.wk\n' "$repo"
+  else
+    printf '%s/.wk\n' "$(repo_parent "$repo")"
+  fi
+}
+
+ensure_storage() {
+  local repo=$1
+  local inside=$2
+  local root ignore exclude
+
+  root=$(storage_root "$repo" "$inside")
+  mkdir -p "$root"
+
+  ignore=$root/.gitignore
+  if [[ ! -e "$ignore" ]]; then
+    printf '*\n!.gitignore\n' >"$ignore"
+  fi
+
+  if [[ "$inside" == 1 ]]; then
+    exclude=$(git -C "$repo" rev-parse --git-path info/exclude)
+    mkdir -p "$(dirname "$exclude")"
+    touch "$exclude"
+    if ! grep -Fxq '.wk/' "$exclude"; then
+      printf '\n.wk/\n' >>"$exclude"
+    fi
+  fi
+}
+
+target_for() {
+  local repo=$1
+  local inside=$2
+  local branch_or_ref=$3
+  printf '%s/%s-%s\n' "$(storage_root "$repo" "$inside")" "$(slugify "$(repo_name "$repo")")" "$(slugify "$branch_or_ref")"
+}
+
+check_target_available() {
+  local target=$1
+  [[ ! -e "$target" ]] || die "target already exists: $target"
+}
+
+is_commit() {
+  local repo=$1
+  local ref=$2
+  git -C "$repo" rev-parse --verify --quiet "${ref}^{commit}" >/dev/null
+}
+
+remote_exists() {
+  local repo=$1
+  local remote=$2
+  git -C "$repo" remote get-url "$remote" >/dev/null 2>&1
+}
+
+metadata_root() {
+  local repo=$1
+  local common
+
+  common=$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir 2>/dev/null) ||
+    common=$(git -C "$repo" rev-parse --git-common-dir 2>/dev/null) ||
+    return 1
+
+  case "$common" in
+    /*) ;;
+    *) common=$repo/$common ;;
+  esac
+
+  case "$(basename "$common")" in
+    .git|.bare) dirname "$common" ;;
+    *) dirname "$common" ;;
+  esac
+}
+
+metadata_value() {
+  local repo=$1
+  local key=$2
+  local root value_path value
+
+  root=$(metadata_root "$repo") || return 1
+
+  for value_path in "$root/.com.xargs.io/env/$key" "$root/.com.xargs.io/$key"; do
+    if [[ -f "$value_path" ]]; then
+      value=$(head -n 1 "$value_path" | tr -d '[:space:]')
+      if [[ -n "$value" ]]; then
+        printf '%s\n' "$value"
+        return 0
+      fi
+    fi
+  done
+
+  return 1
+}
+
+origin_head_branch() {
+  local repo=$1
+  local remote=${2:-$default_remote}
+  local ref
+
+  ref=$(git -C "$repo" symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null) ||
+    return 1
+  printf '%s\n' "${ref#"$remote/"}"
+}
+
+remote_head_branch() {
+  local repo=$1
+  local remote=${2:-$default_remote}
+  local branch
+
+  remote_exists "$repo" "$remote" || return 1
+  branch=$(
+    git -C "$repo" remote show "$remote" 2>/dev/null |
+      awk -F': ' '/HEAD branch:/ { print $2; exit }'
+  )
+  [[ -n "$branch" && "$branch" != "(unknown)" ]] || return 1
+  printf '%s\n' "$branch"
+}
+
+infer_main_or_master() {
+  local repo=$1
+  local remote=${2:-$default_remote}
+  local main_ref= master_ref= main_ts=0 master_ts=0
+
+  if is_commit "$repo" "$remote/main"; then
+    main_ref=$remote/main
+  elif is_commit "$repo" main; then
+    main_ref=main
+  fi
+
+  if is_commit "$repo" "$remote/master"; then
+    master_ref=$remote/master
+  elif is_commit "$repo" master; then
+    master_ref=master
+  fi
+
+  [[ -n "$main_ref$master_ref" ]] || return 1
+
+  if [[ -z "$master_ref" ]]; then
+    printf 'main\n'
+    return
+  fi
+
+  if [[ -z "$main_ref" ]]; then
+    printf 'master\n'
+    return
+  fi
+
+  main_ts=$(git -C "$repo" log -1 --format=%ct "$main_ref" 2>/dev/null || printf 0)
+  master_ts=$(git -C "$repo" log -1 --format=%ct "$master_ref" 2>/dev/null || printf 0)
+
+  if (( main_ts >= master_ts )); then
+    printf 'main\n'
+  else
+    printf 'master\n'
+  fi
+}
+
+default_base_for_repo() {
+  local repo=$1
+  local remote=${2:-$default_remote}
+  local base
+
+  if [[ -n "${WK_BASE:-}" ]]; then
+    printf '%s\n' "$WK_BASE"
+    return
+  fi
+
+  if base=$(metadata_value "$repo" GIT_DEFAULT_BRANCH); then
+    printf '%s\n' "$base"
+    return
+  fi
+
+  if base=$(infer_main_or_master "$repo" "$remote"); then
+    printf '%s\n' "$base"
+    return
+  fi
+
+  if base=$(origin_head_branch "$repo" "$remote"); then
+    printf '%s\n' "$base"
+    return
+  fi
+
+  if base=$(remote_head_branch "$repo" "$remote"); then
+    printf '%s\n' "$base"
+    return
+  fi
+
+  printf 'master\n'
+}
+
+fetch_base() {
+  local repo=$1
+  local base=$2
+  local remote=${3:-$default_remote}
+  local remote_branch=$base
+
+  remote_exists "$repo" "$remote" || {
+    warn "remote '$remote' is not configured; using local refs only"
+    return
+  }
+
+  if [[ "$base" == "$remote/"* ]]; then
+    remote_branch=${base#"$remote/"}
+  elif [[ "$base" == refs/* || "$base" == HEAD || "$base" == @* || "$base" == *~* || "$base" == *^* ]]; then
+    return
+  fi
+
+  run git -C "$repo" fetch "$remote" "+refs/heads/$remote_branch:refs/remotes/$remote/$remote_branch" ||
+    warn "could not fetch $remote $remote_branch; falling back to existing refs"
+}
+
+preferred_start_ref() {
+  local repo=$1
+  local base=$2
+  local remote=${3:-$default_remote}
+  local remote_branch
+
+  if [[ "$base" == "$remote/"* ]]; then
+    if is_commit "$repo" "$base"; then
+      printf '%s\n' "$base"
+      return
+    fi
+  elif [[ "$base" != refs/* && "$base" != HEAD && "$base" != @* && "$base" != *~* && "$base" != *^* ]]; then
+    remote_branch=$remote/$base
+    if is_commit "$repo" "$remote_branch"; then
+      printf '%s\n' "$remote_branch"
+      return
+    fi
+  fi
+
+  is_commit "$repo" "$base" || die "base does not resolve to a commit: $base"
+  printf '%s\n' "$base"
+}
+
+commit_for() {
+  local repo=$1
+  local ref=$2
+  git -C "$repo" rev-parse --verify "${ref}^{commit}"
+}
+
+branch_ref() {
+  local branch=$1
+  printf 'refs/heads/%s\n' "${branch#refs/heads/}"
+}
+
+branch_short() {
+  local branch=$1
+  printf '%s\n' "${branch#refs/heads/}"
+}
+
+branch_exists() {
+  local repo=$1
+  local branch=$2
+  git -C "$repo" show-ref --verify --quiet "$(branch_ref "$branch")"
+}
+
+remote_branch_exists() {
+  local repo=$1
+  local branch=$2
+  local remote=${3:-$default_remote}
+  git -C "$repo" show-ref --verify --quiet "refs/remotes/$remote/$(branch_short "$branch")"
+}
+
+checked_out_path() {
+  local repo=$1
+  local branch=$2
+  local wanted current_path line
+
+  wanted=$(branch_ref "$branch")
+  current_path=
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    case "$line" in
+      worktree\ *) current_path=${line#worktree } ;;
+      branch\ *)
+        if [[ "${line#branch }" == "$wanted" ]]; then
+          printf '%s\n' "$current_path"
+          return 0
+        fi
+        ;;
+    esac
+  done < <(git -C "$repo" worktree list --porcelain)
+
+  return 1
+}
+
+ensure_valid_branch_name() {
+  local branch=$1
+  git check-ref-format --branch "$branch" >/dev/null 2>&1 ||
+    die "invalid branch name: $branch"
+}
+
+ensure_clean_worktree() {
+  local path=$1
+
+  git -C "$path" diff --quiet || die "worktree has unstaged changes: $path"
+  git -C "$path" diff --cached --quiet || die "worktree has staged changes: $path"
+
+  if [[ -n "$(git -C "$path" ls-files --others --exclude-standard)" ]]; then
+    die "worktree has untracked files: $path"
+  fi
+}
+
+print_next_step() {
+  local target=$1
+  printf '\nMove into it:\ncd %q\n' "$target"
+}
+
+cmd_new() {
+  local name= repo_arg= path_arg= branch= base= inside=0 fetch=1
+  local repo slug target start owner stamp
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --base) need_arg "$1" "${2:-}"; base=$2; shift 2 ;;
+      --branch) need_arg "$1" "${2:-}"; branch=$2; shift 2 ;;
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --path) need_arg "$1" "${2:-}"; path_arg=$2; shift 2 ;;
+      --inside) inside=1; shift ;;
+      --no-fetch) fetch=0; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for new: $1" ;;
+      *)
+        [[ -z "$name" ]] || die "new accepts one name"
+        name=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$name" ]] || die "new requires a name"
+
+  repo=$(resolve_repo "$repo_arg")
+  ensure_storage "$repo" "$inside"
+  [[ -n "$base" ]] || base=$(default_base_for_repo "$repo")
+
+  slug=$(slugify "$name")
+  if [[ -z "$branch" ]]; then
+    owner=$(work_id)
+    stamp=$(date +%Y%m%d-%H%M%S)
+    branch=wk/$owner/$stamp-$slug
+  fi
+  ensure_valid_branch_name "$branch"
+
+  branch_exists "$repo" "$branch" && die "branch already exists: $branch"
+
+  target=${path_arg:-$(target_for "$repo" "$inside" "$branch")}
+  check_target_available "$target"
+
+  if [[ "$fetch" == 1 ]]; then
+    fetch_base "$repo" "$base"
+  fi
+  start=$(preferred_start_ref "$repo" "$base")
+
+  run git -C "$repo" worktree add -b "$branch" "$target" "$start"
+
+  printf 'Created worktree:\n%s\n\nBranch:\n%s\n\nBase:\n%s\n' "$target" "$branch" "$start"
+  print_next_step "$target"
+}
+
+cmd_open() {
+  local branch= repo_arg= path_arg= inside=0 fetch=1
+  local repo slug target in_use start
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --path) need_arg "$1" "${2:-}"; path_arg=$2; shift 2 ;;
+      --inside) inside=1; shift ;;
+      --no-fetch) fetch=0; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for open: $1" ;;
+      *)
+        [[ -z "$branch" ]] || die "open accepts one branch"
+        branch=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$branch" ]] || die "open requires a branch"
+
+  repo=$(resolve_repo "$repo_arg")
+  ensure_storage "$repo" "$inside"
+
+  if [[ "$fetch" == 1 ]]; then
+    fetch_base "$repo" "$branch"
+  fi
+
+  slug=$(slugify "$branch")
+
+  if in_use=$(checked_out_path "$repo" "$branch"); then
+    target=${path_arg:-$(target_for "$repo" "$inside" "$slug-ro")}
+    check_target_available "$target"
+    start=$(preferred_start_ref "$repo" "$branch")
+    run git -C "$repo" worktree add --detach "$target" "$start"
+    printf 'Branch is already checked out at:\n%s\n\nCreated detached update-only view:\n%s\n\nBase:\n%s\n' "$in_use" "$target" "$start"
+    print_next_step "$target"
+    return
+  fi
+
+  target=${path_arg:-$(target_for "$repo" "$inside" "$branch")}
+  check_target_available "$target"
+
+  if branch_exists "$repo" "$branch"; then
+    run git -C "$repo" worktree add "$target" "$(branch_short "$branch")"
+  elif remote_branch_exists "$repo" "$branch"; then
+    run git -C "$repo" worktree add --track -b "$(branch_short "$branch")" "$target" "$default_remote/$(branch_short "$branch")"
+  else
+    die "branch does not exist locally or at $default_remote: $branch"
+  fi
+
+  printf 'Created worktree:\n%s\n\nBranch:\n%s\n' "$target" "$(branch_short "$branch")"
+  print_next_step "$target"
+}
+
+cmd_ro() {
+  local ref= repo_arg= path_arg= inside=0 fetch=1
+  local repo slug target start
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --path) need_arg "$1" "${2:-}"; path_arg=$2; shift 2 ;;
+      --inside) inside=1; shift ;;
+      --no-fetch) fetch=0; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for ro: $1" ;;
+      *)
+        [[ -z "$ref" ]] || die "ro accepts one ref"
+        ref=$1
+        shift
+        ;;
+    esac
+  done
+
+  repo=$(resolve_repo "$repo_arg")
+  ensure_storage "$repo" "$inside"
+  [[ -n "$ref" ]] || ref=$(default_base_for_repo "$repo")
+
+  if [[ "$fetch" == 1 ]]; then
+    fetch_base "$repo" "$ref"
+  fi
+  start=$(preferred_start_ref "$repo" "$ref")
+
+  slug=$(slugify "$ref")
+  target=${path_arg:-$(target_for "$repo" "$inside" "$ref-ro")}
+  check_target_available "$target"
+
+  run git -C "$repo" worktree add --detach "$target" "$start"
+
+  printf 'Created detached worktree:\n%s\n\nBase:\n%s\n' "$target" "$start"
+  print_next_step "$target"
+}
+
+cmd_update() {
+  local path_arg= repo_arg= base= fetch=1
+  local path repo start
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --base) need_arg "$1" "${2:-}"; base=$2; shift 2 ;;
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --no-fetch) fetch=0; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for update: $1" ;;
+      *)
+        [[ -z "$path_arg" ]] || die "update accepts at most one path"
+        path_arg=$1
+        shift
+        ;;
+    esac
+  done
+
+  if [[ -n "$path_arg" ]]; then
+    path=$path_arg
+  else
+    path=$PWD
+  fi
+
+  repo=$(resolve_repo "${repo_arg:-$path}")
+  [[ -n "$base" ]] || base=$(default_base_for_repo "$repo")
+  ensure_clean_worktree "$repo"
+
+  if [[ "$fetch" == 1 ]]; then
+    fetch_base "$repo" "$base"
+  fi
+  start=$(preferred_start_ref "$repo" "$base")
+
+  run git -C "$repo" checkout --detach "$start"
+  printf 'Updated detached worktree:\n%s\n\nNow at:\n%s\n' "$repo" "$start"
+}
+
+cmd_update_branch() {
+  local branch= source= repo_arg= remote=$default_remote
+  local repo in_use
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --from) need_arg "$1" "${2:-}"; source=$2; shift 2 ;;
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --remote) need_arg "$1" "${2:-}"; remote=$2; shift 2 ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for update-branch: $1" ;;
+      *)
+        [[ -z "$branch" ]] || die "update-branch accepts one branch"
+        branch=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$branch" ]] || die "update-branch requires a destination branch"
+  ensure_valid_branch_name "$branch"
+
+  repo=$(resolve_repo "$repo_arg")
+  [[ -n "$source" ]] || source=$(default_base_for_repo "$repo" "$remote")
+
+  if in_use=$(checked_out_path "$repo" "$branch"); then
+    die "refusing to update checked-out branch '$branch' at $in_use"
+  fi
+
+  remote_exists "$repo" "$remote" || die "remote '$remote' is not configured"
+
+  run git -C "$repo" fetch "$remote" "$source:$(branch_ref "$branch")"
+  printf 'Updated branch without checking it out:\n%s <- %s/%s\n' "$(branch_short "$branch")" "$remote" "$source"
+}
+
+cmd_clone() {
+  local name= repo_arg= path_arg= branch= base= inside=0 fetch=1
+  local repo slug target start commit owner stamp origin_url
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --base) need_arg "$1" "${2:-}"; base=$2; shift 2 ;;
+      --branch) need_arg "$1" "${2:-}"; branch=$2; shift 2 ;;
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --path) need_arg "$1" "${2:-}"; path_arg=$2; shift 2 ;;
+      --inside) inside=1; shift ;;
+      --no-fetch) fetch=0; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for clone: $1" ;;
+      *)
+        [[ -z "$name" ]] || die "clone accepts one name"
+        name=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$name" ]] || die "clone requires a name"
+
+  repo=$(resolve_repo "$repo_arg")
+  ensure_storage "$repo" "$inside"
+  [[ -n "$base" ]] || base=$(default_base_for_repo "$repo")
+
+  slug=$(slugify "$name")
+  if [[ -z "$branch" ]]; then
+    owner=$(work_id)
+    stamp=$(date +%Y%m%d-%H%M%S)
+    branch=wk/$owner/$stamp-$slug
+  fi
+  ensure_valid_branch_name "$branch"
+
+  target=${path_arg:-$(target_for "$repo" "$inside" "$branch")}
+  check_target_available "$target"
+
+  if [[ "$fetch" == 1 ]]; then
+    fetch_base "$repo" "$base"
+  fi
+  start=$(preferred_start_ref "$repo" "$base")
+  commit=$(commit_for "$repo" "$start")
+
+  run git clone --no-local --no-checkout "$repo" "$target"
+
+  if origin_url=$(git -C "$repo" remote get-url "$default_remote" 2>/dev/null); then
+    run git -C "$target" remote set-url "$default_remote" "$origin_url"
+    if [[ "$fetch" == 1 ]]; then
+      fetch_base "$target" "$base"
+    fi
+  fi
+
+  if is_commit "$target" "$start"; then
+    run git -C "$target" switch -c "$branch" "$start"
+  else
+    run git -C "$target" switch -c "$branch" "$commit"
+  fi
+
+  printf 'Created local clone:\n%s\n\nBranch:\n%s\n\nBase:\n%s\n' "$target" "$branch" "$start"
+  print_next_step "$target"
+}
+
+cmd_list() {
+  local repo_arg= repo
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for list: $1" ;;
+      *) die "list does not accept positional arguments" ;;
+    esac
+  done
+
+  repo=$(resolve_repo "$repo_arg")
+  git -C "$repo" worktree list
+}
+
+cmd_init() {
+  local shell=${1:-}
+
+  if [[ $# -ne 1 ]]; then
+    die "init requires exactly one shell: fish or zsh"
+  fi
+
+  case "$shell" in
+    fish)
+      cat <<'EOF'
+# wk completions for fish.
+# Install from config.fish with:
+#   wk init fish | source
+
+complete -c wk -f
+
+complete -c wk \
+  -n "not __fish_seen_subcommand_from new open ro read-only update update-branch ub clone list ls rm remove path init help" \
+  -a "new open ro update update-branch clone list rm path init help" \
+  -d "safe Git worktree helper"
+
+complete -c wk -n "__fish_seen_subcommand_from init" -a "fish zsh" -d "shell"
+
+complete -c wk -n "__fish_seen_subcommand_from open ro read-only update-branch ub" \
+  -a "(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null)" \
+  -d "branch or ref"
+
+complete -c wk -n "__fish_seen_subcommand_from new clone ro read-only update" -l base -r -d "base ref; default is repo-specific"
+complete -c wk -n "__fish_seen_subcommand_from new clone" -l branch -r -d "explicit new branch name"
+complete -c wk -l repo -r -d "source repository path"
+complete -c wk -l path -r -d "explicit output path"
+complete -c wk -l inside -d "store worktree under repo/.wk"
+complete -c wk -l no-fetch -d "skip fetch before creating or updating"
+complete -c wk -n "__fish_seen_subcommand_from update-branch ub" -l from -r -d "remote branch to fetch from"
+complete -c wk -n "__fish_seen_subcommand_from update-branch ub" -l remote -r -d "remote name; default origin"
+EOF
+      ;;
+    zsh)
+      cat <<'EOF'
+#compdef wk
+# wk completions for zsh.
+# Install from .zshrc with:
+#   eval "$(wk init zsh)"
+
+_wk() {
+  local -a commands common_opts create_opts
+
+  commands=(
+    'new:create a writable work branch from the preferred base'
+    'open:open a branch or detached view if already checked out'
+    'ro:create a detached read/update-oriented worktree'
+    'update:update a clean detached worktree to a base ref'
+    'update-branch:update an unchecked-out branch with a fetch refspec'
+    'clone:create an independent local clone'
+    'list:list worktrees'
+    'rm:remove a clean worktree'
+    'path:print the default worktree path'
+    'init:print shell completion code'
+    'help:show help'
+  )
+
+  common_opts=(
+    '--repo[source repository path]:path:_files -/'
+    '--inside[store worktree under repo/.wk]'
+  )
+
+  create_opts=(
+    '--base[base ref; default is repo-specific]:ref:__wk_refs'
+    '--branch[explicit new branch name]:branch:'
+    '--path[explicit output path]:path:_files -/'
+    '--no-fetch[skip fetch before creating or updating]'
+  )
+
+  _arguments -C \
+    '1:command:->command' \
+    '*::argument:->argument'
+
+  case $state in
+    command)
+      _describe -t commands 'wk command' commands
+      ;;
+    argument)
+      case $words[2] in
+        new|clone)
+          _arguments ${common_opts[@]} ${create_opts[@]} '*:name:'
+          ;;
+        open)
+          _arguments ${common_opts[@]} '--path[explicit output path]:path:_files -/' '--no-fetch[skip fetch]' '*:branch:__wk_refs'
+          ;;
+        ro|read-only)
+          _arguments ${common_opts[@]} '--path[explicit output path]:path:_files -/' '--no-fetch[skip fetch]' '*:ref:__wk_refs'
+          ;;
+        update)
+          _arguments '--base[base ref; default is repo-specific]:ref:__wk_refs' '--repo[source repository path]:path:_files -/' '--no-fetch[skip fetch]' '*:path:_files -/'
+          ;;
+        update-branch|ub)
+          _arguments '--from[remote branch to fetch from]:branch:__wk_refs' '--repo[source repository path]:path:_files -/' '--remote[remote name; default origin]:remote:' '*:branch:__wk_local_branches'
+          ;;
+        list|ls)
+          _arguments '--repo[source repository path]:path:_files -/'
+          ;;
+        rm|remove)
+          _arguments '--repo[source repository path]:path:_files -/' '*:worktree:_files -/'
+          ;;
+        path)
+          _arguments ${common_opts[@]} '*:name:'
+          ;;
+        init)
+          _values 'shell' fish zsh
+          ;;
+      esac
+      ;;
+  esac
+}
+
+__wk_local_branches() {
+  local -a branches
+  branches=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads 2>/dev/null)"})
+  _describe -t branches 'branch' branches
+}
+
+__wk_refs() {
+  local -a refs
+  refs=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null)"})
+  _describe -t refs 'ref' refs
+}
+
+_wk "$@"
+EOF
+      ;;
+    *)
+      die "unsupported shell for init: $shell"
+      ;;
+  esac
+}
+
+cmd_rm() {
+  local name= repo_arg= repo target maybe
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for rm: $1" ;;
+      *)
+        [[ -z "$name" ]] || die "rm accepts one path or name"
+        name=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$name" ]] || die "rm requires a path or worktree name"
+
+  repo=$(resolve_repo "$repo_arg")
+  target=$name
+  if [[ ! -e "$target" ]]; then
+    maybe=$(target_for "$repo" 0 "$name")
+    if [[ -e "$maybe" ]]; then
+      target=$maybe
+    else
+      maybe=$(storage_root "$repo" 0)/$name
+      if [[ -e "$maybe" ]]; then
+        target=$maybe
+      fi
+    fi
+  fi
+
+  run git -C "$repo" worktree remove "$target"
+}
+
+cmd_path() {
+  local name= repo_arg= inside=0 repo
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --repo) need_arg "$1" "${2:-}"; repo_arg=$2; shift 2 ;;
+      --inside) inside=1; shift ;;
+      -h|--help) usage; return ;;
+      -*) die "unknown option for path: $1" ;;
+      *)
+        [[ -z "$name" ]] || die "path accepts one name"
+        name=$1
+        shift
+        ;;
+    esac
+  done
+
+  [[ -n "$name" ]] || die "path requires a name"
+
+  repo=$(resolve_repo "$repo_arg")
+  printf '%s\n' "$(target_for "$repo" "$inside" "$name")"
+}
+
+main() {
+  local command=${1:-help}
+  if [[ $# -gt 0 ]]; then
+    shift
+  fi
+
+  case "$command" in
+    help|-h|--help) usage ;;
+    new) cmd_new "$@" ;;
+    open) cmd_open "$@" ;;
+    ro|read-only) cmd_ro "$@" ;;
+    update) cmd_update "$@" ;;
+    update-branch|ub) cmd_update_branch "$@" ;;
+    clone) cmd_clone "$@" ;;
+    init) cmd_init "$@" ;;
+    list|ls) cmd_list "$@" ;;
+    rm|remove) cmd_rm "$@" ;;
+    path) cmd_path "$@" ;;
+    *) die "unknown command: $command" ;;
+  esac
+}
+
+main "$@"

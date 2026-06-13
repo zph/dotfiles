@@ -1,7 +1,6 @@
 alias vim $EDITOR
 alias edit $EDITOR
 alias gs 'git status -s'
-alias wk 'cd ~/src/worktree'
 alias dc 'docker-compose'
 alias vim='nvim'
 alias c='chezmoi'

@@ -12,17 +12,73 @@ set -eou pipefail
 # Superior to storing in .env folder because this will work in subfolder or in worktree root
 readonly KEY="GIT_DEFAULT_BRANCH"
 
+is_commit() {
+  git rev-parse --verify --quiet "$1^{commit}" >/dev/null
+}
+
+commit_timestamp() {
+  git log -1 --format=%ct "$1" 2>/dev/null || printf 0
+}
+
+infer_main_or_master() {
+  local main_ref=""
+  local master_ref=""
+  local main_ts=0
+  local master_ts=0
+
+  if is_commit origin/main; then
+    main_ref=origin/main
+  elif is_commit main; then
+    main_ref=main
+  fi
+
+  if is_commit origin/master; then
+    master_ref=origin/master
+  elif is_commit master; then
+    master_ref=master
+  fi
+
+  [[ -n "$main_ref$master_ref" ]] || return 1
+
+  if [[ -z "$master_ref" ]]; then
+    echo "main"
+    return
+  fi
+
+  if [[ -z "$main_ref" ]]; then
+    echo "master"
+    return
+  fi
+
+  main_ts="$(commit_timestamp "$main_ref")"
+  master_ts="$(commit_timestamp "$master_ref")"
+
+  if (( main_ts >= master_ts )); then
+    echo "main"
+  else
+    echo "master"
+  fi
+}
+
 set +e
 default_branch="$(git metadata get "$KEY" 2>/dev/null)"
 if [ $? -eq 0 ];then
 set -e
   echo "$default_branch"
 else
+  set -e
+  default_branch="$(infer_main_or_master || true)"
+  if [[ "$default_branch" != "" ]]; then
+    git metadata set "$KEY" "$default_branch"
+    echo "$default_branch"
+    exit 0
+  fi
+
   # Cache the value because it's a slow API call
   default_branch="$(git remote show origin | grep -E -o 'HEAD branch: (.*)' | awk -F: '{print $2}' | tr -d " ")"
   if [[ "$default_branch" == "" ]]; then
     # We need to infer the branch name :-/
-    default_branch="$(git branch -r -l 'origin/*' | awk '{print $1}' | grep -E -o 'origin/(main|master)' | head -1 | awk -F'/' '{print $2}')"
+    default_branch="$(infer_main_or_master || true)"
   fi
   git metadata set "$KEY" "$default_branch"
   echo "$default_branch"
