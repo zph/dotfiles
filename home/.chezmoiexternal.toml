@@ -12,3 +12,31 @@
     type = "git-repo"
     url = "https://github.com/tmux-plugins/tpm.git"
     refreshPeriod = "168h"
+[".tmux/plugins/tmux-sensible"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-sensible.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux-continuum"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-continuum.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux-copycat"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-copycat.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux-yank"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-yank.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux-logging"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-logging.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux"]
+    type = "git-repo"
+    url = "https://github.com/catppuccin/tmux.git"
+    refreshPeriod = "168h"
+[".tmux/plugins/tmux-fpp"]
+    type = "git-repo"
+    url = "https://github.com/jbnicolai/tmux-fpp.git"
+    refreshPeriod = "168h"
