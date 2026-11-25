@@ -4,7 +4,9 @@ set -euo pipefail
 
 codex_bin=""
 while IFS= read -r candidate; do
-  if [[ -x "$candidate" && ! "$candidate" -ef "${BASH_SOURCE[0]}" ]]; then
+  if [[ -x "$candidate" ]] \
+    && ! [[ "$candidate" -ef "${BASH_SOURCE[0]}" ]] \
+    && ! grep -q "underlying codex binary outside this wrapper" "$candidate"; then
     codex_bin="$candidate"
     break
   fi
@@ -15,8 +17,70 @@ if [[ -z "$codex_bin" ]]; then
   exit 127
 fi
 
-exec "$codex_bin" \
-  --sandbox workspace-write \
-  -a on-request \
-  -c 'sandbox_workspace_write.network_access=false' \
-  "$@"
+args=()
+has_sandbox=false
+has_approval=false
+has_network_config=false
+
+while (($#)); do
+  case "$1" in
+    -s | --sandbox)
+      has_sandbox=true
+      args+=("$1")
+      if (($# > 1)); then
+        args+=("$2")
+        shift 2
+      else
+        shift
+      fi
+      ;;
+    --sandbox=*)
+      has_sandbox=true
+      args+=("$1")
+      shift
+      ;;
+    -a | --ask-for-approval)
+      has_approval=true
+      args+=("$1")
+      if (($# > 1)); then
+        args+=("$2")
+        shift 2
+      else
+        shift
+      fi
+      ;;
+    --ask-for-approval=*)
+      has_approval=true
+      args+=("$1")
+      shift
+      ;;
+    -c | --config)
+      if [[ "${2:-}" == sandbox_workspace_write.network_access=* ]]; then
+        has_network_config=true
+      fi
+      args+=("$1")
+      if (($# > 1)); then
+        args+=("$2")
+        shift 2
+      else
+        shift
+      fi
+      ;;
+    --config=sandbox_workspace_write.network_access=*)
+      has_network_config=true
+      args+=("$1")
+      shift
+      ;;
+    *)
+      args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+defaults=()
+$has_sandbox || defaults+=(--sandbox workspace-write)
+$has_approval || defaults+=(-a on-request)
+$has_network_config || defaults+=(-c 'sandbox_workspace_write.network_access=false')
+
+exec "$codex_bin" "${defaults[@]}" "${args[@]}"
