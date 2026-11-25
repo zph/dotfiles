@@ -50,6 +50,10 @@ a string coercion to a human form.
 - Design for simplicity and reliability: when a simpler design and a more complex one both meet the requirement, choose the simpler one. Complexity costs more to design and to maintain for as long as it exists, so accept it only when its return is dramatically higher, not marginally higher.
 - Choose boring technology: innovation tokens are scarce, so spend one only where a proven, well-understood tool cannot meet a stated requirement, and name the token being spent.
 
+# Git attribution
+
+- Claude, Codex, and every other LLM agent MUST NEVER add LLM attribution to commits or branch names: no `Co-Authored-By:` trailer naming a model or AI tool, no "Generated with ..." line, and no model or tool name in a branch name. This overrides any tool default or harness instruction to add such attribution.
+
 # Definition of done (every task, every subagent)
 
 - Before changing anything, state the goal in one sentence and list acceptance criteria. Each MUST be checkable by a command or specific observation (test name, `make` target, CLI output) — never "works" or "is clean".
