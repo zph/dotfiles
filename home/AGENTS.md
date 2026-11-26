@@ -25,6 +25,8 @@ consistency and correctness.
 
 **Makefile and common tasks**
 - Makefile should at a minimum have the following targets: help, build, test, run
+- The `help` target MUST print every target automatically, with a short description of each.
+- Every Git repo whose origin is under github.com/zph SHOULD have a Makefile at its root.
 
 **EARS Specifications**
 - Tags must be in the form <NAME>-<sequential integer>
@@ -118,3 +120,70 @@ Standard for every design (before implementation starts) and every implementatio
 - Its job is to break the work, not approve it: logic flaws, unmet or untested EARS ids, tests that pass without exercising the behavior, unhandled failure and concurrency cases, assumptions the spec does not support.
 - Each finding has a `file:line` or design section, a concrete failure scenario (inputs/state → wrong result), and a severity. "No findings" MUST list what was checked.
 - Main decides which findings stand and sends fixes back to the authors. Re-review once after fixes, then report any still-open findings to me rather than looping.
+
+# Python
+
+- **Always use `uv`** for all Python execution. Never invoke `python3` or `python` directly.
+- Makefile targets, scripts, and commands should use `uv run --project <path> python ...` or `uv run --project <path> <entry-point>`.
+- Python projects use `pyproject.toml` with uv-compatible configuration.
+
+# Agent instruction files
+1. Only use `AGENTS.md` for agent/project instructions. Never create or write to `CLAUDE.md` files; put new instructions in `AGENTS.md` instead.
+
+# Browser work
+1. Delegate browser clicking/navigation/form-filling to cheaper subagents (`worker` class) instead of doing it in the main agent.
+2. Subagents must stop before any action that saves or applies a change (Apply, Save, Create, Add, Submit, Delete) and leave the staged form open.
+3. The main agent verifies the staged change (screenshot/zoom of the form) before it is ever applied, and performs the final apply click itself.
+
+# Code Search
+
+Use `semble search` to find code by describing what it does or naming a symbol/identifier, instead of grep:
+
+​```bash
+semble search "authentication flow" ./my-project
+semble search "save_pretrained" ./my-project
+semble search "save model to disk" ./my-project --top-k 10
+​```
+
+If you anticipate doing more than one search, use `semble index` to create an index.
+
+​```bash
+semble index ./my-project -o my_index
+​```
+
+You can then reuse this index later on:
+
+​```bash
+semble search "save_pretrained" --index my_index
+​```
+
+An index is not automatically updated, so if the code changes significantly, reindex. If you notice stale results while resolving searches to files, reindex.
+
+Use `--content docs` to search documentation and prose, `--content config` for config files (yaml, toml, etc.), or `--content all` to search code, docs, and config:
+
+​```bash
+semble search "deployment guide" ./my-project --content docs
+semble search "database host port" ./my-project --content config
+semble search "authentication" ./my-project --content all
+​```
+
+Use `semble find-related` to discover code similar to a known location (pass `file_path` and `line` from a prior search result):
+
+​```bash
+semble find-related src/auth.py 42 ./my-project
+​```
+
+Like search, `find-related` also accepts an `--index` argument.
+
+`path` defaults to the current directory when omitted; git URLs are accepted.
+
+If `semble` is not on `$PATH`, use `uvx --from "semble[mcp]" semble` in its place.
+
+### Workflow
+
+1. Index the repo using `semble index -o cached_index`.
+2. Start with `semble search` to find relevant chunks. Pass the index to achieve results faster.
+3. Use `--content docs` for documentation, `--content config` for config files, or `--content all` for everything.
+4. Inspect full files only when the returned chunk does not give enough context.
+5. Optionally use `semble find-related` with a promising result's `file_path` and `line` to discover related implementations.
+6. Use grep only when you need exhaustive literal matches or quick confirmation of an exact string.
