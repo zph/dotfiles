@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# vpn [on|off|toggle|status] - route this machine's traffic through the mini exit node.
+# With no argument, toggle. Tests: `make test-vpn` in the chezmoi repo.
+
+set -euo pipefail
+
+readonly EXIT_NODE="mini"
+readonly TAILSCALE="${VPN_TAILSCALE:-/Applications/Tailscale.app/Contents/MacOS/Tailscale}"
+readonly CURL="${VPN_CURL:-curl}"
+readonly IP_URL="https://ifconfig.me"
+readonly IP_TIMEOUT_SECONDS=5
+readonly USAGE_EXIT=2
+# Non-empty when any exit node is selected.
+readonly NODE_PREF='(.ExitNodeID // "") + (.ExitNodeIP // "") + (.AutoExitNode // "")'
+
+usage() { # VPN-005
+  echo "usage: vpn [on|off|toggle|status]  (no argument toggles)" >&2
+  exit "$USAGE_EXIT"
+}
+
+# Prints one field of the Tailscale preferences; fails if they can't be read.
+pref() { # VPN-006 VPN-012
+  local prefs
+  prefs="$("$TAILSCALE" debug prefs)" || return 1
+  # -e makes empty input fail; anything that is not a prefs object is an error.
+  jq -er "if type == \"object\" and has(\"WantRunning\") then ($1) | tostring
+    else error(\"unexpected prefs\") end" <<<"$prefs"
+}
+
+# Prints the status report. Prints nothing and fails if the state can't be read.
+report() { # VPN-010 VPN-011 VPN-012
+  local node lan status backend peer ip
+  node="$(pref "$NODE_PREF")" || return 1
+  lan="$(pref .ExitNodeAllowLANAccess)" || return 1
+  status="$("$TAILSCALE" status --json)" || return 1
+  backend="$(jq -er .BackendState <<<"$status")" || return 1
+  peer="$(jq -r '[.Peer[]? | select(.ExitNode)
+    | (.DNSName | split(".")[0]) + (if .Online then " (online)" else " (offline)" end)]
+    | first // "set, but not found among peers"' <<<"$status")" || return 1
+  ip="$("$CURL" -4 -fsS --max-time "$IP_TIMEOUT_SECONDS" "$IP_URL" 2>/dev/null)" || ip="unknown"
+
+  if [ -n "$node" ]; then echo "VPN: on"; else echo "VPN: off"; peer="none"; fi
+  echo "  Tailscale:  $backend"
+  echo "  Exit node:  $peer"
+  # The local network is only cut off while an exit node is in use.
+  if [ -z "$node" ] || [ "$lan" = "true" ]; then
+    echo "  LAN access: allowed"
+  else
+    echo "  LAN access: blocked"
+  fi
+  echo "  Public IP:  ${ip:-unknown}"
+}
+
+report_change() { # VPN-008 VPN-014
+  report || echo "warning: changed, but could not read the new state." >&2
+}
+
+turn_on() { # VPN-001 VPN-009
+  # Warn first: `set` may itself fail while Tailscale is stopped.
+  if [ "$(pref .WantRunning)" = "false" ]; then
+    echo "warning: Tailscale is stopped; traffic is not routed until you connect." >&2
+  fi
+  echo "Routing traffic through $EXIT_NODE..."
+  "$TAILSCALE" set --exit-node="$EXIT_NODE" # VPN-007: set -e stops here on failure
+  report_change
+}
+
+turn_off() { # VPN-002
+  echo "Removing the exit node..."
+  "$TAILSCALE" set --exit-node=
+  report_change
+}
+
+toggle() { # VPN-003 VPN-004 VPN-006 VPN-013
+  local node
+  if ! node="$(pref "$NODE_PREF")"; then
+    echo "vpn: cannot read Tailscale state; nothing changed." >&2
+    exit 1
+  fi
+  if [ -n "$node" ]; then
+    echo "Toggling VPN: on -> off"
+    turn_off
+  else
+    echo "Toggling VPN: off -> on"
+    turn_on
+  fi
+}
+
+[ "$#" -le 1 ] || usage
+case "${1-toggle}" in
+  on) turn_on ;;
+  off) turn_off ;;
+  toggle) toggle ;;
+  status)
+    if ! report; then
+      echo "vpn: cannot read Tailscale state." >&2
+      exit 1
+    fi
+    ;;
+  *) usage ;;
+esac

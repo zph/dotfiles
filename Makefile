@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help setup hooks lint lint-all unit-test test test-debug
+.PHONY: help setup hooks lint lint-all unit-test test test-debug test-vpn
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -16,6 +16,9 @@ lint: ## Run prek hooks on staged/changed files
 
 lint-all: ## Run prek hooks on all files
 	.hermit/bin/prek run --all-files
+
+test-vpn: ## Run VPN script blackbox tests
+	deno test --allow-all --no-lock --quiet tests/vpn_test.ts
 
 unit-test: ## Run e2e unit tests
 	uv run --project e2e python -m unittest discover -s e2e/src -p 'test_*.py' -v
