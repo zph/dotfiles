@@ -69,6 +69,7 @@ a string coercion to a human form.
 Applies WHEN the main session model (not a subagent) is Sonnet.
 
 - Before stating that a task is done or successful, the main session MUST submit that decision to a new `reasoning` subagent (Claude: Opus) and get its approval.
+- The main session sets that reviewer's effort to low or medium by the size and risk of the change: low only for small, low-risk changes. Skew toward medium: use it whenever the change could cause problems in production, or when unsure.
 - Give it the goal, the acceptance criteria, the artifact or diff, and each check's command and result. Ask for a verdict: approve or reject, with reasons.
 - On reject, fix the findings and resubmit once. If it still rejects, report the task as not done and list the open findings.
 - If no Opus-level verdict can be obtained, report the work as "unverified" and say why. Never claim success.
