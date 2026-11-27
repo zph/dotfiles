@@ -9,6 +9,8 @@ readonly TAILSCALE="${VPN_TAILSCALE:-/Applications/Tailscale.app/Contents/MacOS/
 readonly CURL="${VPN_CURL:-curl}"
 readonly IP_URL="https://ifconfig.me"
 readonly IP_TIMEOUT_SECONDS=5
+readonly IP_ATTEMPTS=3
+readonly IP_RETRY_DELAY_SECONDS=2
 readonly USAGE_EXIT=2
 # Non-empty when any exit node is selected.
 readonly NODE_PREF='(.ExitNodeID // "") + (.ExitNodeIP // "") + (.AutoExitNode // "")'
@@ -27,17 +29,45 @@ pref() { # VPN-006 VPN-012
     else error(\"unexpected prefs\") end" <<<"$prefs"
 }
 
+# Prints Tailscale's state, e.g. Running, Stopped or NeedsLogin.
+backend() { # VPN-009 VPN-016
+  local status
+  status="$("$TAILSCALE" status --json)" || return 1
+  jq -er .BackendState <<<"$status"
+}
+
+# Non-empty only when an exit node is selected and Tailscale is connected.
+active_node() { # VPN-004 VPN-016
+  local node state
+  node="$(pref "$NODE_PREF")" || return 1
+  state="$(backend)" || return 1
+  if [ "$state" = "Running" ]; then echo "$node"; fi
+}
+
+# A tunnel that has just come up can take a moment to pass traffic.
+public_ip() { # VPN-011 VPN-018
+  local attempt ip
+  for ((attempt = 1; attempt <= IP_ATTEMPTS; attempt++)); do
+    if ip="$("$CURL" -4 -fsS --max-time "$IP_TIMEOUT_SECONDS" "$IP_URL" 2>/dev/null)" && [ -n "$ip" ]; then
+      echo "$ip"
+      return
+    fi
+    if ((attempt < IP_ATTEMPTS)); then sleep "$IP_RETRY_DELAY_SECONDS"; fi
+  done
+  echo "unknown"
+}
+
 # Prints the status report. Prints nothing and fails if the state can't be read.
 report() { # VPN-010 VPN-011 VPN-012
   local node lan status backend peer ip
-  node="$(pref "$NODE_PREF")" || return 1
+  node="$(active_node)" || return 1
   lan="$(pref .ExitNodeAllowLANAccess)" || return 1
   status="$("$TAILSCALE" status --json)" || return 1
   backend="$(jq -er .BackendState <<<"$status")" || return 1
   peer="$(jq -r '[.Peer[]? | select(.ExitNode)
     | (.DNSName | split(".")[0]) + (if .Online then " (online)" else " (offline)" end)]
     | first // "set, but not found among peers"' <<<"$status")" || return 1
-  ip="$("$CURL" -4 -fsS --max-time "$IP_TIMEOUT_SECONDS" "$IP_URL" 2>/dev/null)" || ip="unknown"
+  ip="$(public_ip)"
 
   if [ -n "$node" ]; then echo "VPN: on"; else echo "VPN: off"; peer="none"; fi
   echo "  Tailscale:  $backend"
@@ -48,17 +78,19 @@ report() { # VPN-010 VPN-011 VPN-012
   else
     echo "  LAN access: blocked"
   fi
-  echo "  Public IP:  ${ip:-unknown}"
+  echo "  Public IP:  $ip"
 }
 
 report_change() { # VPN-008 VPN-014
   report || echo "warning: changed, but could not read the new state." >&2
 }
 
-turn_on() { # VPN-001 VPN-009
-  # Warn first: `set` may itself fail while Tailscale is stopped.
-  if [ "$(pref .WantRunning)" = "false" ]; then
-    echo "warning: Tailscale is stopped; traffic is not routed until you connect." >&2
+turn_on() { # VPN-001 VPN-009 VPN-015
+  local state
+  state="$(backend)"
+  if [ "$state" != "Running" ]; then
+    echo "Connecting Tailscale..."
+    "$TAILSCALE" up # no flags, so existing settings are kept
   fi
   echo "Routing traffic through $EXIT_NODE..."
   "$TAILSCALE" set --exit-node="$EXIT_NODE" # VPN-007: set -e stops here on failure
@@ -73,7 +105,7 @@ turn_off() { # VPN-002
 
 toggle() { # VPN-003 VPN-004 VPN-006 VPN-013
   local node
-  if ! node="$(pref "$NODE_PREF")"; then
+  if ! node="$(active_node)"; then
     echo "vpn: cannot read Tailscale state; nothing changed." >&2
     exit 1
   fi
