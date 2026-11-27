@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-run --allow-net --allow-read --allow-write --ext=ts
+#!/usr/bin/env -S bun run --install=force
 
 // Script to manage DotSlash manifests for GitHub releases
 // Usage: $0 <command> <extra_args>
@@ -46,17 +46,15 @@ Options:
   --output   Specify output file path
 `;
 
-import { blake3 } from "npm:@noble/hashes@1/blake3";
-import { bytesToHex } from "npm:@noble/hashes@1/utils";
-import { parseArgs } from "jsr:@std/cli";
-import $ from "jsr:@david/dax";
-const { dedent } = $;
-import * as semver from "npm:semver";
-import { parse } from "jsr:@std/jsonc";
-import { Confirm, Input, Select } from "jsr:@cliffy/prompt@1.0.0-rc.7";
-import { join } from "jsr:@std/path";
-import { walk } from "jsr:@std/fs";
-import { globToRegExp } from "jsr:@std/path";
+import { blake3 } from "@noble/hashes@2.0.1/blake3.js";
+import { bytesToHex } from "@noble/hashes@2.0.1/utils.js";
+import { confirm, input, select } from "@inquirer/prompts@7.10.1";
+import minimist from "minimist@1.2.8";
+import { parse as parseJsoncLoose, printParseErrorCode, type ParseError } from "jsonc-parser@3.3.1";
+import semver from "semver@7.6.3";
+import { chmod, mkdir, mkdtemp, open, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { basename, join } from "node:path";
 
 interface GithubRelease {
   tag_name: string;
@@ -67,34 +65,51 @@ interface GithubRelease {
   }>;
 }
 
+// Stand-ins for the dax helpers the Deno original used.
+// dax escapeArg: bare alphanumerics stay as-is, everything else is single-quoted.
+const escapeArg = (arg: string) =>
+  /^[A-Za-z0-9]+$/.test(arg) ? arg : `'${arg.replaceAll("'", `'"'"'`)}'`;
+// @std/jsonc parse(): comments and trailing commas allowed, anything else malformed throws.
+// (Bun.JSONC is more lenient: it accepts single quotes, trailing garbage, hex numbers.)
+function parseJsonc(text: string): unknown {
+  const errors: ParseError[] = [];
+  const value = parseJsoncLoose(text, errors, { allowTrailingComma: true });
+  if (errors.length > 0) {
+    throw new SyntaxError(`Invalid JSONC: ${printParseErrorCode(errors[0].error)} at offset ${errors[0].offset}`);
+  }
+  return value;
+}
+// dax printCommand: `> <command>` on stderr.
+const printCommand = (cmd: string) => process.stderr.write(`> ${cmd}\n`);
+
 async function decompress(source: string, destination: string): Promise<void> {
   const format = source.split(".").slice(1).join(".");
 
   switch (format) {
     case "tar.gz":
     case "tgz":
-      await $`tar xzf ${source} -C ${destination}`;
+      await Bun.$`tar xzf ${source} -C ${destination}`;
       break;
     case "tar.xz":
-      await $`tar xJf ${source} -C ${destination}`;
+      await Bun.$`tar xJf ${source} -C ${destination}`;
       break;
     case "tar.zst":
-      await $`tar --zstd -xf ${source} -C ${destination}`;
+      await Bun.$`tar --zstd -xf ${source} -C ${destination}`;
       break;
     case "tar":
-      await $`tar xf ${source} -C ${destination}`;
+      await Bun.$`tar xf ${source} -C ${destination}`;
       break;
     case "zip":
-      await $`unzip ${source} -d ${destination}`;
+      await Bun.$`unzip ${source} -d ${destination}`;
       break;
     case "gz":
-      await $`gunzip -c ${source} > ${destination}`;
+      await Bun.$`gunzip -c ${source} > ${destination}`;
       break;
     case "xz":
-      await $`xz -dc ${source} > ${destination}`;
+      await Bun.$`xz -dc ${source} > ${destination}`;
       break;
     case "zst":
-      await $`zstd -dc ${source} > ${destination}`;
+      await Bun.$`zstd -dc ${source} > ${destination}`;
       break;
     default:
       throw new Error(`Unsupported archive format: ${format}`);
@@ -150,12 +165,212 @@ async function getBlake3Hash(url: string): Promise<string> {
   return bytesToHex(hash);
 }
 
+// Depth-first walk in readdir order (what @std/fs walk did): yields every non-symlink file,
+// recursing into real directories only (symlinks are never followed nor reported as files).
+async function* walkFiles(root: string): AsyncGenerator<string> {
+  for (const entry of await readdir(root, { withFileTypes: true })) {
+    const path = join(root, entry.name);
+    if (entry.isSymbolicLink()) continue;
+    if (entry.isDirectory()) {
+      yield* walkFiles(path);
+    } else if (entry.isFile()) {
+      yield path;
+    }
+  }
+}
+
+// Hand port of @std/path's posix globToRegExp(glob, { extended: true, globstar: true,
+// caseInsensitive: true }), as of @std/path 1.1.6. Glob libraries (picomatch, Bun.Glob) differ on
+// trailing slashes, `[!x]`, `!(..)`, `a/**`, `//` and escapes, so the original algorithm is reproduced.
+const GLOB_ESCAPE = ["!", "$", "(", ")", "*", "+", ".", "=", "?", "[", "\\", "^", "{", "|"];
+const GLOB_RANGE_ESCAPE = ["-", "\\", "]"];
+const GLOB_POSIX_CLASSES: Record<string, string> = {
+  alnum: "\\dA-Za-z",
+  alpha: "A-Za-z",
+  ascii: "\x00-\x7F",
+  blank: "\t ",
+  cntrl: "\x00-\x1F\x7F",
+  digit: "\\d",
+  graph: "\x21-\x7E",
+  lower: "a-z",
+  print: "\x20-\x7E",
+  punct: "!\"#$%&'()*+,\\-./:;<=>?@[\\\\\\]^_\u2018{|}~",
+  space: "\\s\v",
+  upper: "A-Z",
+  word: "\\w",
+  xdigit: "\\dA-Fa-f",
+};
+function globToRegExp(glob: string): RegExp {
+  const SEP = "/+", SEP_MAYBE = "/*", GLOBSTAR = "(?:[^/]*(?:/|$)+)*", WILDCARD = "[^/]*";
+  if (glob === "") return /(?!)/;
+  // Remove trailing separators.
+  let newLength = glob.length;
+  for (; newLength > 1 && glob[newLength - 1] === "/"; newLength--);
+  glob = glob.slice(0, newLength);
+
+  let regExpString = "";
+  for (let j = 0; j < glob.length;) {
+    let segment = "";
+    const groupStack: string[] = [];
+    let inRange = false;
+    let inEscape = false;
+    let endsWithSep = false;
+    let i = j;
+    for (; i < glob.length && !(glob[i] === "/" && groupStack.length === 0); i++) {
+      if (inEscape) {
+        inEscape = false;
+        const escapeChars = inRange ? GLOB_RANGE_ESCAPE : GLOB_ESCAPE;
+        segment += escapeChars.includes(glob[i]) ? `\\${glob[i]}` : glob[i];
+        continue;
+      }
+      if (glob[i] === "\\") {
+        inEscape = true;
+        continue;
+      }
+      if (glob[i] === "[") {
+        if (!inRange) {
+          inRange = true;
+          segment += "[";
+          if (glob[i + 1] === "!") {
+            i++;
+            segment += "^";
+          } else if (glob[i + 1] === "^") {
+            i++;
+            segment += "\\^";
+          }
+          continue;
+        } else if (glob[i + 1] === ":") {
+          let k = i + 1;
+          let value = "";
+          while (glob[k + 1] !== undefined && glob[k + 1] !== ":") {
+            value += glob[k + 1];
+            k++;
+          }
+          if (glob[k + 1] === ":" && glob[k + 2] === "]") {
+            i = k + 2;
+            segment += GLOB_POSIX_CLASSES[value] ?? "";
+            continue;
+          }
+        }
+      }
+      if (glob[i] === "]" && inRange) {
+        inRange = false;
+        segment += "]";
+        continue;
+      }
+      if (inRange) {
+        segment += glob[i];
+        continue;
+      }
+      if (glob[i] === ")" && groupStack.length > 0 && groupStack[groupStack.length - 1] !== "BRACE") {
+        segment += ")";
+        const type = groupStack.pop()!;
+        if (type === "!") {
+          segment += WILDCARD;
+        } else if (type !== "@") {
+          segment += type;
+        }
+        continue;
+      }
+      if (glob[i] === "|" && groupStack.length > 0 && groupStack[groupStack.length - 1] !== "BRACE") {
+        segment += "|";
+        continue;
+      }
+      if (glob[i] === "+" && glob[i + 1] === "(") {
+        i++;
+        groupStack.push("+");
+        segment += "(?:";
+        continue;
+      }
+      if (glob[i] === "@" && glob[i + 1] === "(") {
+        i++;
+        groupStack.push("@");
+        segment += "(?:";
+        continue;
+      }
+      if (glob[i] === "?") {
+        if (glob[i + 1] === "(") {
+          i++;
+          groupStack.push("?");
+          segment += "(?:";
+        } else {
+          segment += ".";
+        }
+        continue;
+      }
+      if (glob[i] === "!" && glob[i + 1] === "(") {
+        i++;
+        groupStack.push("!");
+        segment += "(?!";
+        continue;
+      }
+      if (glob[i] === "{") {
+        groupStack.push("BRACE");
+        segment += "(?:";
+        continue;
+      }
+      if (glob[i] === "}" && groupStack[groupStack.length - 1] === "BRACE") {
+        groupStack.pop();
+        segment += ")";
+        continue;
+      }
+      if (glob[i] === "," && groupStack[groupStack.length - 1] === "BRACE") {
+        segment += "|";
+        continue;
+      }
+      if (glob[i] === "*") {
+        if (glob[i + 1] === "(") {
+          i++;
+          groupStack.push("*");
+          segment += "(?:";
+        } else {
+          const prevChar = glob[i - 1];
+          let numStars = 1;
+          while (glob[i + 1] === "*") {
+            i++;
+            numStars++;
+          }
+          const nextChar = glob[i + 1];
+          if (
+            numStars === 2 && ["/", undefined].includes(prevChar) &&
+            ["/", undefined].includes(nextChar)
+          ) {
+            segment += GLOBSTAR;
+            endsWithSep = true;
+          } else {
+            segment += WILDCARD;
+          }
+        }
+        continue;
+      }
+      segment += GLOB_ESCAPE.includes(glob[i]) ? `\\${glob[i]}` : glob[i];
+    }
+    // Check for unclosed groups or a dangling backslash.
+    if (groupStack.length > 0 || inRange || inEscape) {
+      // Parse failure. Take all characters from this segment literally.
+      segment = "";
+      for (const c of glob.slice(j, i)) {
+        segment += GLOB_ESCAPE.includes(c) ? `\\${c}` : c;
+        endsWithSep = false;
+      }
+    }
+    regExpString += segment;
+    if (!endsWithSep) {
+      regExpString += i < glob.length ? SEP : SEP_MAYBE;
+      endsWithSep = true;
+    }
+    while (glob[i] === "/") i++;
+    j = i;
+  }
+  return new RegExp(`^${regExpString}$`, "i");
+}
+
 async function findBinaryInArchive(
   url: string,
   format: DotSlashFormat,
   pattern: string,
 ): Promise<string | null> {
-  const tempDir = await Deno.makeTempDir();
+  const tempDir = await mkdtemp(join(tmpdir(), "dspkg"));
   try {
     // Download the asset
     const response = await fetch(url);
@@ -164,27 +379,20 @@ async function findBinaryInArchive(
     }
 
     const assetPath = join(tempDir, "download." + format);
-    const file = await Deno.create(assetPath);
-    await response.body?.pipeTo(file.writable);
+    await writeFile(assetPath, new Uint8Array(await response.arrayBuffer()));
 
     // Extract the archive using our decompress helper
     const extractDir = join(tempDir, "extract");
-    await Deno.mkdir(extractDir);
+    await mkdir(extractDir);
     await decompress(assetPath, extractDir);
 
     // Convert glob pattern to RegExp
-    const regex = globToRegExp(pattern, {
-      extended: true,
-      globstar: true,
-      caseInsensitive: true,
-    });
+    const regex = globToRegExp(pattern);
 
     // Walk the extracted directory looking for executables
-    for await (const entry of walk(extractDir)) {
-      if (!entry.isFile) continue;
-
+    for await (const path of walkFiles(extractDir)) {
       try {
-        const relativePath = entry.path.substring(extractDir.length + 1);
+        const relativePath = path.substring(extractDir.length + 1);
         const matchesPattern = regex.test(relativePath);
 
         if (matchesPattern) {
@@ -198,7 +406,7 @@ async function findBinaryInArchive(
     return null;
   } finally {
     // Clean up temp directory
-    await Deno.remove(tempDir, { recursive: true });
+    await rm(tempDir, { recursive: true });
   }
 }
 
@@ -388,28 +596,27 @@ async function create(
   await writeManifest(manifest, assetPattern.split("/").pop() || "unknown-pkg");
 }
 
+// What Deno.mainModule.split("/").pop() was: the script's file name.
+const scriptName = () => basename(Bun.main || process.argv[1]);
+
 function buildInfo(tag: string, commandOverride?: string[]) {
   return {
     created_at: new Date().toISOString(),
-    build_tool: Deno.mainModule.split("/").pop(),
+    build_tool: scriptName(),
     command: runCommand(commandOverride),
     tag: tag,
   };
 }
 
 async function writeManifest(manifest: Manifest, path: string) {
-  const output = dedent`
-  #!/usr/bin/env dotslash
-
-  ${JSON.stringify(manifest, null, 2)}
-  `;
-  await Deno.writeTextFile(path, output);
-  await Deno.chmod(path, 0o755);
+  const output = `#!/usr/bin/env dotslash\n\n${JSON.stringify(manifest, null, 2)}`;
+  await writeFile(path, output);
+  await chmod(path, 0o755);
 }
 
 const safeStat = async (arg: string) => {
   try {
-    return await Deno.stat(arg);
+    return await stat(arg);
   } catch {
     return null;
   }
@@ -463,15 +670,15 @@ const standardizeManifestArgs = async (args: string[]) => {
     // If arg is a file, add it to the list
     // If arg is a directory, find all files to the list
     try {
-      const stat = await safeStat(arg);
-      if (stat?.isFile) {
+      const st = await safeStat(arg);
+      if (st?.isFile()) {
         files.push(arg);
-      } else if (stat?.isDirectory) {
+      } else if (st?.isDirectory()) {
         // If arg is a directory, find all files that start with dotslash shebang
-        for await (const entry of Deno.readDir(arg)) {
+        for (const entry of await readdir(arg, { withFileTypes: true })) {
           // Note we're not handling recursive directory lookups
           // TODO: frankly the user should use shell globs instead
-          if (!entry.isFile) continue;
+          if (!entry.isFile()) continue;
 
           const path = `${arg}/${entry.name}`;
           files.push(path);
@@ -484,10 +691,10 @@ const standardizeManifestArgs = async (args: string[]) => {
   }
   // Filter out files that don't have the dotslash shebang
   const manifests = await Promise.all(files.map(async (f) => {
-    const file = await Deno.open(f);
+    const file = await open(f);
     const buf = new Uint8Array(512 * 1); // 1 byte per character
-    await file.read(buf);
-    file.close();
+    await file.read(buf, 0, buf.length, null);
+    await file.close();
     const firstLine = new TextDecoder().decode(buf).split("\n")[0];
     logger.debug(`First line of ${f}: ${firstLine}`);
     const isShebang = firstLine.startsWith("#!");
@@ -507,17 +714,18 @@ interface Manifest {
 
 const update = async (manifests: string[]) => {
   for (const manifestFile of manifests) {
-    const manifestText = await Deno.readTextFile(manifestFile);
+    const manifestText = await readFile(manifestFile, "utf8");
     // Skip the first line of the file
     const jsonStart = manifestText.indexOf("\n") + 1;
-    const manifest: Manifest = parse(
+    const manifest: Manifest = parseJsonc(
       manifestText.substring(jsonStart),
     ) as unknown as Manifest;
     logger.info(`Updating`, manifest.metadata.build_info.command);
     const cmd = manifest.metadata.build_info.command;
     if (cmd?.includes("create")) {
       // Do not re-quote the string
-      await $.raw`${cmd}`.printCommand();
+      printCommand(cmd);
+      await Bun.$`${{ raw: cmd }}`;
     } else {
       logger.error(
         `Unsupported command: ${manifest.metadata.build_info.command}`,
@@ -527,18 +735,19 @@ const update = async (manifests: string[]) => {
   }
 };
 
-let logger = new Logger(Deno.env.get("LOG_LEVEL") as LogLevel || "INFO");
-const GITHUB_API_URL = Deno.env.get("GITHUB_API_URL") ||
+let logger = new Logger(process.env.LOG_LEVEL as LogLevel || "INFO");
+const GITHUB_API_URL = process.env.GITHUB_API_URL ||
   "https://api.github.com";
+const GITHUB_RAW_URL = process.env.GITHUB_RAW_URL || "https://raw.githubusercontent.com";
 const runCommand = (commandOverride?: string[]) => {
-  const bin = Deno.mainModule.split("/").pop();
+  const bin = scriptName();
   const sanitizeArgs = (args: string[]) => {
-    return args.map($.escapeArg).join(" ");
+    return args.map(escapeArg).join(" ");
   };
   if (commandOverride) {
     return `${bin} ${sanitizeArgs(commandOverride)}`;
   }
-  return `${bin} ${sanitizeArgs(Deno.args)}`;
+  return `${bin} ${sanitizeArgs(process.argv.slice(2))}`;
 };
 
 // TODO: barebones check right now
@@ -546,16 +755,27 @@ const runCommand = (commandOverride?: string[]) => {
 const check = async (manifests: string[]) => {
   for (const manifestFile of manifests) {
     // TODO: check for presence of file
-    const manifestText = await Deno.readTextFile(manifestFile);
+    const manifestText = await readFile(manifestFile, "utf8");
     if (manifestText.includes("TODO:")) {
       logger.warn(`${manifestFile} has TODOs`);
       logger.warn(manifestText.split("TODO:").map((l) => l.trim()).join("\n"));
     }
     logger.info(`Checking ${manifestFile} by running`);
     const successfulRun = ["--version", "-v", "version"].find(async (v) => {
-      const output = await $`${manifestFile} ${v}`.stdout("piped")
-        .printCommand().noThrow();
-      return output.code === 0;
+      printCommand(`${escapeArg(manifestFile)} ${escapeArg(v)}`);
+      try {
+        const proc = Bun.spawn([manifestFile, v], {
+          stdin: "inherit",
+          stdout: "pipe",
+          stderr: "inherit",
+        });
+        await new Response(proc.stdout).arrayBuffer();
+        return (await proc.exited) === 0;
+      } catch (e: any) {
+        // dax's noThrow(): a command that cannot be run is reported, not thrown
+        process.stderr.write(`${e.message}\n`);
+        return false;
+      }
     });
     if (!successfulRun) {
       logger.error(
@@ -568,10 +788,12 @@ const check = async (manifests: string[]) => {
 
 // TODO: insufficient manifest generation because it lacks the platforms block
 async function createByHTTP(url: string, name: string) {
-  const output = await $.raw`dotslash -- create-url-entry ${url}`.stdout(
-    "piped",
-  ).printCommand();
-  const baseManifest = JSON.parse(output.stdout);
+  const cmd = `dotslash -- create-url-entry ${url}`;
+  printCommand(cmd);
+  // stdout is captured; stderr still reaches the terminal
+  const output = await Bun.$`${{ raw: cmd }}`.quiet();
+  process.stderr.write(output.stderr);
+  const baseManifest = JSON.parse(output.stdout.toString());
   await writeManifest({
     ...baseManifest,
     metadata: { build_info: buildInfo("") },
@@ -595,17 +817,17 @@ interface Args {
 
 export const main = async () => {
   // Parse command line arguments
-  const args: Args = parseArgs(Deno.args, {
+  const args = minimist(process.argv.slice(2), {
     boolean: ["verbose", "help"],
     string: ["output"],
     default: {
       output: null,
     },
-  });
+  }) as unknown as Args & { help: boolean };
 
   if (args.help || args._.length < 1) {
     console.log(HELP_TEXT);
-    Deno.exit(0);
+    process.exit(0);
   }
 
   if (args.verbose) {
@@ -622,7 +844,7 @@ export const main = async () => {
     logger.error(
       `  ${Command.Search}    Search GitHub for most popular matching projects`,
     );
-    Deno.exit(1);
+    process.exit(1);
   }
 
   // Validate command
@@ -631,7 +853,7 @@ export const main = async () => {
     logger.error(
       `Invalid command. Must be one of: ${Object.values(Command).join(", ")}`,
     );
-    Deno.exit(1);
+    process.exit(1);
   }
 
   switch (command) {
@@ -649,7 +871,7 @@ export const main = async () => {
 
       if (!owner || !repoName) {
         logger.error("Repository must be in format owner/repo");
-        Deno.exit(1);
+        process.exit(1);
       }
 
       await create(owner, repoName, tag.toString(), pattern.toString())
@@ -728,7 +950,6 @@ async function search(ref: string, args: Args) {
   type SearchResult = {
     name: string;
     value: any;
-    search: boolean;
     distance: number;
   };
   // Display top 5 results
@@ -740,7 +961,6 @@ async function search(ref: string, args: Args) {
         repo.description?.substring(0, 50) || "No description"
       }`,
       value: repo,
-      search: true,
       distance: levenshteinDistance(
         ref.toLowerCase(),
         repo.name.toLowerCase(),
@@ -749,13 +969,13 @@ async function search(ref: string, args: Args) {
     .sort((a: SearchResult, b: SearchResult) => a.distance - b.distance) // Sort by Levenshtein distance
     .slice(0, 10); // Take top 10 after sorting
 
-  const selected: typeof choices[0] = await Select.prompt({
+  const selected: any = await select({
     message: "Select a repository:",
-    options: choices,
+    choices: choices.map(({ name, value }: SearchResult) => ({ name, value })),
   });
 
   if (selected) {
-    const proceed = await Confirm.prompt({
+    const proceed = await confirm({
       message: `Install ${selected.name}?`,
       default: false,
     });
@@ -784,11 +1004,11 @@ async function search(ref: string, args: Args) {
       name: "latest - Always use latest release",
       value: "latest",
     });
-    const tag: typeof tags[0] = await Select.prompt({
+    const tag: any = await select({
       message: "Select a release tag:",
-      options: tagChoices,
+      choices: tagChoices,
     });
-    const name = await Input.prompt({
+    const name = await input({
       message: "Output file:",
       default: `${selected.name}`,
     });
@@ -823,8 +1043,8 @@ async function install(ref: string, args: Args) {
 
 async function installHttp(ref: string, args: Args) {
   const output = await fetch(ref).then((r) => r.text());
-  await Deno.writeTextFile(args.output || ref, output);
-  await Deno.chmod(args.output || ref, 0o755);
+  await writeFile(args.output || ref, output);
+  await chmod(args.output || ref, 0o755);
   console.log(`Installed ${args.output || ref}`);
 }
 
@@ -860,7 +1080,7 @@ async function installGithubRegistry(refRaw: string, args: Args) {
 
   // TODO: conflates path in repo with path in local filesystem
   const rawUrl =
-    `https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}`;
+    `${GITHUB_RAW_URL}/${owner}/${repo}/${ref}/${path}`;
   logger.debug({ rawUrl });
   const response = await fetch(rawUrl);
   if (!response.ok) {
@@ -869,8 +1089,8 @@ async function installGithubRegistry(refRaw: string, args: Args) {
 
   const content = await response.text();
   const outputPath = args.output as string || path.split("/").pop() || "";
-  await Deno.writeTextFile(outputPath, content);
-  await Deno.chmod(outputPath, 0o755);
+  await writeFile(outputPath, content);
+  await chmod(outputPath, 0o755);
   console.log(`Installed ${outputPath}`);
 }
 

@@ -16,7 +16,12 @@
 **Test Driven Development TDD**
 - Implement testing at various layers: unit tests, integration tests, end to end tests
 - Anything with a cli interface must also have full blackbox end to end tests, preferrably using
-deno as a wrapper for the test harness (see https://github.com/zph/tome-cli/tree/main/test)
+`bun test` as the harness, spawning the CLI as a subprocess with `Bun.spawn` or `Bun.$`
+(see the chezmoi repo's `tests/` for examples)
+- Standalone TypeScript scripts use Bun, not Deno: shebang `#!/usr/bin/env -S bun run --install=force`,
+with exact versions in import specifiers (e.g. `import semver from "semver@7.6.3"`) and no
+package.json. Prefer Bun/Node built-ins (`Bun.$`, `node:util` parseArgs, `node:fs`, `node:path`)
+over libraries; otherwise use small pinned micro libraries.
 - Integration and end to end tests can use testcontiners with docker/podman if needing external
 images or datastores.
 - Running tests is often possible from the Makefile and so is building binaries. Use makefile

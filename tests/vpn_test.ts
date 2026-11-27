@@ -18,11 +18,13 @@
 // VPN-016: WHILE Tailscale is not connected, the report SHALL show the VPN as off.
 // VPN-017: WHEN turning off (including by toggle), the script SHALL only remove the exit node and SHALL NOT connect or disconnect Tailscale.
 // VPN-018: IF the public IP lookup fails, THEN the script SHALL try up to 3 times, as a new tunnel takes a moment to pass traffic.
+import { test } from "bun:test";
 import assert from "node:assert/strict";
-import { fileURLToPath } from "node:url";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
-const SCRIPT = Deno.env.get("VPN_SCRIPT") ??
-  fileURLToPath(new URL("../home/bin/executable_vpn", import.meta.url));
+const SCRIPT = process.env.VPN_SCRIPT ?? join(import.meta.dir, "../home/bin/executable_vpn");
 const USAGE_EXIT = 2;
 const SET_ON = "set --exit-node=mini";
 const SET_OFF = "set --exit-node=";
@@ -71,29 +73,28 @@ const prefs = (extra: Record<string, unknown> = {}) =>
 const ON = prefs({ ExitNodeID: "abc" });
 
 async function run(args: string[], env: Record<string, string> = {}) {
-  const dir = await Deno.makeTempDir();
+  const dir = await mkdtemp(join(tmpdir(), "vpn-test-"));
   try {
     const log = `${dir}/calls`;
     const state = `${dir}/prefs`;
-    await Deno.writeTextFile(`${dir}/tailscale`, FAKE_TAILSCALE, { mode: 0o755 });
-    await Deno.writeTextFile(`${dir}/curl`, FAKE_CURL, { mode: 0o755 });
-    await Deno.writeTextFile(log, "");
-    await Deno.writeTextFile(state, env.FAKE_PREFS ?? prefs());
-    const out = await new Deno.Command("bash", {
-      args: [SCRIPT, ...args],
+    await writeFile(`${dir}/tailscale`, FAKE_TAILSCALE, { mode: 0o755 });
+    await writeFile(`${dir}/curl`, FAKE_CURL, { mode: 0o755 });
+    await writeFile(log, "");
+    await writeFile(state, env.FAKE_PREFS ?? prefs());
+    const proc = Bun.spawnSync(["bash", SCRIPT, ...args], {
       env: {
+        ...process.env,
         VPN_TAILSCALE: `${dir}/tailscale`,
         VPN_CURL: `${dir}/curl`,
         FAKE_LOG: log,
         FAKE_STATE: state,
         ...env,
       },
-    }).output();
-    const calls = (await Deno.readTextFile(log)).split("\n").filter(Boolean);
-    const text = new TextDecoder();
-    return { code: out.code, calls, stdout: text.decode(out.stdout), stderr: text.decode(out.stderr) };
+    });
+    const calls = (await readFile(log, "utf8")).split("\n").filter(Boolean);
+    return { code: proc.exitCode, calls, stdout: proc.stdout.toString(), stderr: proc.stderr.toString() };
   } finally {
-    await Deno.remove(dir, { recursive: true });
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
@@ -101,7 +102,7 @@ const REPORT_ON = [/^VPN: on$/m, /Exit node: +mini \(online\)/, /LAN access: +bl
 const REPORT_OFF = [/^VPN: off$/m, /Exit node: +none/, /LAN access: +allowed/, new RegExp(`Public IP: +${PUBLIC_IP}`)];
 const matchAll = (text: string, patterns: RegExp[]) => patterns.forEach((p) => assert.match(text, p));
 
-Deno.test("VPN-001 VPN-008 on sets mini and reports", async () => {
+test("VPN-001 VPN-008 on sets mini and reports", async () => {
   const r = await run(["on"]);
   assert.equal(r.code, 0, r.stderr);
   assert.deepEqual(r.calls, [SET_ON]);
@@ -109,14 +110,14 @@ Deno.test("VPN-001 VPN-008 on sets mini and reports", async () => {
   assert.doesNotMatch(r.stderr, /stopped/);
 });
 
-Deno.test("VPN-002 VPN-008 off clears the exit node and reports", async () => {
+test("VPN-002 VPN-008 off clears the exit node and reports", async () => {
   const r = await run(["off"], { FAKE_PREFS: ON });
   assert.equal(r.code, 0, r.stderr);
   assert.deepEqual(r.calls, [SET_OFF]);
   matchAll(r.stdout, REPORT_OFF);
 });
 
-Deno.test("VPN-003 VPN-013 toggle from off turns on", async () => {
+test("VPN-003 VPN-013 toggle from off turns on", async () => {
   for (const args of [[], ["toggle"]]) {
     const r = await run(args);
     assert.equal(r.code, 0, r.stderr);
@@ -125,7 +126,7 @@ Deno.test("VPN-003 VPN-013 toggle from off turns on", async () => {
   }
 });
 
-Deno.test("VPN-004 VPN-013 toggle from on turns off (by ID, IP or auto)", async () => {
+test("VPN-004 VPN-013 toggle from on turns off (by ID, IP or auto)", async () => {
   for (const p of [ON, prefs({ ExitNodeIP: "100.64.0.1" }), prefs({ AutoExitNode: "any" })]) {
     for (const args of [[], ["toggle"]]) {
       const r = await run(args, { FAKE_PREFS: p });
@@ -136,7 +137,7 @@ Deno.test("VPN-004 VPN-013 toggle from on turns off (by ID, IP or auto)", async 
   }
 });
 
-Deno.test("VPN-005 bad arguments change nothing", async () => {
+test("VPN-005 bad arguments change nothing", async () => {
   for (const args of [["maybe"], ["on", "off"], [""], ["status", "x"]]) {
     const r = await run(args);
     assert.equal(r.code, USAGE_EXIT, `args=${JSON.stringify(args)}`);
@@ -154,7 +155,7 @@ const UNREADABLE: Record<string, string>[] = [
   { FAKE_PREFS: "{}" },
 ];
 
-Deno.test("VPN-006 unreadable state changes nothing", async () => {
+test("VPN-006 unreadable state changes nothing", async () => {
   for (const env of UNREADABLE) {
     const r = await run([], env);
     assert.notEqual(r.code, 0, JSON.stringify(env));
@@ -162,7 +163,7 @@ Deno.test("VPN-006 unreadable state changes nothing", async () => {
   }
 });
 
-Deno.test("VPN-007 failed set is reported", async () => {
+test("VPN-007 failed set is reported", async () => {
   for (const [args, p] of [[["on"], prefs()], [["off"], ON], [[], prefs()], [[], ON]] as const) {
     const r = await run([...args], { FAKE_SET_FAIL: "1", FAKE_PREFS: p });
     assert.notEqual(r.code, 0);
@@ -175,7 +176,7 @@ const STOPPED = prefs({ WantRunning: false });
 const STOPPED_WITH_NODE = prefs({ ExitNodeID: "abc", WantRunning: false });
 const LOGGED_OUT = prefs({ ExitNodeID: "abc", FakeLoggedOut: true });
 
-Deno.test("VPN-009 stopped Tailscale is connected before turning on", async () => {
+test("VPN-009 stopped Tailscale is connected before turning on", async () => {
   for (const p of [STOPPED, STOPPED_WITH_NODE, LOGGED_OUT]) {
     for (const args of [["on"], [], ["toggle"]]) {
       const r = await run(args, { FAKE_PREFS: p });
@@ -186,19 +187,19 @@ Deno.test("VPN-009 stopped Tailscale is connected before turning on", async () =
   }
 });
 
-Deno.test("VPN-009 a connected Tailscale is not reconnected", async () => {
+test("VPN-009 a connected Tailscale is not reconnected", async () => {
   const r = await run(["on"]);
   assert.deepEqual(r.calls, [SET_ON]);
 });
 
-Deno.test("VPN-015 failed connect sets nothing", async () => {
+test("VPN-015 failed connect sets nothing", async () => {
   const r = await run(["on"], { FAKE_PREFS: STOPPED, FAKE_UP_FAIL: "1" });
   assert.notEqual(r.code, 0);
   assert.deepEqual(r.calls, ["up"]);
   assert.doesNotMatch(r.stdout, /^VPN: /m);
 });
 
-Deno.test("VPN-016 stopped Tailscale reports VPN off", async () => {
+test("VPN-016 stopped Tailscale reports VPN off", async () => {
   for (const p of [STOPPED_WITH_NODE, LOGGED_OUT]) {
     const r = await run(["status"], { FAKE_PREFS: p });
     assert.equal(r.code, 0, r.stderr);
@@ -207,7 +208,7 @@ Deno.test("VPN-016 stopped Tailscale reports VPN off", async () => {
   }
 });
 
-Deno.test("VPN-017 turning off leaves a connected Tailscale connected", async () => {
+test("VPN-017 turning off leaves a connected Tailscale connected", async () => {
   for (const args of [["off"], [], ["toggle"]]) {
     const r = await run(args, { FAKE_PREFS: ON });
     assert.deepEqual(r.calls, [SET_OFF]);
@@ -215,13 +216,13 @@ Deno.test("VPN-017 turning off leaves a connected Tailscale connected", async ()
   }
 });
 
-Deno.test("VPN-017 off does not connect Tailscale", async () => {
+test("VPN-017 off does not connect Tailscale", async () => {
   const r = await run(["off"], { FAKE_PREFS: STOPPED_WITH_NODE });
   assert.equal(r.code, 0, r.stderr);
   assert.deepEqual(r.calls, [SET_OFF]);
 });
 
-Deno.test("VPN-010 status reports and changes nothing", async () => {
+test("VPN-010 status reports and changes nothing", async () => {
   for (const [p, report] of [[ON, REPORT_ON], [prefs(), REPORT_OFF]] as const) {
     const r = await run(["status"], { FAKE_PREFS: p });
     assert.equal(r.code, 0, r.stderr);
@@ -234,13 +235,13 @@ Deno.test("VPN-010 status reports and changes nothing", async () => {
   assert.match(gone.stdout, /Exit node: +set, but not found/);
 });
 
-Deno.test("VPN-011 unknown public IP is not an error", async () => {
+test("VPN-011 unknown public IP is not an error", async () => {
   const r = await run(["status"], { FAKE_CURL_FAIL: "1" });
   assert.equal(r.code, 0, r.stderr);
   assert.match(r.stdout, /Public IP: +unknown/);
 });
 
-Deno.test("VPN-012 status fails when state is unreadable", async () => {
+test("VPN-012 status fails when state is unreadable", async () => {
   for (const env of [...UNREADABLE, { FAKE_STATUS_FAIL: "1" } as Record<string, string>]) {
     const r = await run(["status"], env);
     assert.notEqual(r.code, 0, JSON.stringify(env));
@@ -248,16 +249,16 @@ Deno.test("VPN-012 status fails when state is unreadable", async () => {
   }
 });
 
-Deno.test("VPN-014 a failed report after a change is only a warning", async () => {
+test("VPN-014 a failed report after a change is only a warning", async () => {
   const r = await run(["on"], { FAKE_REPORT_FAIL: "1" });
   assert.equal(r.code, 0, r.stderr);
   assert.deepEqual(r.calls, [SET_ON]);
   assert.match(r.stderr, /could not read the new state/);
 });
 
-Deno.test("VPN-018 public IP lookup is retried", async () => {
+test("VPN-018 public IP lookup is retried", async () => {
   const third = await run(["status"], { FAKE_CURL_FLAKY: "3" });
   assert.match(third.stdout, new RegExp(`Public IP: +${PUBLIC_IP}`));
   const fourth = await run(["status"], { FAKE_CURL_FLAKY: "4" });
   assert.match(fourth.stdout, /Public IP: +unknown/);
-});
+}, 20_000); // two runs x two 2s retry sleeps; bun's default per-test timeout is 5s

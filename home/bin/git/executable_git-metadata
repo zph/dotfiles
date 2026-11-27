@@ -1,24 +1,27 @@
-#!/usr/bin/env -S deno run -A --ext ts
+#!/usr/bin/env -S bun run --install=force
 // SUMMARY: git metadata [set|get] KEY [VALUE]
 // git metadata get VAR_NAME
 // git metadata set VAR_NAME VALUE
 
-import { $ } from "jsr:@david/dax"
-import { parseArgs } from "jsr:@std/cli";
+import minimist from "minimist@1.2.8"
+import { existsSync, statSync } from "node:fs"
+import { mkdir, readFile, writeFile } from "node:fs/promises"
+import { dirname, join } from "node:path"
 
 const ENV_FOLDER = ".com.xargs.io/env"
 
-const args = parseArgs(Deno.args, {
+// minimist mirrors @std/cli parseArgs (numeric coercion, flag swallowing, `--`).
+const args = minimist(process.argv.slice(2), {
   boolean: ["help"],
 })
 
-if(args._.length === 0) {
-  console.log($.dedent`Usage:
-   git metadata set key value
-   git metadata get key
-   `)
-   Deno.exit(1)
+if (args._.length === 0) {
+  console.log(`Usage:
+git metadata set key value
+git metadata get key`)
+  process.exit(1)
 } else if (args._.length < 2) {
+  // Original bug kept: `${args}` renders as "[object Object]".
   throw new Error(`Too few args ${args}`)
 }
 
@@ -26,28 +29,31 @@ enum Action {
   Get = "get",
   Set = "set",
 }
-const action = args._[0] as Action
-if(action === Action.Set) {
-  if(args._.length !== 3) {
+const action = args._[0] as unknown as Action
+if (action === Action.Set) {
+  if (args._.length !== 3) {
     throw new Error(`Missing argument for value`)
   }
 } else if (action === Action.Get) {
-  if(args._.length !== 2) {
+  if (args._.length !== 2) {
     throw new Error(`Missing argument for value`)
   }
 }
-const keyName = args._[1] as string
+const keyName = args._[1] as unknown as string
+
+const isFile = (p: string) => existsSync(p) && statSync(p).isFile()
+const isDir = (p: string) => existsSync(p) && statSync(p).isDirectory()
 
 const main = async () => {
-  const gitRoot = await $`git root`.noThrow().quiet()
-  if (gitRoot.code === 0) {
-    Deno.chdir(gitRoot.stdout.trim())
+  const gitRoot = await Bun.$`git root`.nothrow().quiet()
+  if (gitRoot.exitCode === 0) {
+    process.chdir(gitRoot.stdout.toString().trim())
   }
 
-  const gitFile = $.path(".git")
-  if (gitFile.existsSync() && gitFile.isFileSync()) {
+  const gitFile = ".git"
+  if (isFile(gitFile)) {
     // We're in subfolder of a workdir
-    const content = await Deno.readTextFile(gitFile.toString())
+    const content = await readFile(gitFile, "utf8")
     const p = content.match(/gitdir: (.*)/i)
     if (p && p[1]?.length > 0) {
       let basePath: string
@@ -57,12 +63,11 @@ const main = async () => {
       } else {
         basePath = p[1]
       }
-      const root = $.path(basePath).parentOrThrow()
-      Deno.chdir(root.toString())
+      process.chdir(dirname(basePath))
     } else {
       throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
     }
-  } else if (gitFile.existsSync() && gitFile.isDirSync()) {
+  } else if (isDir(gitFile)) {
     // We're in a normal git repo
   } else {
     throw new Error(`Undefined behavior, should not have .git file without gitdir: in my workflows`)
@@ -70,30 +75,31 @@ const main = async () => {
 
   // By this point we've either found the true git-root or we've thrown an error.
 
-  const env = $.path(ENV_FOLDER)
+  const env = ENV_FOLDER
 
-  if (!env.isDirSync()) {
-    await Deno.mkdir(ENV_FOLDER, {recursive: true})
+  if (!isDir(env)) {
+    await mkdir(env, { recursive: true })
   }
 
   // We're established a sane default and can do the real work
+  // join() throws on a numeric KEY (coerced by the parser), as the original did.
   const set = async (key: string, value: string) => {
-    await Deno.writeTextFile(env.join(key).toString(), value)
+    await writeFile(join(env, key), String(value))
   }
 
   const get = async (key: string) => {
-    const keyPath = env.join(key)
-    if (keyPath.isFileSync()) {
-      console.log(await Deno.readTextFile(keyPath.toString()))
+    const keyPath = join(env, key)
+    if (isFile(keyPath)) {
+      console.log(await readFile(keyPath, "utf8"))
     } else {
       throw new Error(`Unable to find ${key} at ${keyPath}`)
     }
   }
 
-  if(action === Action.Get) {
+  if (action === Action.Get) {
     await get(keyName)
-  } else if(action === Action.Set) {
-    const value = args._[2] as string
+  } else if (action === Action.Set) {
+    const value = args._[2] as unknown as string
     await set(keyName, value)
   }
 }
