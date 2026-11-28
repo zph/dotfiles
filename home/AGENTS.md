@@ -71,7 +71,7 @@ Rules name model classes: `frontier` (main session only, never a subagent), `rea
 - BEFORE spawning a subagent, delegating, or starting a coding task that is not small, read `~/docs/agents/DELEGATION.md`.
 - Every spawn names its model explicitly; never fork or leave it unset.
 - Delegate by default when work needs more than ~3 file reads, a broad search, web research or long output. Work inline only for a known file or a single command. The main session's context is for talking with me, EARS specs, decisions and final review.
-- BEFORE giving work to a `worker`, read `~/docs/agents/OFFLOAD.md`: external CLIs (agy, codex via `offload-run`) come first.
+- BEFORE giving work to a `worker` or making any `offload-run` call, read `~/docs/agents/OFFLOAD.md`: external CLIs (agy, codex via `offload-run`) come first.
 - Never offload: EARS specs, trade-offs, design, antagonistic review (except the codex second reviewer), final review, anything touching secrets or credentials, or `git push`/publish.
 
 ## Who does what

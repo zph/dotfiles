@@ -4,7 +4,7 @@ Part of ~/AGENTS.md; section names cited here may live there or in a sibling fil
 
 ## Model classes
 
-Rules in this file name a class, not a model. Prefer the latest model in each line, which should be what the tool's default for that line resolves to; do not pin older versions. For a tool or model not listed, map it by cost and capability relative to these examples.
+Rules in ~/AGENTS.md and its docs name a class, not a model. Prefer the latest model in each line, which should be what the tool's default for that line resolves to; do not pin older versions. For a tool or model not listed, map it by cost and capability relative to these examples.
 
 | Class | Use for | Claude | Codex |
 |---|---|---|---|
@@ -12,9 +12,9 @@ Rules in this file name a class, not a model. Prefer the latest model in each li
 | `reasoning` | Design, debugging, review | Opus at medium effort | Sol at medium effort |
 | `worker` | Implementation, search, reading output | Sonnet | Sol at low effort; Luna for easy work |
 
-## Who does what
+## Delegation order
 
-The main session runs on the `frontier` class, the most expensive. Its context is for talking with me, EARS specs, decisions, and final review. Everything else is delegated, except small changes (below).
+The main session runs on the `frontier` class, the most expensive. Its context is for talking with me, EARS specs, decisions, and final review. Everything else is delegated, except small changes (see "Who does what" in ~/AGENTS.md).
 
 | Work | Runs on |
 |---|---|
