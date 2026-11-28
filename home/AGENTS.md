@@ -13,6 +13,7 @@
 - Mark every stub or fake implementation with a to-do comment.
 - Go: never discard or ignore errors (no `val, _ := fnCall()`).
 - Python: always use `uv`, never `python`/`python3` directly (`uv run --project <path> ...`); projects use a uv-compatible `pyproject.toml`.
+- Use Bun for scripting.
 - Standalone TypeScript scripts use Bun, not Deno: shebang `#!/usr/bin/env -S bun run --install=force`, exact versions in import specifiers (`import semver from "semver@7.6.3"`), no package.json. Prefer Bun/Node built-ins (`Bun.$`, `node:util` parseArgs, `node:fs`, `node:path`), else small pinned micro libraries.
 
 # Testing and Makefile
