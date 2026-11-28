@@ -34,3 +34,10 @@ test: ## Run e2e tests in fresh Tart VM
 
 test-debug: ## Run e2e tests, keep VM on failure
 	uv run --project e2e dotfiles-e2e --keep
+
+.PHONY: test-llm-quota-nudge
+test-llm-quota-nudge: ## Run the quota nudge tests with stub CLIs
+	@log=$$(mktemp /tmp/llm-quota-nudge-test.XXXXXXXX); \
+	  bun test tests/llm-quota-nudge_test.ts > "$$log" 2>&1; rc=$$?; \
+	  grep -E '^\(fail\)|^ *[0-9]+ (pass|fail)' "$$log"; \
+	  echo "log: $$log (exit $$rc)"; exit $$rc

@@ -1,0 +1,53 @@
+#!/usr/bin/env -S bun run --install=force
+
+const [provider, model, ...extra] = Bun.argv.slice(2);
+
+// NUDGE-003
+if (
+  (provider !== "claude" && provider !== "codex" && provider !== "agy") ||
+  model === "" || model?.startsWith("-") || extra.length
+) {
+  console.error("Usage: llm-quota-nudge {claude|codex|agy} [model]");
+  process.exit(2);
+}
+
+const prompt = "Reply with only OK. Do not use tools.";
+const commands = {
+  claude: [
+    "claude", "--safe-mode", "--no-session-persistence", "--tools", "",
+    "--model", model ?? "haiku", "--print", prompt,
+  ],
+  codex: [
+    "codex", "-a", "never", "exec", "--skip-git-repo-check", "--ephemeral",
+    "--ignore-user-config", "--sandbox", "read-only", "--color", "never",
+    "--disable", "shell_tool", "--disable", "apps", "--disable", "plugins",
+    "-c", 'web_search="disabled"', "-c", 'model_reasoning_effort="low"',
+    "--model", model ?? "gpt-6-luna", prompt,
+  ],
+  agy: [
+    "agy", "--mode", "plan", "--sandbox", "--disable-slash-commands",
+    "--print-timeout", "60s", "--model", model ?? "gemini-4-hydrogen-low",
+    "--print", prompt,
+  ],
+};
+
+// NUDGE-001, NUDGE-002, NUDGE-004, NUDGE-005
+const path = [process.env.PATH, "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"]
+  .filter(Boolean).join(":");
+
+try {
+  const child = Bun.spawn(commands[provider], {
+    cwd: "/tmp",
+    env: { ...process.env, PATH: path },
+    stdin: "ignore",
+    stdout: "inherit",
+    stderr: "inherit",
+  });
+  for (const signal of ["SIGHUP", "SIGINT", "SIGTERM"]) {
+    process.on(signal, () => child.kill(signal));
+  }
+  process.exit(await child.exited);
+} catch (error) {
+  console.error(`llm-quota-nudge: ${error instanceof Error ? error.message : error}`);
+  process.exit(error?.code === "ENOENT" ? 127 : 1);
+}
