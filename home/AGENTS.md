@@ -1,56 +1,31 @@
 # Instructions
 
-1. Always use TDD approach to building
-2. EARS design using our ears skill
-3. Tag ears spec ids onto the code area worked on for a given task
-4. Use docs/ folder for understanding the project and keep an upto date IMPLEMENTATION.md doc
-5. Common commands for project should be added to a Makefile that includes `help` as the default
-   target
+- TDD always, red-green-refactor is mandatory; test behavior, not implementation. Test at unit, integration and end-to-end layers.
+- EARS design using the ears skill; tag spec ids onto the code worked on.
+- Use `docs/` to understand the project; always keep `IMPLEMENTATION.md` up to date.
+- Algorithm and distributed-systems choices focus on tradeoffs and use the research skill.
+- Be very succinct in outputs to save context. Search aggressively to load as little as possible while debugging.
+- A message from me starting with just a single quotation mark and a newline is a command to proceed.
 
-**Remember:**
-- 🧪 Test first, EARS always, trace everything
-- 🎯 Test behavior, not implementation
-- 📋 **Always update IMPLEMENTATION.md**
-- 🔄 Red-Green-Refactor loop is mandatory
-- Technical choices for algorithms and distributed systems behavior should focus on the tradeoffs involved and use research skill.
-**Test Driven Development TDD**
-- Implement testing at various layers: unit tests, integration tests, end to end tests
-- Anything with a cli interface must also have full blackbox end to end tests, preferrably using
-`bun test` as the harness, spawning the CLI as a subprocess with `Bun.spawn` or `Bun.$`
-(see the chezmoi repo's `tests/` for examples)
-- Standalone TypeScript scripts use Bun, not Deno: shebang `#!/usr/bin/env -S bun run --install=force`,
-with exact versions in import specifiers (e.g. `import semver from "semver@7.6.3"`) and no
-package.json. Prefer Bun/Node built-ins (`Bun.$`, `node:util` parseArgs, `node:fs`, `node:path`)
-over libraries; otherwise use small pinned micro libraries.
-- Integration and end to end tests can use testcontiners with docker/podman if needing external
-images or datastores.
-- Running tests is often possible from the Makefile and so is building binaries. Use makefile
-commands preferentially instead of writing out and executing the full command. It's important for
-consistency and correctness.
+# Code
 
-**Makefile and common tasks**
-- Makefile should at a minimum have the following targets: help, build, test, run
-- The `help` target MUST print every target automatically, with a short description of each.
-- Every Git repo whose origin is under github.com/zph SHOULD have a Makefile at its root.
+- Hoist magic values into constants; prefer iota over string, with a string coercion to a human form. State machine states, and their tests, always use these constants.
+- Mark every stub or fake implementation with a to-do comment.
+- Go: never discard or ignore errors (no `val, _ := fnCall()`).
+- Python: always use `uv`, never `python`/`python3` directly (`uv run --project <path> ...`); projects use a uv-compatible `pyproject.toml`.
+- Standalone TypeScript scripts use Bun, not Deno: shebang `#!/usr/bin/env -S bun run --install=force`, exact versions in import specifiers (`import semver from "semver@7.6.3"`), no package.json. Prefer Bun/Node built-ins (`Bun.$`, `node:util` parseArgs, `node:fs`, `node:path`), else small pinned micro libraries.
 
-**EARS Specifications**
-- Tags must be in the form <NAME>-<sequential integer>
-- example: RUNAWAY-001
-- Be consistent in the capitalization and non capitalization, prefer RFC type captilization
-where WHEN/THEN/SHALL/MUST are capitalized
-- The sequential integers must be sequential for the full file and MUST not be restarted per
-section
+# Testing and Makefile
 
-**Constants**
-- Magic values in code should become constants and prefer iota > string for constants but offer
-a string coercion to a human form.
-- State machine states should always use these defined constants and so should tests
-- Any time you see me start a message with just the single quotation mark and an enter, I want you to treat that as a command to proceed.
-- Prefer to hoist out values as constants rather than littering them about the code as strings or magic numbers.
-- Be very succinct in outputs to me to avoid using up context
-- Use search tools aggressively to minimize how much context you load while debugging
-- If you are stubbing something out and not doing the real implementation, you must always mark it with a to-do comment.
-- Must never throw away or ignore error responses in golang. It's bad to do `val, _ := fnCall()`
+- Every CLI needs full blackbox end-to-end tests, preferably `bun test` spawning it with `Bun.spawn` or `Bun.$` (see the chezmoi repo's `tests/`).
+- Integration and e2e tests can use testcontainers with docker/podman for external images or datastores.
+- Common commands go in a Makefile with at least `help`, `build`, `test`, `run`; `help` is the default and MUST print every target automatically with a short description. Prefer make targets over typing the full command.
+- Every Git repo whose origin is under github.com/zph SHOULD have a root Makefile.
+
+# EARS specs
+
+- Tags are `<NAME>-<integer>` (e.g. RUNAWAY-001), sequential across the whole file, never restarted per section.
+- Capitalize consistently, RFC style (WHEN/THEN/SHALL/MUST).
 
 # Design goal
 
@@ -91,141 +66,33 @@ Project work is a loop: change → verify → read the result → decide. Part o
 
 # Models and delegation
 
-## Model classes
+Rules name model classes: `frontier` (main session only, never a subagent), `reasoning` (design, debugging, review; Claude Opus at medium effort), `worker` (implementation, search, reading output; Claude Sonnet).
 
-Rules in this file name a class, not a model. Prefer the latest model in each line, which should be what the tool's default for that line resolves to; do not pin older versions. For a tool or model not listed, map it by cost and capability relative to these examples.
-
-| Class | Use for | Claude | Codex |
-|---|---|---|---|
-| `frontier` | Main session only; never a subagent | Fable | Astra |
-| `reasoning` | Design, debugging, review | Opus at medium effort | Sol at medium effort |
-| `worker` | Implementation, search, reading output | Sonnet | Sol at low effort; Luna for easy work |
-
-## External offload (cheapest first)
-
-Grunt work that runs on Claude's `worker` class goes to an external CLI first, to save Claude tokens.
-Use the first tier whose check passes:
-
-| Tier | Check | Why |
-|---|---|---|
-| 1 agy (Antigravity) | `command -v offload-run && command -v agy` | Prepaid Google credits that expire monthly |
-| 2 codex | `command -v offload-run && command -v codex` | Paid subscription, but cheaper for me than Claude |
-| 3 Claude `worker` subagent | — | Fallback |
-
-**Call:** `offload-run [-C <project-dir>] [-t <seconds>] <agy|codex> <read|review|edit> <abs-out-file> @<abs-brief-file>`
-
-- **Modes:** `read` is search, summarizing and reading logs (read-only, low effort). `review` is antagonistic review (read-only, medium effort). `edit` is implementation from a written spec (agy `accept-edits`, codex `workspace-write`).
-- **Only route:** `~/bin/offload-run` is the only way to call agy or codex. Deny rules in settings block direct calls. Neither CLI can start inside Claude's sandbox, so the sandbox excludes `offload-run`, and the script enforces its own guards: pinned binaries, agy `--sandbox`, codex's own sandbox with no MCP servers, brief and output files only under `/private/tmp/claude-<uid>/` (no symlinks; the output file must not already exist), a clean git tree for `edit`, and a hard timeout (default 900s) that kills the whole process group.
-- **Bare call only:** the sandbox exclusion applies only to a single `offload-run` command with literal absolute paths. No `$TMPDIR` or other variables, no `VAR=value` prefix, no pipes, redirects, `cd` or `$(...)`, or the call stays sandboxed and the CLI fails. Write out the scratchpad path, and use `-C` instead of `cd` and `-t` instead of env vars.
-- **agy limits:** headless agy can't answer its own permission prompts, so it auto-denies shell commands and file access outside the project and then stops (`offload-run` exits 3). Give agy only in-project file work: edits, search, summarizing files you name inside the project. Work that needs shell commands, such as running tests or reading logs elsewhere, goes to codex.
-- **Offload:** mechanical edits from a written spec, boilerplate and test scaffolding, renames and reformatting, broad search, summarizing logs or test output, doc updates, browser-free research.
-- **Never offload:** EARS specs, trade-off decisions, design, antagonistic review (except the second reviewer described under "Antagonistic review"), final review, and anything that touches secrets or credentials, or runs `git push`/publish.
-- **Brief:** write it to a file in the scratchpad and pass `@<path>`. Use the brief format from "Who does what": goal, acceptance criteria with the check command, files in scope, what's ruled out, and a return format of at most 30 lines. Put the artifact itself (design text or diff) in the brief instead of pointing at live files, so the input can't change mid-run.
-- **Output:** agy writes everything to `<out-file>`. codex writes its final message to `<out-file>` and its progress to `<out-file>.log`. Use a new file name for every run. Claude reads only the last 30 lines or a grep of the failures, never the whole log.
-- **Edits:** `edit` needs a clean git tree, so commit or use a worktree first. Run at most one edit-mode attempt per tree at a time.
-- **Verification:** Claude runs the acceptance command (the `make` target) and checks `git diff --stat`. Claude also reads the diff of any test, Makefile or CI file the worker touched, so the worker can't pass by weakening checks. Otherwise Claude doesn't re-read its work or trust the CLI's own report.
-- **Fallback:** on a non-zero exit (3 is agy auto-denying a tool, 124 is a timeout) or a quota or auth error, stash the failed attempt's changes (`git stash push -u -m "failed offload: <tier>"`), then move to the next tier once and say so in one line. Don't retry the same tier in a loop.
-- **Threshold:** only offload when the task would cost more than about 3 file reads or a long output. A handoff still costs Claude tokens for the brief plus the result.
+- BEFORE spawning a subagent, delegating, or starting a coding task that is not small, read `~/docs/agents/DELEGATION.md`.
+- Every spawn names its model explicitly; never fork or leave it unset.
+- Delegate by default when work needs more than ~3 file reads, a broad search, web research or long output. Work inline only for a known file or a single command. The main session's context is for talking with me, EARS specs, decisions and final review.
+- BEFORE giving work to a `worker`, read `~/docs/agents/OFFLOAD.md`: external CLIs (agy, codex via `offload-run`) come first.
+- Never offload: EARS specs, trade-offs, design, antagonistic review (except the codex second reviewer), final review, anything touching secrets or credentials, or `git push`/publish.
 
 ## Who does what
 
-The main session runs on the `frontier` class, the most expensive. Its context is for talking with me, EARS specs, decisions, and final review. Everything else is delegated.
-
-| Work | Runs on |
-|---|---|
-| EARS spec, trade-off decisions, final review | main session (`frontier`) |
-| Low-level design, debugging, multi-step reasoning, reviewing implementers | `reasoning` subagent |
-| Antagonistic review of designs and diffs | new `reasoning` subagent |
-| Implementation from a written spec, search, reading logs/test output, summarizing, docs | External offload (agy → codex), else `worker` subagent |
-
-- Every spawn names its model explicitly, using the class's model for the tool in use. Never fork or leave the model unset (the subagent inherits the `frontier` model).
-- Delegate by default when work needs more than ~3 file reads, a broad search, web research, or reading long output. Work inline only for a known file or a single command.
-- Coding tasks run in this order:
-  1. Main writes EARS + interfaces.
-  2. One `reasoning` agent produces the low-level design.
-  3. Antagonistic review of the design.
-  4. The `reasoning` agent spawns `worker` implementers and reviews them.
-  5. Antagonistic review of the diff.
-  6. Main reviews the final diff.
-- Every brief contains: goal, acceptance criteria and the command that checks them, files in scope, what is already ruled out, and the return format.
-- Subagents return at most 30 lines: conclusion, `file:line` references, commands run with pass/fail. Long output goes to a file; return the path.
-- Run independent subagents in parallel in one message.
-- Main verifies a subagent's claim by running the acceptance command, not by re-reading its work.
+- A **small change** meets ALL of: at most 3 files and 50 changed lines (added plus deleted per `git diff --numstat`, counted for the whole task, not per commit; new tests and docs not counted, but changed or deleted existing tests are); a task is never split to stay under the limit; no change to concurrency, distributed behavior, persisted data or migrations, auth or secrets, public interfaces, deploy or CI configuration, runtime config or dashboards of deployed services, network or SSH exposure, permission or sandbox settings, agent instruction files that loosen a rule, or safety-critical boat controls. WHEN unsure, it is not small.
+- WHEN a change is small, main does it inline or with one implementer (external offload or `worker`): no design agent, no antagonistic review, no second reviewer. TDD, EARS, "Definition of done" and "Sonnet main session sign-off" still apply. IF the change grows past the threshold, THEN read `~/docs/agents/DELEGATION.md` and switch to its full order.
 
 # Antagonistic review
 
-Standard for every design (before implementation starts) and every implementation (before main's final review).
-
-- Main spawns a new `reasoning` subagent as the reviewer. It MUST NOT be the designer, an implementer, or the agent that reviewed them: those are anchored by the long process that produced the work and inherit its logic flaws.
-- Give it only the EARS spec, the acceptance criteria, and the artifact (design doc or diff). Withhold the authors' reasoning, summaries, and review conclusions.
-- WHEN `offload-run` and `codex` are installed, main also runs a second reviewer from a different model family, in parallel with the first and with the same inputs and rules: `offload-run codex review <abs-scratch>/codex-review-<n>.out @<abs-scratch>/review-brief.md` (a bare call, as "External offload" requires). The brief holds the EARS spec, the acceptance criteria, and a frozen copy of the artifact (the design text or the diff itself, not a path or a live `git diff` range), so both reviewers see identical input. Main merges both reviewers' findings and drops duplicates. If codex fails or runs out of quota, continue with the Claude reviewer alone and say so in one line.
-- Its job is to break the work, not approve it: logic flaws, unmet or untested EARS ids, tests that pass without exercising the behavior, unhandled failure and concurrency cases, assumptions the spec does not support.
-- Each finding has a `file:line` or design section, a concrete failure scenario (inputs/state → wrong result), and a severity. "No findings" MUST list what was checked.
-- Main decides which findings stand and sends fixes back to the authors. Re-review once after fixes, then report any still-open findings to me rather than looping.
-
-# Python
-
-- **Always use `uv`** for all Python execution. Never invoke `python3` or `python` directly.
-- Makefile targets, scripts, and commands should use `uv run --project <path> python ...` or `uv run --project <path> <entry-point>`.
-- Python projects use `pyproject.toml` with uv-compatible configuration.
+Required for every design (before implementation) and every implementation (before final review), except small changes. Read `~/docs/agents/REVIEW.md` before running it.
 
 # Agent instruction files
-1. Only use `AGENTS.md` for agent/project instructions. Never create or write to `CLAUDE.md` files; put new instructions in `AGENTS.md` instead.
+
+Only use `AGENTS.md` for agent/project instructions. Never create or write `CLAUDE.md` files; put new instructions in `AGENTS.md`.
 
 # Browser work
-1. Delegate browser clicking/navigation/form-filling to cheaper subagents (`worker` class) instead of doing it in the main agent.
-2. Subagents must stop before any action that saves or applies a change (Apply, Save, Create, Add, Submit, Delete) and leave the staged form open.
-3. The main agent verifies the staged change (screenshot/zoom of the form) before it is ever applied, and performs the final apply click itself.
 
-# Code Search
+1. Delegate browser clicking, navigation and form filling to `worker` subagents.
+2. Subagents stop before any action that saves or applies a change (Apply, Save, Create, Add, Submit, Delete), leaving the staged form open.
+3. The main agent verifies the staged change (screenshot/zoom) before it is applied, and performs the final apply click itself.
 
-Use `semble search` to find code by describing what it does or naming a symbol/identifier, instead of grep:
+# Code search
 
-​```bash
-semble search "authentication flow" ./my-project
-semble search "save_pretrained" ./my-project
-semble search "save model to disk" ./my-project --top-k 10
-​```
-
-If you anticipate doing more than one search, use `semble index` to create an index.
-
-​```bash
-semble index ./my-project -o my_index
-​```
-
-You can then reuse this index later on:
-
-​```bash
-semble search "save_pretrained" --index my_index
-​```
-
-An index is not automatically updated, so if the code changes significantly, reindex. If you notice stale results while resolving searches to files, reindex.
-
-Use `--content docs` to search documentation and prose, `--content config` for config files (yaml, toml, etc.), or `--content all` to search code, docs, and config:
-
-​```bash
-semble search "deployment guide" ./my-project --content docs
-semble search "database host port" ./my-project --content config
-semble search "authentication" ./my-project --content all
-​```
-
-Use `semble find-related` to discover code similar to a known location (pass `file_path` and `line` from a prior search result):
-
-​```bash
-semble find-related src/auth.py 42 ./my-project
-​```
-
-Like search, `find-related` also accepts an `--index` argument.
-
-`path` defaults to the current directory when omitted; git URLs are accepted.
-
-If `semble` is not on `$PATH`, use `uvx --from "semble[mcp]" semble` in its place.
-
-### Workflow
-
-1. Index the repo using `semble index -o cached_index`.
-2. Start with `semble search` to find relevant chunks. Pass the index to achieve results faster.
-3. Use `--content docs` for documentation, `--content config` for config files, or `--content all` for everything.
-4. Inspect full files only when the returned chunk does not give enough context.
-5. Optionally use `semble find-related` with a promising result's `file_path` and `line` to discover related implementations.
-6. Use grep only when you need exhaustive literal matches or quick confirmation of an exact string.
+Use `semble search "<description or symbol>" <path>` instead of grep; grep only for exhaustive literal matches. For options and indexing, read `~/docs/agents/CODE_SEARCH.md`.
